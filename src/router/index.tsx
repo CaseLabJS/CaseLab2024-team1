@@ -8,11 +8,11 @@ const router = createBrowserRouter([
 		element: <App />,
 	},
 	{
-		path: '/app',
+		path: '/app/:page?',
 		element: <div>App</div>,
 	},
 	{
-		path: '/admin',
+		path: '/admin/:page?',
 		element: <div>Admin</div>,
 	},
 ])
