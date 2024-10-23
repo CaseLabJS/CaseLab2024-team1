@@ -1,50 +1,63 @@
-# React + TypeScript + Vite
+# Code Style Guide
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 1. Общие соглашения
 
-Currently, two official plugins are available:
+- Язык: Весь код пишется на английском (имена переменных, функций, комментарии и т.д.).
+- Форматирование: Использовать Prettier для автоформатирования кода:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Базовый конфиг для Prettier
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```json
+{
+	"trailingComma": "es5",
+	"tabWidth": 4,
+	"semi": false,
+	"singleQuote": true
+}
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 2. Именование
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+1. **Компоненты React**: PascalCase (например, `MyComponent.tsx`).
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+2. **Вспомогательные функции и утилиты**: camelCase (например, `useApiHook.ts`).
+
+3. **Переменные и классы**:
+
+- camelCase для переменных и функций (например, `userData`).
+- Константы: UpperCaseSnakeCase (например, `MAX_USERS_LIMIT`).
+- PascalCase для классов (например, `UserCard`).
+
+4. **Именование интерфейсов**:
+
+- PascalCase для имен интерфейсов.
+- Названия интерфейсов должны описывать сущности, которые они представляют.
+- Не использовать префикс `I` в именах интерфейсов. В современном TypeScript это считается устаревшим подходом, так как интерфейсы и так легко различимы по контексту использования.
+
+5. **Именование типов**:
+
+- PascalCase для пользовательских типов (`type`).
+- Типы, как и интерфейсы, должны четко описывать структуру данных или их поведение.
+- Использовать конкретные и интуитивные имена для типов.
+
+## 3. React компоненты
+
+- Только Functional components.
+- Обязательно нужно описывать интерфейс пропсов компонента.
+- Компоненты, состоящие из более чем 200 строк, рекомендуется разбивать на более мелкие.
+
+## 4. TypeScript
+
+- Использовать строгую типизацию (`strict: true` в tsconfig).
+- Предпочитать `interface` для описания типов объектов.
+- Избегать использования типа `any`. Если тип неизвестен, использовать `unknown`.
+- Явно указывать типы в функциях и переменных там, где это необходимо.
+
+## 5. Стили
+
+- Использовать CSS-модули, если необходим кастомный CSS.
+
+Для CSS-модулей придерживаться соглашений:
+
+- Имена файлов: `Component.module.css`.
+- Имена классов: _camelCase_ (например, `.buttonPrimary`).
