@@ -46,12 +46,6 @@ export interface DocumentVersion {
     signatures:    Signature[];
 }
 
-export interface Signature {
-    hash:             number;
-    placeholderTitle: string;
-    user:             User;
-}
-
 export interface Value {
     attributeName: string;
     value:         string;
@@ -59,6 +53,23 @@ export interface Value {
 
 
 // signature-controller
+// POST /sign/{id}
+export interface Signature {
+    hash:             number;
+    placeholderTitle: string;
+    user:             User;
+}
+
+// POST /sign/voting
+export interface SignVoting {
+    participants:      User[];
+    documentVersion:   DocumentVersion;
+    approvalThreshold: number;
+    deadline:          Date;
+    status:            string;
+}
+
+// POST /sign/send  | GET /sign/{id}  | GET /sign (Sign[])
 export interface Sign {
     id:                number;
     userTo:            User;
