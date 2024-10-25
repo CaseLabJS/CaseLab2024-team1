@@ -1,78 +1,74 @@
 // user-controller
 export interface User {
-    id:      number;
-    name:    string;
-    surname: string;
-    email:   string;
-    roles:   Role[];
+  id: number
+  name: string
+  surname: string
+  email: string
+  roles: Role[]
 }
 
 export interface Role {
-    id:   number;
-    name: string;
+  id: number
+  name: string
 }
 
-
-// documents-controller / document-type-controller 
+// documents-controller / document-type-controller
 export interface Document {
-    id:               number;
-    user:             User;
-    documentType:     DocumentType;
-    documentVersions: DocumentVersion[];
+  id: number
+  user: User
+  documentType: DocumentType
+  documentVersions: DocumentVersion[]
 }
-
 
 // document-types / attributes
 export interface DocumentType {
-    id:         number;
-    name:       string;
-    attributes: Attribute[];
+  id: number
+  name: string
+  attributes: Attribute[]
 }
 
 export interface Attribute {
-    id:       number;
-    name:     string;
-    required: boolean;
+  id: number
+  name: string
+  required: boolean
 }
 
 export interface DocumentVersion {
-    id:            number;
-    versionId:     number;
-    title:         string;
-    description:   string;
-    createdAt:     Date;
-    values:        Value[];
-    base64Content: string;
-    signatures:    Signature[];
+  id: number
+  versionId: number
+  title: string
+  description: string
+  createdAt: Date
+  values: Value[]
+  base64Content: string
+  signatures: Signature[]
 }
 
 export interface Value {
-    attributeName: string;
-    value:         string;
+  attributeName: string
+  value: string
 }
-
 
 // signature-controller
 // POST /sign/{id}
 export interface Signature {
-    hash:             number;
-    placeholderTitle: string;
-    user:             User;
+  hash: number
+  placeholderTitle: string
+  user: User
 }
 
 // POST /sign/voting
 export interface SignVoting {
-    participants:      User[];
-    documentVersion:   DocumentVersion;
-    approvalThreshold: number;
-    deadline:          Date;
-    status:            string;
+  participants: User[]
+  documentVersion: DocumentVersion
+  approvalThreshold: number
+  deadline: Date
+  status: string
 }
 
 // POST /sign/send  | GET /sign/{id}  | GET /sign (Sign[])
 export interface Sign {
-    id:                number;
-    userTo:            User;
-    documentVersionId: number;
+  id: number
+  userTo: User
+  documentVersionId: number
 }
-

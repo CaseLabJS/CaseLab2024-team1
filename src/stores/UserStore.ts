@@ -1,25 +1,19 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable } from 'mobx'
 
-interface User {
-        
-}
+interface User {}
 
 class UserStore {
-    users: User[] = [];
-    currentUser: User | null = null;
+  users: User[] = []
+  currentUser: User | null = null
 
-    constructor() {
-        makeAutoObservable(this);
-    }
+  constructor() {
+    makeAutoObservable(this)
+  }
 
-    login() {
+  login() {}
 
-    }
-
-    addUser() {
-
-    }
+  addUser() {}
 }
 
-const userStore = new UserStore();
-export default userStore;
+const userStore = new UserStore()
+export default userStore

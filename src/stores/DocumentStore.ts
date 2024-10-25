@@ -1,28 +1,20 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable } from 'mobx'
 
-interface Document {
-    
-}
+interface Document {}
 
 class DocumentStore {
-    documents: Document[] = [];
+  documents: Document[] = []
 
-    constructor() {
-        makeAutoObservable(this);
-    }
+  constructor() {
+    makeAutoObservable(this)
+  }
 
-    fetchDocuments() {
+  fetchDocuments() {}
 
-    }
+  deleteDocument() {}
 
-    deleteDocument() {
-        
-    }
-
-    updateDocument() {
-
-    }
+  updateDocument() {}
 }
 
-const documentStore = new DocumentStore();
-export default documentStore;
+const documentStore = new DocumentStore()
+export default documentStore

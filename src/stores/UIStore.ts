@@ -1,10 +1,10 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable } from 'mobx'
 
 class UIStore {
-    constructor() {
-        makeAutoObservable(this);
-    }
+  constructor() {
+    makeAutoObservable(this)
+  }
 }
 
-const uiStore = new UIStore();
-export default uiStore;
+const uiStore = new UIStore()
+export default uiStore
