@@ -2,7 +2,8 @@ import {useState} from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import {ThemeProvider} from "./theme/theme-provider/theme-provider.tsx";
+import {ThemeProvider} from "./theme/theme-provider/theme-provider";
+import {CssBaseline} from "@mui/material";
 
 function App() {
     const [count, setCount] = useState(0)
@@ -10,6 +11,7 @@ function App() {
     return (
         <ThemeProvider>
             <>
+                <CssBaseline />
                 <div>
                     <a href="https://vitejs.dev" target="_blank">
                         <img src={viteLogo} className="logo" alt="Vite logo"/>
