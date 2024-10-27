@@ -1,13 +1,11 @@
-import { makeAutoObservable } from 'mobx'
-
-interface User {}
-
+import { User } from '@/shared/types/sharedTypes';
+import { makeAutoObservable } from 'mobx';
 class UserStore {
-  users: User[] = []
-  currentUser: User | null = null
+  users: User[] = [];
+  currentUser: User | null = null;
 
   constructor() {
-    makeAutoObservable(this)
+    makeAutoObservable(this);
   }
 
   login() {}
@@ -15,5 +13,5 @@ class UserStore {
   addUser() {}
 }
 
-const userStore = new UserStore()
-export default userStore
+const userStore = new UserStore();
+export default userStore;
