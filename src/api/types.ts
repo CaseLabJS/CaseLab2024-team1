@@ -4,7 +4,7 @@ export type BaseApiRequest = {
     request: () => Promise<never>
     // any, т.к. lazy импорт нормально не типизируется
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mock: () => Promise<any>
+    mock?: () => Promise<any>
 }
 
 export type RequestType = <D, R>(
