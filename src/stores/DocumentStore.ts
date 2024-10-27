@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { type Document } from '@/shared/types/sharedTypes';
+import { type Document } from '@/shared/types';
 class DocumentStore {
   documents: Document[] = [];
 
