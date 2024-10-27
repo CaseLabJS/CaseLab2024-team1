@@ -10,16 +10,19 @@ import prettierRecommended from 'eslint-plugin-prettier/recommended';
 
 export default tseslint.config(
   { ignores: ['dist', '!.storybook'] },
-
+  {
+    extends: [...storybook.configs['flat/recommended']],
+    files: ['**/*.stories.@(ts|tsx|js|jsx|mjs|cjs)'],
+    ignores: ['**/*.config.*', '**/*.d.ts'],
+  },
+  { ...prettierRecommended, files: ['**/*.{js,jsx,ts,tsx,md}'] },
   {
     settings: { react: { version: '18.3' } },
     extends: [
       js.configs.recommended,
-      // ...tseslint.configs.recommended,
       ...tseslint.configs.recommendedTypeChecked,
-      ...storybook.configs['flat/recommended'],
+
       pluginMobx.flatConfigs.recommended,
-      prettierRecommended,
     ],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
