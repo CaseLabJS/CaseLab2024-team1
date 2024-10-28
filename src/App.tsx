@@ -1,61 +1,39 @@
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
 import './App.css'
-import { attributeControllerApi } from './api/attributeController'
+import { ThemeProvider } from './theme/theme-provider/theme-provider'
+import CssBaseline from '@mui/material/CssBaseline'
 
 function App() {
-  const model = {
-    documentTypesNames: ['testType'],
-    name: 'extraAttr1',
-    required: false,
-  }
-
-  const api = attributeControllerApi
-
-  const create = () => {
-    api
-      .createAttribute({
-        ...model,
-      })
-      .then((data) => console.log(data))
-  }
-
-  const get = () => {
-    api.getAttributeById(3).then((data) => console.log(data))
-  }
-
-  const patch = () => {
-    api
-      .patchAttribute(3, { name: 'new document extra mega type' })
-      .then((data) => console.log(data))
-  }
-
-  const update = () => {
-    api
-      .updateAttribute({
-        ...model,
-        id: 3,
-        required: true,
-        documentTypesNames: ['new document extra type', 'testType'],
-      })
-      .then((data) => console.log(data))
-  }
-
-  const remove = () => {
-    api.deleteAttribute(2).then((data) => console.log(data))
-  }
-
-  const getAll = () => {
-    api.getAttributes().then((data) => console.log(data))
-  }
+  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <button onClick={create}>new </button>
-      <button onClick={get}>get </button>
-      <button onClick={update}>update </button>
-      <button onClick={patch}>patch </button>
-      <button onClick={remove}>remove </button>
-      <button onClick={getAll}>getAll </button>
-    </>
+    <ThemeProvider>
+      <>
+        <CssBaseline />
+        <div>
+          <a href="https://vitejs.dev" target="_blank">
+            <img src={viteLogo} className="logo" alt="Vite logo" />
+          </a>
+          <a href="https://react.dev" target="_blank">
+            <img src={reactLogo} className="logo react" alt="React logo" />
+          </a>
+        </div>
+        <h1>Vite + React</h1>
+        <div className="card">
+          <button onClick={() => setCount((count) => count + 1)}>
+            count is {count}
+          </button>
+          <p>
+            Edit <code>src/App.tsx</code> and save to test HMR
+          </p>
+        </div>
+        <p className="read-the-docs">
+          Click on the Vite and React logos to learn more
+        </p>
+      </>
+    </ThemeProvider>
   )
 }
 
