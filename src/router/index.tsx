@@ -1,11 +1,13 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom'
 
-import ROUTES from './routes';
+import ROUTES from './routes'
+
+import App from '../App'
 
 const router = createBrowserRouter([
   {
     path: ROUTES.home,
-    element: <Outlet></Outlet>,
+    element: <App />,
   },
   {
     path: ROUTES.app(':page?'),
@@ -15,6 +17,6 @@ const router = createBrowserRouter([
     path: ROUTES.admin(':page?'),
     element: <div>Admin</div>,
   },
-]);
+])
 
-export default router;
+export default router

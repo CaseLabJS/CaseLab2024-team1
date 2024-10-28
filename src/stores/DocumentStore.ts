@@ -1,10 +1,12 @@
-import { makeAutoObservable } from 'mobx';
-import { type Document } from '@/shared/types/sharedTypes';
+import { makeAutoObservable } from 'mobx'
+
+interface Document {}
+
 class DocumentStore {
-  documents: Document[] = [];
+  documents: Document[] = []
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this)
   }
 
   fetchDocuments() {}
@@ -14,5 +16,5 @@ class DocumentStore {
   updateDocument() {}
 }
 
-const documentStore = new DocumentStore();
-export default documentStore;
+const documentStore = new DocumentStore()
+export default documentStore
