@@ -1,52 +1,57 @@
 import './App.css'
-import { documentControllerApi } from './api/documentController'
+import { documentTypesControllerApi } from './api/documentTypesController'
 
 function App() {
-
-  const version = {
-    title: '28 октября 17:14',
-    userId: 2,
-    documentTypeId: 1,
-    values: [
+  const model = {
+    name: 'new document extra type',
+    attributes: [
       {
-        attributeName: 'testAttr2',
-        value: 'Hi, there',
+        id: 1,
+        name: 'testAttr1',
+        required: false,
       },
     ],
-    base64Content: '',
   }
 
-  const api = documentControllerApi
+  const api = documentTypesControllerApi
 
   const create = () => {
-    api.createDocument(version).then((data) => console.log(data))
+    api.createDocumentTypes(model).then((data) => console.log(data))
   }
 
   const get = () => {
-    api.getDocumentById(3).then((data) => console.log(data))
+    api.getDocumentTypesById(1).then((data) => console.log(data))
   }
 
   const patch = () => {
     api
-      .patchDocumentVersion(3, { description: 'USER 3' })
+      .patchDocumentTypes(3, { name: 'new document extra mega type' })
       .then((data) => console.log(data))
   }
 
   const update = () => {
     api
-      .createDocumentVersion(3, {
-        ...version,
-        description: 'NEW 3',
+      .updateDocumentTypes({
+        ...model,
+        id: 3,
+        attributes: [
+          ...model.attributes,
+          {
+            id: 2,
+            name: 'testAttr2',
+            required: true,
+          },
+        ],
       })
       .then((data) => console.log(data))
   }
 
   const remove = () => {
-    api.deleteDocument(4).then((data) => console.log(data))
+    api.deleteDocumentTypes(2).then((data) => console.log(data))
   }
 
   const getAll = () => {
-    api.getDocuments().then((data) => console.log(data))
+    api.getDocumentsTypes().then((data) => console.log(data))
   }
 
   return (
