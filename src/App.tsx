@@ -1,39 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-import { ThemeProvider } from './theme/theme-provider/theme-provider'
-import CssBaseline from '@mui/material/CssBaseline'
+import { documentControllerApi } from './api/documentController'
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const version = {
+    title: '28 октября 17:14',
+    userId: 2,
+    documentTypeId: 1,
+    values: [
+      {
+        attributeName: 'testAttr2',
+        value: 'Hi, there',
+      },
+    ],
+    base64Content: '',
+  }
+
+  const api = documentControllerApi
+
+  const create = () => {
+    api.createDocument(version).then((data) => console.log(data))
+  }
+
+  const get = () => {
+    api.getDocumentById(3).then((data) => console.log(data))
+  }
+
+  const patch = () => {
+    api
+      .patchDocumentVersion(3, { description: 'USER 3' })
+      .then((data) => console.log(data))
+  }
+
+  const update = () => {
+    api
+      .createDocumentVersion(3, {
+        ...version,
+        description: 'NEW 3',
+      })
+      .then((data) => console.log(data))
+  }
+
+  const remove = () => {
+    api.deleteDocument(4).then((data) => console.log(data))
+  }
+
+  const getAll = () => {
+    api.getDocuments().then((data) => console.log(data))
+  }
 
   return (
-    <ThemeProvider>
-      <>
-        <CssBaseline />
-        <div>
-          <a href="https://vitejs.dev" target="_blank">
-            <img src={viteLogo} className="logo" alt="Vite logo" />
-          </a>
-          <a href="https://react.dev" target="_blank">
-            <img src={reactLogo} className="logo react" alt="React logo" />
-          </a>
-        </div>
-        <h1>Vite + React</h1>
-        <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is {count}
-          </button>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </p>
-        </div>
-        <p className="read-the-docs">
-          Click on the Vite and React logos to learn more
-        </p>
-      </>
-    </ThemeProvider>
+    <>
+      <button onClick={create}>new </button>
+      <button onClick={get}>get </button>
+      <button onClick={update}>update </button>
+      <button onClick={patch}>patch </button>
+      <button onClick={remove}>remove </button>
+      <button onClick={getAll}>getAll </button>
+    </>
   )
 }
 

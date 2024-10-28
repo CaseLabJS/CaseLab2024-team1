@@ -23,7 +23,7 @@ class UserControllerApi extends BaseApi {
       mock: () => Promise.resolve(() => user),
     })
 
-  patchUserById = (id: number, userFields: UserFields) =>
+  patchUser = (id: number, userFields: UserFields) =>
     this.createRequest<User>({
       request: () => privateApi.patch(`${SERVICE_URL}/${id}`, userFields),
       mock: async () => {
@@ -32,12 +32,12 @@ class UserControllerApi extends BaseApi {
       },
     })
 
-  deleteUserById = (id: number) =>
+  deleteUser = (id: number) =>
     this.createRequest<never>({
       request: () => privateApi.delete(`${SERVICE_URL}/${id}`),
     })
 
-  addRoleByUserId = (id: number, roleName: string) =>
+  addUserRole = (id: number, roleName: string) =>
     this.createRequest<User>({
       request: () =>
         privateApi.put(`${SERVICE_URL}/${id}/role`, { name: roleName }),
@@ -48,7 +48,7 @@ class UserControllerApi extends BaseApi {
       },
     })
 
-  removeRoleByUserId = (id: number, roleName: string) =>
+  removeUserRole = (id: number, roleName: string) =>
     this.createRequest<User>({
       request: () =>
         privateApi.delete(`${SERVICE_URL}/${id}/role`, {
@@ -58,6 +58,15 @@ class UserControllerApi extends BaseApi {
         const user = await this.getUserById(2)
         user.roles = user.roles.filter((role) => role.name !== roleName)
         return () => user
+      },
+    })
+
+  getUsers = () =>
+    this.createRequest<User[]>({
+      request: () => privateApi.get(`${SERVICE_URL}`),
+      mock: async () => {
+        const user = await this.getUserById(2)
+        return () => [user]
       },
     })
 }
