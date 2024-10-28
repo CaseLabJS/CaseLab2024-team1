@@ -1,4 +1,4 @@
-import { User } from '@/shared/types';
+import { User } from '@/shared/types/sharedTypes';
 import { makeAutoObservable } from 'mobx';
 class UserStore {
   users: User[] = [];
