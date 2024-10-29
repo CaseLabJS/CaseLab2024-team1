@@ -6,7 +6,6 @@ import Box from "@mui/material/Box";
 import {useState} from "react";
 
 export const Dropzone = () => {
-  //TODO передается наверх
   const [_acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
 
   const {
