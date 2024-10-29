@@ -1,0 +1,28 @@
+.createDocumentFormContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    padding: 2rem;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 2px rgb(168 179 192 / 16%), 0 2px 4px rgb(210 215 221 / 9%);
+}
+
+.formControl {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding-bottom: 1.5rem;
+}
+
+.formControl span {
+    font-size: 14px;
+}
+
+#fileInput,
+#filePowerAttorney,
+#fileСertificate {
+    display: none;
+}
