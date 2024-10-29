@@ -38,7 +38,7 @@ export interface DocumentVersion {
   versionId: number
   title: string
   description: string
-  createdAt: Date
+  createdAt: string //ISOString
   values: Value[]
   base64Content: string
   signatures: Signature[]
@@ -62,7 +62,7 @@ export interface SignVoting {
   participants: User[]
   documentVersion: DocumentVersion
   approvalThreshold: number
-  deadline: Date
+  deadline: string //ISOString
   status: string
 }
 
