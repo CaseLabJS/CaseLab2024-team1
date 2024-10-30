@@ -1,4 +1,5 @@
 import App from '@/App'
+import { Outlet } from 'react-router-dom'
 
 const ROUTES = {
   home: '/',
@@ -20,29 +21,41 @@ export const publicRoutes = [
 export const adminRoutes = [
   {
     path: ROUTES.admin(),
-    element: <div>Admin</div>,
-  },
-  {
-    path: ROUTES.admin('users'),
-    element: <div>Users</div>,
-  },
-  {
-    path: ROUTES.admin('document-type'),
-    element: <div>Document Type</div>,
-  },
-  {
-    path: ROUTES.admin('attribute-type'),
-    element: <div>Attribute Type</div>,
+    element: <Outlet />,
+    children: [
+      {
+        path: ROUTES.admin(),
+        element: <div>Admin</div>,
+      },
+      {
+        path: ROUTES.admin('users'),
+        element: <div>Users</div>,
+      },
+      {
+        path: ROUTES.admin('document-type'),
+        element: <div>Document Type</div>,
+      },
+      {
+        path: ROUTES.admin('attribute-type'),
+        element: <div>Attribute Type</div>,
+      },
+    ],
   },
 ]
 
 export const appRoutes = [
   {
     path: ROUTES.app(),
-    element: <div>App</div>,
-  },
-  {
-    path: ROUTES.app('document'),
-    element: <div>Create Document</div>,
+    element: <Outlet />,
+    children: [
+      {
+        path: ROUTES.app(),
+        element: <div>App</div>,
+      },
+      {
+        path: ROUTES.app('document'),
+        element: <div>Create Document</div>,
+      },
+    ],
   },
 ]
