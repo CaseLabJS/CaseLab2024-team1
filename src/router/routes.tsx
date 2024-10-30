@@ -1,4 +1,3 @@
-import App from '@/App'
 import { Outlet } from 'react-router-dom'
 
 const ROUTES = {
@@ -14,7 +13,7 @@ export const publicRoutes = [
   },
   {
     path: ROUTES.home,
-    element: <App />,
+    element: <div>home</div>,
   },
 ]
 
