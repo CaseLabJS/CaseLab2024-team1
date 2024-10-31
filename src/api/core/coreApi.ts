@@ -13,7 +13,7 @@ export abstract class CoreApi {
 
     constructor() {
         this.api.interceptors.response.use(
-            (response: AxiosResponse) => response,
+            (response: AxiosResponse) => response.data,
             (error: AxiosError) => {
                 const { response, code } = error
                 const statusCode = response?.status
