@@ -19,7 +19,7 @@ class UserStore {
 
   async fetchUsers() {
     const users = await userControllerApi.getUsers()
-    console.log(users)
+
     runInAction(() => {
       this.users = [...users]
     })
