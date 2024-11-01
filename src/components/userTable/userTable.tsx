@@ -1,14 +1,8 @@
 import React from 'react'
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { Button, Typography, Box } from '@mui/material'
 
-import { User, Role } from '@/types/sharedTypes'
-
-interface Employee {
-  id: number
-  fullName: string
-  department: string
-}
+import { User } from '@/types/sharedTypes'
 
 const UserTable: React.FC = () => {
   const rows: User[] = [
@@ -65,12 +59,11 @@ const UserTable: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
-        Пользователи
-      </Typography>
+      <Box textAlign="left" mb={1}>
+        <Typography variant="h5">Пользователи</Typography>
+      </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Button variant="contained"></Button>
         <Button variant="outlined">Добавить пользователя</Button>
       </Box>
 
