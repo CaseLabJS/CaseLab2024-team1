@@ -18,6 +18,10 @@ export const Authorization: FC<AuthorizationProps> = observer(
       return <Navigate to={ROUTES.signIn} />
     }
 
-    return <Outlet />
+    return (
+      <section className="main">
+        <Outlet />
+      </section>
+    )
   }
 )

@@ -1,4 +1,5 @@
 import { Authorization } from './authorization'
+import { CreateDocumentForm } from '@/components/createDocumentForm/createDocumentForm.tsx'
 
 export const ROUTES = {
   home: '/',
@@ -76,7 +77,7 @@ export const appRoutes = [
       },
       {
         path: ROUTES.app('document'),
-        element: <div>Create Document</div>,
+        element: <CreateDocumentForm />,
       },
     ],
   },
