@@ -1,13 +1,24 @@
-import { CoreApi } from './coreApi';
+import { CoreApi } from './coreApi'
+import { token } from '@/lib/tokenManager'
 
 class PrivateApi extends CoreApi {
-  setAuthHeader = (token: string) => {
-    this.api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  };
+  constructor() {
+    super()
+    this.api.interceptors.request.use(
+      (config) => {
+        if (token.hasValue()) {
+          config.headers.Authorization = `Bearer ${token.value}`
+        }
 
-  removeAuthHeader = () => {
-    this.api.defaults.headers.common.Authorization = null;
-  };
+        return config
+      },
+      (error) => {
+        return Promise.reject(
+          error instanceof Error ? error : new Error(String(error))
+        )
+      }
+    )
+  }
 }
 
-export const privateApi = new PrivateApi();
+export const privateApi = new PrivateApi()
