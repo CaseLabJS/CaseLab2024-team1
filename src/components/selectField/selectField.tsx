@@ -1,8 +1,8 @@
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
-import FormControl from '@mui/material/FormControl'
-import {ChangeEvent, forwardRef, Ref} from 'react'
+import { ChangeEvent, forwardRef, Ref } from 'react'
 
+//any необходимо, чтобы компонент мог принимать любой массив данных в виде опций
 interface SelectFieldProps<T extends Record<string, any>> {
   /**
    * An array of options to select from
@@ -29,7 +29,6 @@ interface SelectFieldProps<T extends Record<string, any>> {
    */
   getOptionLabel: (option: T) => string
 
-
   /**
    * The current value of the select field.
    */
@@ -41,37 +40,39 @@ interface SelectFieldProps<T extends Record<string, any>> {
   onChange: (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void
 }
 
-export const SelectField = forwardRef(<T extends Record<string, any>>(
-  props: SelectFieldProps<T>,
-  ref: Ref<HTMLInputElement>
-) => {
-  const {
-    options,
-    label,
-    fullWidth = false,
-    sx,
-    getOptionLabel,
-    value,
-    onChange,
-    ...otherProps
-  } = props
+export const SelectField = forwardRef(
+  <T extends Record<string, string | any>>(
+    props: SelectFieldProps<T>,
+    ref: Ref<HTMLInputElement>
+  ) => {
+    const {
+      options,
+      label,
+      fullWidth = false,
+      sx,
+      getOptionLabel,
+      value,
+      onChange,
+      ...otherProps
+    } = props
 
-  return (
-    <FormControl fullWidth={fullWidth}>
+    return (
       <TextField
         select
+        fullWidth
         ref={ref}
         label={label}
         sx={{
           '& .MuiSelect-select': {
             minWidth: '7rem',
-            padding: '0.5rem 2rem',
           },
           ...sx,
         }}
         {...otherProps}
         onChange={onChange}
         value={value}
+        size="small"
+        margin="dense"
       >
         {options.map((option) => (
           <MenuItem key={option.id} value={getOptionLabel(option)}>
@@ -79,6 +80,6 @@ export const SelectField = forwardRef(<T extends Record<string, any>>(
           </MenuItem>
         ))}
       </TextField>
-    </FormControl>
-  )
-})
+    )
+  }
+)

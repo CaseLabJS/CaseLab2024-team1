@@ -1,17 +1,20 @@
 import Box from '@mui/material/Box'
-import {ChangeEvent, useCallback, useState} from 'react'
+import { ChangeEvent, useCallback, useState } from 'react'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import './documentForm.css'
 import Typography from '@mui/material/Typography'
 import { IconButton, useTheme } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { DocumentOptions } from '@/components/createDocumentForm/documentOptions/documentOptions.tsx'
 import { testDocumentsType } from '@/stories/selectField/testData/testData.ts'
 import { DynamicFormField } from '@/components/createDocumentForm/dynamicFormField/dynamicFormField.tsx'
-import {Controller, useFieldArray, useFormContext} from 'react-hook-form'
-import {SelectField} from "@/components/selectField/selectField.tsx";
-import {Attribute} from "@/types/sharedTypes.ts";
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
+import { SelectField } from '@/components/selectField/selectField.tsx'
+import { Attribute } from '@/types/sharedTypes.ts'
+import { TextareaAutosize } from '@/components/styled/textareaAutosize.tsx'
+import Paper from '@mui/material/Paper'
+import { alpha } from '@mui/material/styles'
+import { FormValues } from '@/components/createDocumentForm/types.ts'
 
 interface DocumentFormProps {
   /**
@@ -28,12 +31,12 @@ interface DocumentFormProps {
    * Callback function to handle changes in the request signature checkbox.
    * It receives the change event and a boolean indicating the new state of the checkbox.
    */
-  onRequestSignatureChange: (toggle: boolean) => void;
+  onRequestSignatureChange: (toggle: boolean) => void
 
   /**
    * The index of the current file in the list of documents, used for managing state in dynamic forms.
    */
-  fileIndex: number;
+  fileIndex: number
 }
 
 export const DocumentForm = (props: DocumentFormProps) => {
@@ -45,11 +48,11 @@ export const DocumentForm = (props: DocumentFormProps) => {
     documentTypes[0].attributes
   )
 
-  const { control } = useFormContext()
-  const {replace} = useFieldArray({
+  const { control, register, formState } = useFormContext<FormValues>()
+  const { replace } = useFieldArray({
     control: control,
-    name: `items.${fileIndex}.attributes`
-  });
+    name: `items.${fileIndex}.attributes`,
+  })
 
   const handleDocumentTypeChange = useCallback(
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -58,25 +61,32 @@ export const DocumentForm = (props: DocumentFormProps) => {
       const docType = documentTypes.find((type) => type.name === selectedType)
       if (docType) {
         setAttributes(docType.attributes)
-        replace(docType.attributes.map((attribute) => {
-          return {
-            [attribute.name]: ""
-          }
-        }));
+        replace(
+          docType.attributes.map((attribute) => {
+            return {
+              [attribute.name]: '',
+            }
+          })
+        )
       } else {
         setAttributes([])
-        replace([]);
+        replace([])
       }
     },
     [replace]
   )
 
   return (
-    <Box
+    <Paper
+      square
+      variant="outlined"
       sx={{
-        border: isChecked ? '' : '1px solid #ccc',
-        borderBottom: isChecked ? '1px solid #ccc' : '',
-        borderTop: isChecked ? '1px solid #ccc' : '',
+        '&:hover': {
+          boxShadow: theme.shadows[7],
+        },
+        '&:focus-within': {
+          boxShadow: theme.shadows[7],
+        },
       }}
     >
       {!isChecked && (
@@ -84,19 +94,18 @@ export const DocumentForm = (props: DocumentFormProps) => {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: '#7c7b7b42',
+            backgroundColor: alpha(theme.palette.grey[400], 0.25),
             padding: '1rem',
-            borderBottom: '1px solid #ccc',
           }}
-          fileIndex={fileIndex}
+          errorMessage={formState.errors.items?.[fileIndex]?.recipient?.message}
+          {...register(`items.${fileIndex}.recipient`, {
+            required: 'Отправитель обязателен',
+          })}
         />
       )}
 
       <Box
         sx={{
-          '&:hover': {
-            backgroundColor: '#59595938',
-          },
           display: 'flex',
           gap: '1rem',
           flexDirection: 'column',
@@ -121,26 +130,29 @@ export const DocumentForm = (props: DocumentFormProps) => {
           </IconButton>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-          <Typography variant="body2" sx={{ minWidth: '8rem' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            flexWrap: { xs: 'wrap', sm: 'nowrap' },
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{ minWidth: { xs: '2rem', sm: '4rem', md: '6rem' } }}
+          >
             Тип документа
           </Typography>
           <Controller
             name={`items.${fileIndex}.documentType`}
+            rules={{ required: 'Тип документа обязателен' }}
             control={control}
             render={({ field }) => {
               return (
                 <SelectField
                   options={documentTypes}
                   fullWidth
-                  sx={{
-                    '& .MuiSelect-select': {
-                      padding: '.5rem',
-                    },
-                    '&.MuiFormControl-root': {
-                      flex: 0.5,
-                    },
-                  }}
                   getOptionLabel={(option) => option.name}
                   {...field}
                   value={field.value}
@@ -154,13 +166,34 @@ export const DocumentForm = (props: DocumentFormProps) => {
           />
         </Box>
 
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+          <Controller
+            name={`items.${fileIndex}.description`}
+            control={control}
+            render={({ field }) => {
+              return (
+                <TextareaAutosize
+                  maxRows={4}
+                  aria-label="description"
+                  placeholder="Введите здесь своё описание..."
+                  {...field}
+                />
+              )
+            }}
+          />
+        </Box>
+
         {attributes.map((attr, index) => (
           <Controller
+            rules={{
+              required: attr.required ? `${attr.name} обязателен` : false,
+            }}
             key={attr.id}
             name={`items.${fileIndex}.attributes.${index}.${attr.name}`}
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState }) => (
               <DynamicFormField
+                errorMessage={fieldState.error?.message}
                 attr={attr}
                 {...field}
               />
@@ -178,9 +211,9 @@ export const DocumentForm = (props: DocumentFormProps) => {
                   role="checkbox"
                   checked={field.value}
                   onChange={(e) => {
-                    const checked = e.target.checked;
-                    field.onChange(checked);
-                    onRequestSignatureChange(checked);
+                    const checked = e.target.checked
+                    field.onChange(checked)
+                    onRequestSignatureChange(checked)
                   }}
                   data-testid="checkbox-control"
                 />
@@ -190,6 +223,6 @@ export const DocumentForm = (props: DocumentFormProps) => {
           )}
         />
       </Box>
-    </Box>
+    </Paper>
   )
 }

@@ -3,6 +3,7 @@ import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
 import { forwardRef, Ref, useCallback } from 'react'
 
+//any необходимо, чтобы компонент мог принимать любой массив данных в виде опций
 interface CustomAutocompleteProps<T extends Record<string, any>> {
   /**
    * An array of options to be displayed in the autocomplete dropdown
@@ -40,9 +41,9 @@ interface CustomAutocompleteProps<T extends Record<string, any>> {
   defaultValue?: T
 
   /**
-   * The index of the file in the list of items, used for dynamic form handling.
+   * Error message
    */
-  fileIndex?: number
+  errorMessage?: string
 }
 
 export const CustomAutocomplete = forwardRef(
@@ -58,7 +59,7 @@ export const CustomAutocomplete = forwardRef(
       displayFields,
       sx = { minWidth: '25rem' },
       defaultValue,
-      fileIndex,
+      errorMessage,
       ...otherProps
     } = props
 
@@ -103,6 +104,8 @@ export const CustomAutocomplete = forwardRef(
             variant="outlined"
             fullWidth
             ref={ref}
+            error={!!errorMessage}
+            helperText={errorMessage}
             {...otherProps}
           />
         )}

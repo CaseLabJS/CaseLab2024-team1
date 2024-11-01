@@ -1,10 +1,9 @@
-import Box from "@mui/material/Box";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import {StyledSwitch} from "@/components/styled/switch.tsx";
-import InputLabel from "@mui/material/InputLabel";
-import Input from "@mui/material/Input";
-import {ChangeEvent} from "react";
-import {useTheme} from "@mui/material";
+import Box from '@mui/material/Box'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import { StyledSwitch } from '@/components/styled/switch.tsx'
+import InputLabel from '@mui/material/InputLabel'
+import { ChangeEvent } from 'react'
+import { InputBase, useTheme } from '@mui/material'
 
 interface FormControlProps {
   isChecked: boolean
@@ -12,20 +11,31 @@ interface FormControlProps {
 }
 
 export const FormControl = (props: FormControlProps) => {
-  const {isChecked, handleChangeChecked} = props;
-  const theme = useTheme();
+  const { isChecked, handleChangeChecked } = props
+  const theme = useTheme()
 
   return (
     <Box
-      className="formControl"
       sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: '1rem',
+        paddingBottom: '1.5rem',
         '& .MuiInputBase-root': {
           display: 'none',
         },
       }}
     >
       <FormControlLabel
-        sx={{ margin: 0, gap: '0.5rem' }}
+        sx={{
+          margin: 0,
+          gap: '0.5rem',
+          '& .MuiFormControlLabel-label': {
+            fontSize: '14px',
+          },
+        }}
         control={
           <StyledSwitch
             sx={{ m: 1 }}
@@ -37,11 +47,19 @@ export const FormControl = (props: FormControlProps) => {
       />
       <InputLabel
         htmlFor="fileInput"
-        sx={{ color: theme.palette.primary.main, cursor: "pointer"}}
+        sx={{ color: theme.palette.primary.main, cursor: 'pointer' }}
       >
         Загрузить ещё
       </InputLabel>
-      <Input type="file" id="fileInput" />
+      <InputBase
+        type="file"
+        id="fileInput"
+        sx={{ display: 'none' }}
+        inputProps={{
+          accept: '.pdf,.png,.jpg,.jpeg,.txt,.docx',
+          multiple: false,
+        }}
+      />
     </Box>
   )
 }

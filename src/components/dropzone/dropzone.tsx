@@ -1,20 +1,19 @@
 import { useDropzone } from 'react-dropzone'
-import './dropzone.css'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
-import Box from "@mui/material/Box";
-import {useState} from "react";
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import InputBase from '@mui/material/InputBase'
+import { style } from '@/components/dropzone/styles.ts'
+import {useMemo} from "react";
 
-export const Dropzone = () => {
-  const [_acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
+interface DropzoneProps {
+  onFilesAccepted: (files: File[]) => void
+}
 
-  const {
-    getRootProps,
-    getInputProps,
-    isDragActive,
-    // acceptedFiles,
-    // fileRejections,
-  } = useDropzone({
+export const Dropzone = (props: DropzoneProps) => {
+  const { onFilesAccepted } = props
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       'application/pdf': ['.pdf'],
       'image/png': ['.png'],
@@ -25,24 +24,34 @@ export const Dropzone = () => {
     },
     maxFiles: 20,
     onDrop: (files) => {
-      setAcceptedFiles((prevFiles) => [...prevFiles, ...files]);
+      onFilesAccepted(files)
     },
   })
 
+  const dropzoneStyle = useMemo(() => ({
+    ...style.dropzone,
+    ...(isDragActive ? style.active : {}),
+  }), [isDragActive]);
+
   return (
-    <Box className="container">
+    <Box sx={style.container}>
       <Box
-        {...getRootProps({ className: `dropzone ${isDragActive ? 'active' : ''}` })}
+        {...getRootProps()}
+        sx={dropzoneStyle}
       >
-        <input {...getInputProps()} />
-        <SaveAltIcon />
-        <p>Перетащите файлы для отправки или загрузите с компьютера</p>
-        <Box className="download">
-          <Box className="selectFile">
-            <FileUploadIcon />
-            <p>Выбрать файл</p>
+        <InputBase inputProps={{
+        ...getInputProps()
+        }}/>
+        <SaveAltIcon sx={style.icons} />
+        <Typography variant="body1">
+          Перетащите файлы для отправки или загрузите с компьютера
+        </Typography>
+        <Box sx={style.bottomSectionContainer}>
+          <Box sx={style.bottomSection}>
+            <FileUploadIcon sx={style.icons} />
+            <Typography variant="body1">Выбрать файл</Typography>
           </Box>
-          <p className="max-docs">Максимум 20 документов</p>
+          <Typography variant="subtitle2">Максимум 20 документов</Typography>
         </Box>
       </Box>
     </Box>

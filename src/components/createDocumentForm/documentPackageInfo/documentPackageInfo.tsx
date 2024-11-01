@@ -4,29 +4,38 @@ import { DocumentOptions } from '@/components/createDocumentForm/documentOptions
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import { ChangeEvent } from 'react'
-import {testFiles} from "@/stories/createDocumentForm/testData/testData.ts";
+import { useFormContext } from 'react-hook-form'
+import Paper from '@mui/material/Paper'
+import { useTheme } from '@mui/material'
+import { alpha } from '@mui/material/styles'
+import {FormValues} from "@/components/createDocumentForm/types.ts";
 
 interface DocumentPackageInfoProps {
+  initialValue: File[]
   requestSignature: boolean
   onChange: (event: ChangeEvent<HTMLInputElement>, toggle: boolean) => void
 }
 
 export const DocumentPackageInfo = (props: DocumentPackageInfoProps) => {
-  const { requestSignature, onChange } = props
+  const { initialValue, requestSignature, onChange } = props
+  const theme = useTheme()
+  const { register, formState } = useFormContext<FormValues>()
 
   return (
-    <Box
+    <Paper
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#7c7b7b42',
+        backgroundColor: alpha(theme.palette.grey[400], 0.25),
         padding: '1rem',
         gap: '1rem',
       }}
+      variant="outlined"
+      square
     >
       <Box>
         <Typography variant="body1">
-          Пакет из {testFiles.length} документов
+          Пакет из {initialValue.length} документов
         </Typography>
       </Box>
 
@@ -34,7 +43,12 @@ export const DocumentPackageInfo = (props: DocumentPackageInfoProps) => {
         sx={{
           display: 'flex',
           alignItems: 'center',
+          gap: '0.5rem',
         }}
+        errorMessage={formState.errors.recipient?.message}
+        {...register("recipient", {
+          required: "Отправитель обязателен"
+        })}
       />
 
       <FormControlLabel
@@ -47,7 +61,6 @@ export const DocumentPackageInfo = (props: DocumentPackageInfoProps) => {
         }
         label="Запросить подпись контрагента для всех документов"
       />
-
-    </Box>
+    </Paper>
   )
 }

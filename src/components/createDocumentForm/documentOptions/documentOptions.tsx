@@ -1,33 +1,39 @@
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import {testContractors} from "@/stories/autocomplete/autocomplete.stories.tsx";
-import {useFormContext} from "react-hook-form";
-import {CustomAutocomplete} from "@/components/autocomplete/autocomplete.tsx";
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import { testContractors } from '@/stories/autocomplete/autocomplete.stories.tsx'
+import { CustomAutocomplete } from '@/components/autocomplete/autocomplete.tsx'
+import { forwardRef, Ref } from 'react'
 
 interface DocumentOptionsProps {
   sx?: object
-  fileIndex?: number
+  errorMessage?: string
 }
 
-export const DocumentOptions = (props: DocumentOptionsProps) => {
-  const {sx, fileIndex} = props;
-  const {register} = useFormContext()
+export const DocumentOptions = forwardRef(
+  (props: DocumentOptionsProps, ref: Ref<HTMLInputElement>) => {
+    const { sx, errorMessage, ...otherProps } = props
 
-  return (
-    <Box sx={sx}>
-      <Typography variant="body2" sx={{ minWidth: '8rem' }}>
-        Отправить
-      </Typography>
-      <CustomAutocomplete
-        options={testContractors}
-        label="Введите название или ИНН контрагента"
-        id="contractor-id"
-        displayFields={['name', 'inn']}
-        sx={{ flex: 7 }}
-        noOptionsText="Нет организаций в списке ваших контрагентов. Найдите и пригласите их, чтобы отправлять документы"
-        fileIndex={fileIndex}
-        {...register(fileIndex !== undefined ? `items.${fileIndex}.recipient` : `items.recipient`)}
-      />
-    </Box>
-  )
-}
+    return (
+      <Box sx={sx}>
+        <Typography
+          variant="body2"
+          sx={{ minWidth: { xs: '2rem', sm: '4rem', md: '6rem' } }}
+        >
+          Отправить
+        </Typography>
+
+        <CustomAutocomplete
+          ref={ref}
+          options={testContractors}
+          label="Введите название или ИНН контрагента"
+          id="contractor-id"
+          displayFields={['name', 'inn']}
+          sx={{ flex: 7 }}
+          noOptionsText="Нет организаций в списке ваших контрагентов. Найдите и пригласите их, чтобы отправлять документы"
+          errorMessage={errorMessage}
+          {...otherProps}
+        />
+      </Box>
+    )
+  }
+)
