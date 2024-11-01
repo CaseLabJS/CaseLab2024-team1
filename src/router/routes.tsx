@@ -1,4 +1,6 @@
 import { Outlet } from 'react-router-dom'
+import AdminPage from '@/components/adminPage/adminPage'
+import UserTable from '@/components/userTable/userTable'
 
 const ROUTES = {
   home: '/',
@@ -20,15 +22,11 @@ export const publicRoutes = [
 export const adminRoutes = [
   {
     path: ROUTES.admin(),
-    element: <Outlet />,
+    element: <AdminPage />,
     children: [
       {
-        path: ROUTES.admin(),
-        element: <div>Admin</div>,
-      },
-      {
         path: ROUTES.admin('users'),
-        element: <div>Users</div>,
+        element: <UserTable />,
       },
       {
         path: ROUTES.admin('document-type'),
