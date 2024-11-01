@@ -22,5 +22,6 @@ dist-ssr
 *.sln
 *.sw?
 .env.development
+yarn.lock
 
 *storybook.log
