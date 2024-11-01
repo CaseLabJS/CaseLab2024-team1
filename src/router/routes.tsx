@@ -1,9 +1,12 @@
-import { Outlet } from 'react-router-dom'
+import { Authorization } from './authorization'
 
-const ROUTES = {
+export const ROUTES = {
   home: '/',
   admin: (page = '') => `/admin/${page}`,
   app: (page = '') => `/app/${page}`,
+  signIn: '/sign-in',
+  signUp: '/sign-up',
+  signOut: '/sign-out',
 }
 
 export const publicRoutes = [
@@ -17,10 +20,30 @@ export const publicRoutes = [
   },
 ]
 
+export const authRoutes = [
+  {
+    element: <Authorization />,
+    children: [
+      {
+        path: ROUTES.signIn,
+        element: <div>Sign In</div>,
+      },
+      {
+        path: ROUTES.signUp,
+        element: <div>Sign Up</div>,
+      },
+      {
+        path: ROUTES.signUp,
+        element: <div>Sign Out</div>,
+      },
+    ],
+  },
+]
+
 export const adminRoutes = [
   {
     path: ROUTES.admin(),
-    element: <Outlet />,
+    element: <Authorization requireAuth />,
     children: [
       {
         path: ROUTES.admin(),
@@ -45,7 +68,7 @@ export const adminRoutes = [
 export const appRoutes = [
   {
     path: ROUTES.app(),
-    element: <Outlet />,
+    element: <Authorization requireAuth />,
     children: [
       {
         path: ROUTES.app(),
