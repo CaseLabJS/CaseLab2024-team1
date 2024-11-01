@@ -22,7 +22,7 @@ class AuthStore {
         email,
         password,
       })
-      token.storageType = rememberMe ? 'localStorage' : 'sessionStorage'
+      token.storageType = rememberMe ? localStorage : sessionStorage
       token.value = tokenValue
     } catch (error) {
       this.error = error as SerializedError

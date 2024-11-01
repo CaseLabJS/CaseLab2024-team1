@@ -25,7 +25,8 @@ export class TokenManager {
     if (token) {
       this.storage.setItem(ACCESS_TOKEN_KEY, token)
     } else {
-      this.storage.removeItem(ACCESS_TOKEN_KEY)
+      sessionStorage.removeItem(ACCESS_TOKEN_KEY)
+      localStorage.removeItem(ACCESS_TOKEN_KEY)
     }
   }
 
@@ -39,9 +40,8 @@ export class TokenManager {
     return exp ? exp * 1000 < Date.now() : true
   }
 
-  set storageType(storageType: 'localStorage' | 'sessionStorage') {
-    this.storage =
-      storageType === 'localStorage' ? localStorage : sessionStorage
+  set storageType(storageType: Storage) {
+    this.storage = storageType
   }
 
   hasValue() {
