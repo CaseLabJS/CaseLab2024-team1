@@ -1,23 +1,17 @@
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import {agreement} from "@/stories/selectField/selectField.stories.tsx";
-import {Controller, useFormContext} from "react-hook-form";
-import {SelectField} from "@/components/selectField/selectField.tsx";
-
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import { agreement } from '@/stories/selectField/selectField.stories.tsx'
+import { Controller, useFormContext } from 'react-hook-form'
+import { SelectField } from '@/components/selectField/selectField.tsx'
 
 export const ActionButtons = () => {
-  const {  control } = useFormContext()
+  const { control } = useFormContext()
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-      <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+      <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
         <Box>
-          <Button
-            color="primary"
-            variant="contained"
-            fullWidth
-            type="submit"
-          >
+          <Button color="primary" variant="contained" fullWidth type="submit">
             Подписать и отправить
           </Button>
         </Box>

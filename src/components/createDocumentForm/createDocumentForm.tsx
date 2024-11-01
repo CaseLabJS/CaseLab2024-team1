@@ -11,14 +11,12 @@ import { DocumentPackageInfo } from '@/components/createDocumentForm/documentPac
 import { testDocumentsType } from '@/stories/selectField/testData/testData.ts'
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
 import { agreement } from '@/stories/selectField/selectField.stories.tsx'
-import { useNotifications } from '@toolpad/core'
 import { FormValues } from '@/components/createDocumentForm/types.ts'
 
 export const CreateDocumentForm = () => {
   const [isChecked, setIsChecked] = useState(true)
   const [requestSignature, setRequestSignature] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
-  const notifications = useNotifications()
 
   const initialDocumentType = testDocumentsType[0]
 
@@ -41,7 +39,7 @@ export const CreateDocumentForm = () => {
     (files: File[]) => {
       form.setValue(
         'items',
-        files.map((_file) => {
+        files.map(() => {
           return {
             documentType: initialDocumentType.name,
             requestSignature: false,
@@ -97,10 +95,6 @@ export const CreateDocumentForm = () => {
 
   const onSubmit = (data: FormValues) => {
     //TODO обработка документа и post запрос
-    notifications.show('Документ успешно отправлен', {
-      severity: 'success',
-      autoHideDuration: 2000,
-    })
     console.log('data', data)
   }
 

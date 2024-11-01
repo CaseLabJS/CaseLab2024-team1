@@ -1,5 +1,5 @@
-import {styled, TextareaAutosize as BaseTextareaAutosize} from "@mui/material";
-import {alpha} from "@mui/material/styles";
+import { styled, TextareaAutosize as BaseTextareaAutosize } from '@mui/material'
+import { alpha } from '@mui/material/styles'
 
 export const TextareaAutosize = styled(BaseTextareaAutosize)(
   ({ theme }) => `
@@ -11,8 +11,9 @@ export const TextareaAutosize = styled(BaseTextareaAutosize)(
   line-height: 1.5;
   padding: 8px 12px;
   border-radius: 4px;
-  border: 1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.common.white, 0.23) :  alpha(theme.palette.common.black, 0.23)};
-
+  border: 1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.common.white, 0.23) : alpha(theme.palette.common.black, 0.23)};
+  background-color: transparent;
+  
   &:hover {
     border-color: ${theme.palette.text.primary};
   }
@@ -26,5 +27,5 @@ export const TextareaAutosize = styled(BaseTextareaAutosize)(
   &:focus-visible {
     outline: 0;
   }
-`,
-);
+`
+)
