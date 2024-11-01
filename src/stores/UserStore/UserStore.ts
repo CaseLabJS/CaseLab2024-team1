@@ -4,77 +4,66 @@ import { Role, User, UserCredentials } from '@/types/sharedTypes'
 
 import { userControllerApi } from '@/api/userController'
 
+import { executeWithLoading } from '@/utils/executeWithLoading'
+
 class UserStore {
-  users: User[] = []
+  userData: User
+  loading: boolean = false
+  error: string | null = null
 
-  constructor() {
+  constructor(user: User) {
     makeAutoObservable(this)
-  }
 
-  private updateUserAtUsers(updatedUser: User) {
-    this.users = this.users.map((currentUser) =>
-      currentUser.id === updatedUser.id ? updatedUser : currentUser
-    )
-  }
-
-  async fetchUsers() {
-    const users = await userControllerApi.getUsers()
-
-    runInAction(() => {
-      this.users = [...users]
-    })
-  }
-
-  async getUserById(userId: number) {
-    return await userControllerApi.getUserById(userId)
-  }
-
-  async createUser(user: UserCredentials) {
-    const createdUser = await userControllerApi.createUser(user)
-
-    runInAction(() => {
-      this.users = [...this.users, createdUser]
-    })
+    this.userData = user
   }
 
   async updateUser(user: UserCredentials) {
-    const updatedUser = await userControllerApi.updateUser(user)
+    const updatedUser = await executeWithLoading(this, () =>
+      userControllerApi.updateUser(user)
+    )
 
-    runInAction(() => this.updateUserAtUsers(updatedUser))
-  }
-
-  async deleteUser(userId: number) {
-    await userControllerApi.deleteUser(userId)
-
-    runInAction(() => {
-      this.users = this.users.filter((currentUser) => currentUser.id !== userId)
-    })
+    if (updatedUser) {
+      runInAction(() => {
+        this.userData = updatedUser
+      })
+    }
   }
 
   async patchUser(userId: number, fields: Partial<UserCredentials>) {
-    const patchedUser = await userControllerApi.patchUser(userId, fields)
+    const patchedUser = await executeWithLoading(this, () =>
+      userControllerApi.patchUser(userId, fields)
+    )
 
-    runInAction(() => this.updateUserAtUsers(patchedUser))
+    if (patchedUser) {
+      runInAction(() => {
+        this.userData = patchedUser
+      })
+    }
   }
 
   async addUserRole(userId: number, role: Role) {
-    const userWithUpdatedRole = await userControllerApi.addUserRole(
-      userId,
-      role.name
+    const userWithUpdatedRole = await executeWithLoading(this, () =>
+      userControllerApi.addUserRole(userId, role.name)
     )
 
-    runInAction(() => this.updateUserAtUsers(userWithUpdatedRole))
+    if (userWithUpdatedRole) {
+      runInAction(() => {
+        this.userData = userWithUpdatedRole
+      })
+    }
   }
 
   async removeUserRole(userId: number, role: Role) {
-    const userWithRemovedRole = await userControllerApi.removeUserRole(
-      userId,
-      role.name
+    const userWithRemovedRole = await executeWithLoading(this, () =>
+      userControllerApi.removeUserRole(userId, role.name)
     )
 
-    runInAction(() => this.updateUserAtUsers(userWithRemovedRole))
+    if (userWithRemovedRole) {
+      runInAction(() => {
+        this.userData = userWithRemovedRole
+      })
+    }
   }
 }
 
-const userStore = new UserStore()
-export default userStore
+export default UserStore

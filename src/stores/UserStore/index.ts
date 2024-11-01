@@ -1,3 +1,3 @@
-import userStore from './UserStore'
+import UserStore from './UserStore'
 
-export default userStore
+export default UserStore
