@@ -1,4 +1,4 @@
-import { User } from '@/types/sharedTypes'
+import { User, UserCredentials } from '@/types/sharedTypes'
 import { BaseApi } from '../core/baseApi'
 import { privateApi } from '../core/private.api'
 import { UserFields } from './types'
@@ -11,13 +11,13 @@ class UserControllerApi extends BaseApi {
       mock: () => import('./mock/user'),
     })
 
-  createUser = (user: UserFields) =>
+  createUser = (user: UserCredentials) =>
     this.createRequest<User>({
       request: () => privateApi.post(SERVICE_URL, user),
       mock: () => Promise.resolve(() => user),
     })
 
-  updateUser = (user: User) =>
+  updateUser = (user: UserCredentials) =>
     this.createRequest<User>({
       request: () => privateApi.put(`${SERVICE_URL}/${user.id}`, user),
       mock: () => Promise.resolve(() => user),
