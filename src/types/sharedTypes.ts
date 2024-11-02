@@ -7,6 +7,15 @@ export interface User {
   roles: Role[]
 }
 
+export interface UserCredentials {
+  id?: number
+  name: string
+  surname: string
+  email: string
+  password: string
+  roles?: Role[]
+}
+
 export interface Role {
   id: number
   name: string

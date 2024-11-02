@@ -1,8 +1,8 @@
-import { CssBaseline } from '@mui/material'
 import './App.css'
 
 import { RouterProvider } from 'react-router-dom'
 import { ThemeProvider } from './theme/theme-provider/theme-provider'
+import CssBaseline from '@mui/material/CssBaseline'
 
 import router from '@/router'
 
