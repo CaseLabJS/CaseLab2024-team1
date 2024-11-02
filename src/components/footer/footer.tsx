@@ -1,20 +1,16 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { Box, Typography, Link } from '@mui/material'
-import UserStore from '@/stores/UserStore/index'
+import authStore from '@/stores/authStore'
 
 interface FooterProps {
-  userStore: UserStore
+  authStore: typeof authStore
 }
 
-const Footer: React.FC<FooterProps> = observer(({ userStore }) => {
-  const { userData } = userStore
+const Footer: React.FC<FooterProps> = observer(({ authStore }) => {
+  const { isAuth, isAdmin } = authStore
 
   const renderFooterContent = () => {
-    // пользователь входит в ЛК, проверяем его роли
-    const isAdmin = userData.roles.some((role) => role.name === 'ADMIN')
-    const isUser = userData.roles.some((role) => role.name === 'USER')
-
     if (isAdmin) {
       return (
         <>
@@ -25,7 +21,7 @@ const Footer: React.FC<FooterProps> = observer(({ userStore }) => {
           <Typography variant="body2">© 2024</Typography>
         </>
       )
-    } else if (isUser) {
+    } else if (isAuth) {
       return (
         <>
           <Typography variant="h6">Лого</Typography>
