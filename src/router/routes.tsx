@@ -1,5 +1,10 @@
-import { Authorization } from './authorization'
-import { CreateDocumentForm } from '@/components/createDocumentForm/createDocumentForm.tsx'
+import { AppDashboardLayout } from '@/components/appDashboardLayout/appDashboardLayout.tsx'
+import { SlotsSignIn } from '@/components/appDashboardLayout/slotsSignIn/slotsSignIn.tsx'
+import { CreateDocumentPage } from '@/components/appDashboardLayout/pages/createDocumentPage/createDocumentPage.tsx'
+import { ProtectedRoute } from './protectedRoute.tsx'
+import { AppProvider } from '@/components/appProvider/appProvider.tsx'
+import { Authorization } from '@/router/authorization.tsx'
+import { Outlet } from 'react-router-dom'
 
 export const ROUTES = {
   home: '/',
@@ -10,74 +15,67 @@ export const ROUTES = {
   signOut: '/sign-out',
 }
 
-export const publicRoutes = [
+export const appRoutes = [
   {
-    path: '*',
-    element: <div>404 Not Found</div>,
-  },
-  {
-    path: ROUTES.home,
-    element: <div>home</div>,
-  },
-]
-
-export const authRoutes = [
-  {
-    element: <Authorization />,
+    path: ROUTES.app('/'),
+    Component: Outlet,
     children: [
       {
-        path: ROUTES.signIn,
-        element: <div>Sign In</div>,
-      },
-      {
-        path: ROUTES.signUp,
-        element: <div>Sign Up</div>,
-      },
-      {
-        path: ROUTES.signUp,
-        element: <div>Sign Out</div>,
+        path: ROUTES.app(':id'),
+        Component: () => <div>Id</div>,
       },
     ],
+  },
+  {
+    path: ROUTES.app('document'),
+    Component: CreateDocumentPage,
   },
 ]
 
 export const adminRoutes = [
   {
-    path: ROUTES.admin(),
-    element: <Authorization requireAuth />,
-    children: [
-      {
-        path: ROUTES.admin(),
-        element: <div>Admin</div>,
-      },
-      {
-        path: ROUTES.admin('users'),
-        element: <div>Users</div>,
-      },
-      {
-        path: ROUTES.admin('document-type'),
-        element: <div>Document Type</div>,
-      },
-      {
-        path: ROUTES.admin('attribute-type'),
-        element: <div>Attribute Type</div>,
-      },
-    ],
+    path: ROUTES.admin('users'),
+    element: <div>Users</div>,
+  },
+  {
+    path: ROUTES.admin('document-type'),
+    element: <div>Document Type</div>,
+  },
+  {
+    path: ROUTES.admin('attribute-type'),
+    element: <div>Attribute Type</div>,
   },
 ]
 
-export const appRoutes = [
+export const routes = [
   {
-    path: ROUTES.app(),
-    element: <Authorization requireAuth />,
+    Component: AppProvider,
     children: [
       {
-        path: ROUTES.app(),
-        element: <div>App</div>,
+        path: '*',
+        element: <div>404 Not Found</div>,
       },
       {
-        path: ROUTES.app('document'),
-        element: <CreateDocumentForm />,
+        path: ROUTES.home,
+        Component: () => <Authorization requireAuth />,
+      },
+      {
+        path: ROUTES.signIn,
+        Component: SlotsSignIn,
+      },
+      {
+        path: ROUTES.app(),
+        Component: () => (
+          <ProtectedRoute>
+            <AppDashboardLayout />
+          </ProtectedRoute>
+        ),
+        children: [...appRoutes],
+      },
+      {
+        path: ROUTES.admin(),
+        element: <div>Admin</div>,
+        children: [...adminRoutes],
       },
     ],
   },
