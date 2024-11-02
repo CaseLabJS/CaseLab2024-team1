@@ -1,6 +1,6 @@
 import React from 'react'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { Button, Typography, Box } from '@mui/material'
+import { Button, Typography, Box, Paper } from '@mui/material'
 
 import { User } from '@/types/sharedTypes'
 
@@ -58,22 +58,24 @@ const UserTable: React.FC = () => {
   ]
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box textAlign="left" mb={1}>
-        <Typography variant="h5">Пользователи</Typography>
-      </Box>
+    <Paper>
+      <Box sx={{ p: 3 }}>
+        <Box textAlign="left" mb={1}>
+          <Typography variant="h5">Пользователи</Typography>
+        </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Button variant="outlined">Добавить пользователя</Button>
-      </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+          <Button variant="outlined">Добавить пользователя</Button>
+        </Box>
 
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSizeOptions={[5]}
-        disableRowSelectionOnClick
-      />
-    </Box>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          pageSizeOptions={[5]}
+          disableRowSelectionOnClick
+        />
+      </Box>
+    </Paper>
   )
 }
 

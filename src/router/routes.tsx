@@ -1,4 +1,5 @@
 import AdminPage from '@/components/adminPage/adminPage'
+import UserTable from '@/components/userTable/userTable'
 
 import { Authorization } from './authorization'
 
@@ -45,11 +46,15 @@ export const authRoutes = [
 export const adminRoutes = [
   {
     path: ROUTES.admin(),
-    element: <Authorization requireAuth />,
+    element: <Authorization />,
     children: [
       {
-        path: ROUTES.admin('users'),
+        path: ROUTES.admin(),
         element: <AdminPage />,
+      },
+      {
+        path: ROUTES.admin('users'),
+        element: <UserTable />,
       },
       {
         path: ROUTES.admin('document-type'),
