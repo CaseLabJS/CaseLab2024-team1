@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { StyledSwitch } from '@/components/styled/switch.tsx'
-import { ThemeProvider } from '@/theme/theme-provider/theme-provider.tsx'
-import CssBaseline from '@mui/material/CssBaseline'
 import { ChangeEvent } from 'react'
+import {decorators} from "@/stories/preview.tsx";
 
 const meta = {
   title: 'Components/StyledSwitch',
@@ -16,14 +15,7 @@ const meta = {
     onChange: (event: ChangeEvent<HTMLInputElement>) =>
       console.log(event.target.checked),
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <CssBaseline />
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
+  decorators: decorators,
 } satisfies Meta<typeof StyledSwitch>
 
 export default meta

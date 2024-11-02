@@ -1,9 +1,8 @@
 import { ChangeEvent, useState } from 'react'
-import { ThemeProvider } from '@/theme/theme-provider/theme-provider.tsx'
-import CssBaseline from '@mui/material/CssBaseline'
 import { Meta, StoryObj } from '@storybook/react'
 import { testDocumentsType } from '@/stories/selectField/testData/testData.ts'
 import {SelectField} from "@/components/selectField/selectField.tsx";
+import {decorators} from "@/stories/preview.tsx";
 
 export const agreement = [
   {
@@ -31,16 +30,7 @@ const meta = {
     fullWidth: true,
     getOptionLabel: (option) => option.name,
   },
-  decorators: [
-    (Story) => {
-      return (
-        <ThemeProvider>
-          <CssBaseline />
-          <Story />
-        </ThemeProvider>
-      );
-    },
-  ],
+  decorators: decorators,
 } satisfies Meta<typeof SelectField>
 
 export default meta

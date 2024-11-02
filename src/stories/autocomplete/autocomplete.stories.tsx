@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { ThemeProvider } from '@/theme/theme-provider/theme-provider.tsx'
-import CssBaseline from '@mui/material/CssBaseline'
 import {CustomAutocomplete} from "@/components/autocomplete/autocomplete.tsx";
+import {decorators} from "@/stories/preview.tsx";
 
 export const testContractors = [
   { id: 1, name: 'Контрагент А', inn: '1234567890' },
@@ -25,14 +24,7 @@ const meta = {
     displayFields: ['name', 'inn'],
     noOptionsText: 'Нет организаций в списке ваших контрагентов.',
   },
-  decorators: [
-    (Story) => (
-      <ThemeProvider>
-        <CssBaseline />
-        <Story />
-      </ThemeProvider>
-    ),
-  ],
+  decorators: decorators,
 } satisfies Meta<typeof CustomAutocomplete>
 
 export default meta
