@@ -57,7 +57,7 @@ export const CustomAutocomplete = forwardRef(
       id,
       noOptionsText = 'Нет вариантов',
       displayFields,
-      sx = { minWidth: '25rem' },
+      sx,
       defaultValue,
       errorMessage,
       ...otherProps
@@ -110,7 +110,12 @@ export const CustomAutocomplete = forwardRef(
           />
         )}
         id={id}
-        sx={sx}
+        sx={{
+          minWidth: '25rem',
+          backgroundColor: 'background.paper',
+          borderRadius: '0.5rem',
+          ...sx,
+        }}
         noOptionsText={noOptionsText}
         defaultValue={defaultValue}
       />
