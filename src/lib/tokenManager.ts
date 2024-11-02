@@ -31,7 +31,8 @@ export class TokenManager {
   }
 
   get payload() {
-    this.decodedToken ??= decodeJwt(this.value || '')
+    if (!this.value) return null
+    this.decodedToken ??= decodeJwt(this.value)
     return this.decodedToken?.payload
   }
 
