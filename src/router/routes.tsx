@@ -1,3 +1,6 @@
+import AdminPage from '@/components/adminPage/adminPage'
+import UserTable from '@/components/userTable/userTable'
+
 import { Authorization } from './authorization'
 import { CreateDocumentForm } from '@/components/createDocumentForm/createDocumentForm.tsx'
 
@@ -44,15 +47,15 @@ export const authRoutes = [
 export const adminRoutes = [
   {
     path: ROUTES.admin(),
-    element: <Authorization requireAuth />,
+    element: <Authorization />,
     children: [
       {
         path: ROUTES.admin(),
-        element: <div>Admin</div>,
+        element: <AdminPage />,
       },
       {
         path: ROUTES.admin('users'),
-        element: <div>Users</div>,
+        element: <UserTable />,
       },
       {
         path: ROUTES.admin('document-type'),
