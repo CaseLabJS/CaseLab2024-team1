@@ -7,18 +7,31 @@ const Footer: React.FC<{ authStore: typeof authStore }> = observer(
   ({ authStore }) => {
     const { isAuth, isAdmin } = authStore
 
+    const linkStyles = {
+      textDecoration: 'none',
+      color: 'primary.main',
+      '&:hover': {
+        color: 'primary.dark',
+      },
+      '&:focus': {
+        color: 'primary.light',
+      },
+    }
+
+    const renderLink = (href: string, text: string) => (
+      <Link href={href} variant="body2" sx={linkStyles}>
+        {text}
+      </Link>
+    )
+
     const commonContent = (
       <>
         <Typography variant="h6">Лого</Typography>
-        {isAdmin ? (
-          <Link href="#" variant="body2">
-            Документация
-          </Link>
-        ) : isAuth ? (
-          <Link href="#" variant="body2">
-            Часто задаваемые вопросы
-          </Link>
-        ) : null}
+        {isAdmin
+          ? renderLink('#', 'Документация')
+          : isAuth
+            ? renderLink('#', 'Часто задаваемые вопросы')
+            : null}
         <Typography variant="body2">© 2024</Typography>
       </>
     )
@@ -27,11 +40,15 @@ const Footer: React.FC<{ authStore: typeof authStore }> = observer(
       <Box
         sx={{
           display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
           justifyContent: 'space-between',
           alignItems: 'baseline',
-          p: 2,
+          p: { xs: '1rem', sm: '1.5rem' },
           backgroundColor: 'background.default',
           textAlign: 'center',
+          minWidth: '20rem',
+          maxWidth: '80rem',
+          margin: '0 auto',
         }}
       >
         {commonContent}
