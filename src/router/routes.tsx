@@ -3,6 +3,7 @@ import UserTable from '@/components/userTable/userTable'
 
 import { Authorization } from './authorization'
 import { CreateDocumentForm } from '@/components/createDocumentForm/createDocumentForm.tsx'
+import CreateAttributePage from '@/pages/CreateAttribute'
 
 export const ROUTES = {
   home: '/',
@@ -63,7 +64,7 @@ export const adminRoutes = [
       },
       {
         path: ROUTES.admin('attribute-type'),
-        element: <div>Attribute Type</div>,
+        element: <CreateAttributePage />,
       },
     ],
   },
