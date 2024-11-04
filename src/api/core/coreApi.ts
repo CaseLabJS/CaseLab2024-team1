@@ -24,6 +24,13 @@ export abstract class CoreApi {
 
         if (error.status === 401) {
           token.clear()
+          return Promise.reject(
+            new SerializedError({
+              status,
+              message:
+                'Ошибка авторизации. Предоставлены не верные логин или пароль',
+            })
+          )
         }
 
         return Promise.reject(

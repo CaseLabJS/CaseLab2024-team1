@@ -23,6 +23,7 @@ import {
 import authStore from '@/stores/authStore'
 import { Loader } from '@/components/loader/loader'
 import { ROUTES } from '@/router/routes'
+import Bird from '@/assets/bird.svg'
 
 type FormData = {
   email: string
@@ -38,7 +39,7 @@ export const LoginForm: React.FC = () => {
   } = useForm<FormData>()
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = React.useState(false)
-  const [snackbarIsOpen, setSnackbarIsOpen] = useState(true)
+  const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
   const [loaderIsOpen, setLoaderIsOpen] = useState(true)
 
   const { login, error, loading, isAdmin, isAuth } = authStore
@@ -46,11 +47,7 @@ export const LoginForm: React.FC = () => {
     rememberMe,
     ...credential
   }) => {
-    try {
-      await login(credential, rememberMe)
-    } catch (error) {
-      console.log(error)
-    }
+    await login(credential, rememberMe)
   }
 
   useEffect(() => {
@@ -58,6 +55,12 @@ export const LoginForm: React.FC = () => {
       navigate(isAdmin ? ROUTES.admin() : ROUTES.app())
     }
   }, [isAuth, isAdmin])
+
+  useEffect(() => {
+    if (error) {
+      setSnackbarIsOpen(true)
+    }
+  }, [error])
 
   return (
     <Box
@@ -77,7 +80,7 @@ export const LoginForm: React.FC = () => {
     >
       {/* Логотип */}
       <Box sx={{ mb: 2 }}>
-        <img src="/path/to/logo.png" alt="Logo" width={50} height={50} />
+        <img src={Bird} alt="Logo" width={50} height={50} />
       </Box>
 
       <Typography variant="h5" gutterBottom>
@@ -87,12 +90,6 @@ export const LoginForm: React.FC = () => {
         Welcome, please sign in to continue
       </Typography>
 
-      {error && (
-        <Typography variant="body2" color="error" gutterBottom>
-          {error.message}
-        </Typography>
-      )}
-      {}
       {/* Поле Email */}
       <TextField
         label="Email"
@@ -156,6 +153,7 @@ export const LoginForm: React.FC = () => {
       <Button type="submit" variant="contained" color="primary" fullWidth>
         ВОЙТИ
       </Button>
+      {/*show error*/}
       <Snackbar
         open={snackbarIsOpen}
         autoHideDuration={6000}
@@ -166,6 +164,8 @@ export const LoginForm: React.FC = () => {
           {error?.message}
         </Alert>
       </Snackbar>
+      {/*show loading*/}
+      {/*спиннер можно закрыть на случай если авторизация длится слишком долго*/}
       <Modal
         open={loading && loaderIsOpen}
         onClick={() => setLoaderIsOpen(false)}
