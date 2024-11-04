@@ -1,3 +1,6 @@
+import AdminPage from '@/components/adminPage/adminPage'
+import UserTable from '@/components/userTable/userTable'
+
 import { AppDashboardLayout } from '@/components/appDashboardLayout/appDashboardLayout.tsx'
 import { SlotsSignIn } from '@/components/appDashboardLayout/slotsSignIn/slotsSignIn.tsx'
 import { CreateDocumentPage } from '@/components/appDashboardLayout/pages/createDocumentPage/createDocumentPage.tsx'
@@ -34,16 +37,26 @@ export const appRoutes = [
 
 export const adminRoutes = [
   {
-    path: ROUTES.admin('users'),
-    element: <div>Users</div>,
-  },
-  {
-    path: ROUTES.admin('document-type'),
-    element: <div>Document Type</div>,
-  },
-  {
-    path: ROUTES.admin('attribute-type'),
-    element: <div>Attribute Type</div>,
+    path: ROUTES.admin(),
+    element: <Authorization />,
+    children: [
+      {
+        path: ROUTES.admin(),
+        element: <AdminPage />,
+      },
+      {
+        path: ROUTES.admin('users'),
+        element: <UserTable />,
+      },
+      {
+        path: ROUTES.admin('document-type'),
+        element: <div>Document Type</div>,
+      },
+      {
+        path: ROUTES.admin('attribute-type'),
+        element: <div>Attribute Type</div>,
+      },
+    ],
   },
 ]
 
