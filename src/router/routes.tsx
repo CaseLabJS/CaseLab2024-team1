@@ -3,35 +3,49 @@ import UserTable from '@/components/userTable/userTable'
 
 import { AppDashboardLayout } from '@/components/appDashboardLayout/appDashboardLayout.tsx'
 import { SlotsSignIn } from '@/components/appDashboardLayout/slotsSignIn/slotsSignIn.tsx'
-import { CreateDocumentPage } from '@/components/appDashboardLayout/pages/createDocumentPage/createDocumentPage.tsx'
-import { ProtectedRoute } from './protectedRoute.tsx'
+import { CreateDocumentPage } from '@/pages/createDocumentPage/createDocumentPage.tsx'
 import { AppProvider } from '@/components/appProvider/appProvider.tsx'
 import { Authorization } from '@/router/authorization.tsx'
-import { Outlet } from 'react-router-dom'
+import { ROUTES } from '@/router/constants.ts'
 
-export const ROUTES = {
-  home: '/',
-  admin: (page = '') => `/admin/${page}`,
-  app: (page = '') => `/app/${page}`,
-  signIn: '/sign-in',
-  signUp: '/sign-up',
-  signOut: '/sign-out',
-}
+export const publicRoutes = [
+  {
+    path: '*',
+    element: <div>404 Not Found</div>,
+  },
+  {
+    path: ROUTES.home,
+    element: <div>home</div>,
+  },
+]
+
+export const authRoutes = [
+  {
+    path: ROUTES.signIn,
+    Component: SlotsSignIn,
+  },
+]
 
 export const appRoutes = [
   {
-    path: ROUTES.app('/'),
-    Component: Outlet,
+    path: ROUTES.app(),
+    element: <Authorization requireAuth />,
     children: [
       {
-        path: ROUTES.app(':id'),
-        Component: () => <div>Id</div>,
+        path: ROUTES.app(),
+        Component: AppDashboardLayout,
+        children: [
+          {
+            path: ROUTES.app(':id'),
+            Component: () => <div>Id</div>,
+          },
+          {
+            path: ROUTES.app('document'),
+            Component: CreateDocumentPage,
+          },
+        ],
       },
     ],
-  },
-  {
-    path: ROUTES.app('document'),
-    Component: CreateDocumentPage,
   },
 ]
 
@@ -63,33 +77,6 @@ export const adminRoutes = [
 export const routes = [
   {
     Component: AppProvider,
-    children: [
-      {
-        path: '*',
-        element: <div>404 Not Found</div>,
-      },
-      {
-        path: ROUTES.home,
-        Component: () => <Authorization requireAuth />,
-      },
-      {
-        path: ROUTES.signIn,
-        Component: SlotsSignIn,
-      },
-      {
-        path: ROUTES.app(),
-        Component: () => (
-          <ProtectedRoute>
-            <AppDashboardLayout />
-          </ProtectedRoute>
-        ),
-        children: [...appRoutes],
-      },
-      {
-        path: ROUTES.admin(),
-        element: <div>Admin</div>,
-        children: [...adminRoutes],
-      },
-    ],
+    children: [...publicRoutes, ...appRoutes, ...adminRoutes, ...authRoutes],
   },
 ]

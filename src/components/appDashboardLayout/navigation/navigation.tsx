@@ -6,10 +6,11 @@ import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner'
 import GradingIcon from '@mui/icons-material/Grading'
 import AddIcon from '@mui/icons-material/Add'
+import { ROUTES } from '@/router/constants.ts'
 
 export const NAVIGATION: Navigation = [
   {
-    segment: 'app/document',
+    segment: `.${ROUTES.app('document')}`,
     title: 'Добавить документ',
     icon: <AddIcon />,
   },
@@ -21,22 +22,22 @@ export const NAVIGATION: Navigation = [
     title: 'Документооборот',
   },
   {
-    segment: 'app',
+    segment: `.${ROUTES.app('inbox')}`,
     title: 'Входящие',
     icon: <InboxIcon />,
   },
   {
-    segment: 'app/forward',
+    segment: `.${ROUTES.app('forward')}`,
     title: 'Исходящие',
     icon: <ForwardToInboxIcon />,
   },
   {
-    segment: 'app/draft',
+    segment: `.${ROUTES.app('draft')}`,
     title: 'Черновики',
     icon: <DraftsIcon />,
   },
   {
-    segment: 'app/deleted',
+    segment: `.${ROUTES.app('deleted')}`,
     title: 'Удаленные',
     icon: <DeleteSweepIcon />,
   },
@@ -48,12 +49,12 @@ export const NAVIGATION: Navigation = [
     title: 'Согласование',
   },
   {
-    segment: 'app/reports',
+    segment: `.${ROUTES.app('reports')}`,
     title: 'Требуют обработки',
     icon: <DocumentScannerIcon />,
   },
   {
-    segment: 'app/integrations',
+    segment: `.${ROUTES.app('integrations')}`,
     title: 'Обработанные',
     icon: <GradingIcon />,
   },
