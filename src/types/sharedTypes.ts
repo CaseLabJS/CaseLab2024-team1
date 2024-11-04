@@ -36,6 +36,11 @@ export interface DocumentType {
   attributes: Attribute[]
 }
 
+export interface NewDocumentType {
+  name: string
+  attributeIds: number[]
+}
+
 export interface Attribute {
   id: number
   name: string
