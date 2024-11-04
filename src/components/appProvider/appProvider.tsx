@@ -3,11 +3,8 @@ import { NAVIGATION } from '@/components/appDashboardLayout/navigation/navigatio
 import logo from '@/assets/rb_1741.png'
 import { theme } from '@/theme/theme.ts'
 import { Outlet } from 'react-router-dom'
-import {useAuth} from "@/hooks/useAuth.tsx";
 
 export const AppProvider = () => {
-  const { session, authentication } = useAuth();
-
   return (
     <ToolpadProvider
       //TODO здесь может быть отдельная навигация для admin
@@ -25,8 +22,6 @@ export const AppProvider = () => {
         title: 'TechDoc',
       }}
       theme={theme}
-      session={session}
-      authentication={authentication}
     >
       <Outlet />
     </ToolpadProvider>
