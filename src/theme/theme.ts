@@ -13,7 +13,7 @@ export const theme = createTheme({
         },
       },
     },
-    dark: true
+    dark: true,
   },
   // colorSchemes: { light: true, dark: true },
   breakpoints: {
@@ -26,4 +26,4 @@ export const theme = createTheme({
     },
   },
   defaultColorScheme: 'dark',
-});
+})

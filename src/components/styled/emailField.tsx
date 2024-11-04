@@ -7,7 +7,6 @@ export const EmailField = () => {
     <TextField
       label="Почта"
       name="email"
-      type="email"
       size="small"
       required
       fullWidth

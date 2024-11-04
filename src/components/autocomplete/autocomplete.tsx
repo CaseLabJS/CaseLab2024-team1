@@ -4,6 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete'
 import { forwardRef, Ref, useCallback } from 'react'
 
 //any необходимо, чтобы компонент мог принимать любой массив данных в виде опций
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface CustomAutocompleteProps<T extends Record<string, any>> {
   /**
    * An array of options to be displayed in the autocomplete dropdown
@@ -47,6 +48,7 @@ interface CustomAutocompleteProps<T extends Record<string, any>> {
 }
 
 export const CustomAutocomplete = forwardRef(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   <T extends Record<string, any>>(
     props: CustomAutocompleteProps<T>,
     ref: Ref<HTMLInputElement>
@@ -65,6 +67,7 @@ export const CustomAutocomplete = forwardRef(
 
     const getOptionLabel = useCallback(
       (option: T) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return displayFields.map((field) => option[field]).join(' ')
       },
       [displayFields]
@@ -90,9 +93,8 @@ export const CustomAutocomplete = forwardRef(
         getOptionLabel={getOptionLabel}
         filterOptions={filterOptions}
         renderOption={(props, option) => {
-          const { key, ...optionProps } = props
           return (
-            <Box key={key} component="li" {...optionProps}>
+            <Box component="li" {...props} key={props.id}>
               {getOptionLabel(option)}
             </Box>
           )
@@ -122,3 +124,5 @@ export const CustomAutocomplete = forwardRef(
     )
   }
 )
+
+CustomAutocomplete.displayName = 'CustomAutocomplete'

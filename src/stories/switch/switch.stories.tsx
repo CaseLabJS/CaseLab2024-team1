@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { StyledSwitch } from '@/components/styled/switch.tsx'
 import { ChangeEvent } from 'react'
-import {decorators} from "@/stories/preview.tsx";
+import { decorators } from '@/stories/preview.tsx'
 
 const meta = {
   title: 'Components/StyledSwitch',

@@ -30,8 +30,7 @@ export const SlotsSignIn = () => {
       }
     }
 
-    //TODO login({email, password});
-    await login()
+    await login({ email, password })
 
     if (isAuth) {
       //перенаправляем на /admin или /app

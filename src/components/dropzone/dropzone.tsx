@@ -5,7 +5,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import InputBase from '@mui/material/InputBase'
 import { style } from '@/components/dropzone/styles.ts'
-import {useMemo} from "react";
+import { useMemo } from 'react'
 
 interface DropzoneProps {
   onFilesAccepted: (files: File[]) => void
@@ -28,20 +28,22 @@ export const Dropzone = (props: DropzoneProps) => {
     },
   })
 
-  const dropzoneStyle = useMemo(() => ({
-    ...style.dropzone,
-    ...(isDragActive ? style.active : {}),
-  }), [isDragActive]);
+  const dropzoneStyle = useMemo(
+    () => ({
+      ...style.dropzone,
+      ...(isDragActive ? style.active : {}),
+    }),
+    [isDragActive]
+  )
 
   return (
     <Box sx={style.container}>
-      <Box
-        {...getRootProps()}
-        sx={dropzoneStyle}
-      >
-        <InputBase inputProps={{
-        ...getInputProps()
-        }}/>
+      <Box {...getRootProps()} sx={dropzoneStyle}>
+        <InputBase
+          inputProps={{
+            ...getInputProps(),
+          }}
+        />
         <SaveAltIcon sx={style.icons} />
         <Typography variant="body1">
           Перетащите файлы для отправки или загрузите с компьютера

@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import { agreement } from '@/stories/selectField/selectField.stories.tsx'
+import { Agreement } from '@/stories/selectField/selectField.stories.tsx'
 import { Controller, useFormContext } from 'react-hook-form'
 import { SelectField } from '@/components/selectField/selectField.tsx'
 
@@ -33,7 +33,7 @@ export const ActionButtons = () => {
             render={({ field }) => {
               return (
                 <SelectField
-                  options={agreement}
+                  options={Agreement}
                   fullWidth
                   label="Статус"
                   getOptionLabel={(option) => option.text}

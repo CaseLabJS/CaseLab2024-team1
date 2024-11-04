@@ -3,14 +3,14 @@ import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import { Dropzone } from '@/components/dropzone/dropzone'
 import { DocumentForm } from '@/components/createDocumentForm/documentForm/documentForm'
-import { ChangeEvent, useCallback, useState } from 'react'
+import { ChangeEvent, FormEvent, useCallback, useState } from 'react'
 import { SignerSection } from '@/components/createDocumentForm/signerSection/signerSection.tsx'
 import { ActionButtons } from '@/components/createDocumentForm/actionButtons/actionButtons.tsx'
 import { FormControl } from '@/components/createDocumentForm/formControl/formControl.tsx'
 import { DocumentPackageInfo } from '@/components/createDocumentForm/documentPackageInfo/documentPackageInfo.tsx'
 import { testDocumentsType } from '@/stories/selectField/testData/testData.ts'
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
-import { agreement } from '@/stories/selectField/selectField.stories.tsx'
+import { Agreement } from '@/stories/selectField/selectField.stories.tsx'
 import { FormValues } from '@/components/createDocumentForm/types.ts'
 import { useNotifications } from '@toolpad/core'
 
@@ -25,7 +25,7 @@ export const CreateDocumentForm = () => {
   const defaultValues = {
     items: [],
     recipient: '',
-    status: agreement[0].text,
+    status: Agreement[0].text,
   }
 
   const form = useForm<FormValues>({
@@ -60,7 +60,7 @@ export const CreateDocumentForm = () => {
       )
       setUploadedFiles((prevFiles) => [...prevFiles, ...files])
     },
-    [form]
+    [form, initialDocumentType.attributes, initialDocumentType.name]
   )
 
   const handleRequestAllSignaturesChange = useCallback(
@@ -95,14 +95,24 @@ export const CreateDocumentForm = () => {
     [uploadedFiles, form]
   )
 
-  const onSubmit = (data: FormValues) => {
-    //TODO обработка документа и post запрос
-    notifications.show('Документ успешно отправлен', {
-      severity: 'success',
-      autoHideDuration: 2000,
-    })
-    console.log('data', data)
-  }
+  const onSubmit = useCallback(
+    (data: FormValues) => {
+      //TODO обработка документа и post запрос
+      notifications.show('Документ успешно отправлен', {
+        severity: 'success',
+        autoHideDuration: 2000,
+      })
+      console.log('data', data)
+    },
+    [notifications]
+  )
+
+  const handleFormSubmit = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      void form.handleSubmit(onSubmit)(event)
+    },
+    [form, onSubmit]
+  )
 
   return (
     <Paper
@@ -124,7 +134,7 @@ export const CreateDocumentForm = () => {
         <Dropzone onFilesAccepted={onFilesAccepted} />
       ) : (
         <FormProvider {...form}>
-          <Box component="form" onSubmit={form.handleSubmit(onSubmit)}>
+          <Box component="form" onSubmit={handleFormSubmit}>
             <FormControl
               isChecked={isChecked}
               handleChangeChecked={handleChangeChecked}

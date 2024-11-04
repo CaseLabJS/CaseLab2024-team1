@@ -73,7 +73,7 @@ export const DocumentForm = (props: DocumentFormProps) => {
         replace([])
       }
     },
-    [replace]
+    [documentTypes, replace]
   )
 
   return (
@@ -99,7 +99,7 @@ export const DocumentForm = (props: DocumentFormProps) => {
           }}
           errorMessage={formState.errors.items?.[fileIndex]?.recipient?.message}
           {...register(`items.${fileIndex}.recipient`, {
-            required: 'Отправитель обязателен',
+            required: 'Получатель обязателен',
           })}
         />
       )}

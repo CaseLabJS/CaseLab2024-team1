@@ -1,9 +1,8 @@
-import {DashboardLayout} from "@toolpad/core/DashboardLayout";
-import {Search} from "@/components/search/search.tsx";
-import {Outlet} from "react-router-dom";
+import { DashboardLayout } from '@toolpad/core/DashboardLayout'
+import { Search } from '@/components/search/search.tsx'
+import { Outlet } from 'react-router-dom'
 
 export const AppDashboardLayout = () => {
-
   return (
     <DashboardLayout
       slots={{ toolbarActions: Search }}
@@ -19,11 +18,11 @@ export const AppDashboardLayout = () => {
             maxWidth: '40px',
           },
         },
-        "& .MuiDrawer-root": {
+        '& .MuiDrawer-root': {
           maxWidth: '230px',
-          "& .MuiPaper-root": {
+          '& .MuiPaper-root': {
             maxWidth: '230px',
-          }
+          },
         },
       }}
     >

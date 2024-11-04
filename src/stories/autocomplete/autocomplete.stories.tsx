@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
-import {CustomAutocomplete} from "@/components/autocomplete/autocomplete.tsx";
-import {decorators} from "@/stories/preview.tsx";
+import { CustomAutocomplete } from '@/components/autocomplete/autocomplete.tsx'
+import { decorators } from '@/stories/preview.tsx'
 
-export const testContractors = [
+export const TestContractors = [
   { id: 1, name: 'Контрагент А', inn: '1234567890' },
   { id: 2, name: 'Контрагент Б', inn: '0987654321' },
   { id: 3, name: 'Контрагент В', inn: '1112223334' },
@@ -18,7 +18,7 @@ const meta = {
   },
   tags: ['autodocs'],
   args: {
-    options: testContractors,
+    options: TestContractors,
     label: 'Введите название или ИНН контрагента',
     id: 'contractor-id',
     displayFields: ['name', 'inn'],
@@ -32,7 +32,7 @@ type Story = StoryObj<typeof meta>
 
 export const Disabled: Story = {
   args: {
-    options: testContractors,
+    options: TestContractors,
     label: 'Введите название или ИНН контрагента',
     id: 'contractor-id-disabled',
     displayFields: ['name', 'inn'],
@@ -50,12 +50,12 @@ export const Disabled: Story = {
 
 export const WithPredefinedValue: Story = {
   args: {
-    options: testContractors,
+    options: TestContractors,
     label: 'Введите название или ИНН контрагента',
     id: 'contractor-id-predefined',
     displayFields: ['name', 'inn'],
     noOptionsText: 'Нет организаций в списке ваших контрагентов.',
-    defaultValue: testContractors[0],
+    defaultValue: TestContractors[0],
   },
 }
 
