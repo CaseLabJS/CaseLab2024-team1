@@ -16,7 +16,7 @@ export abstract class CoreApi {
   constructor() {
     this.api.interceptors.response.use(
       <T>(response: AxiosResponse<T>) => response.data,
-      (error: AxiosError<string>) => {
+      (error: AxiosError<string | { error: string }>) => {
         const { status, data } = error.response ?? {
           status: error.status,
           data: 'Unknown error',
@@ -29,7 +29,7 @@ export abstract class CoreApi {
         return Promise.reject(
           new SerializedError({
             status,
-            message: data,
+            message: typeof data === 'string' ? data : data.error,
           })
         )
       }

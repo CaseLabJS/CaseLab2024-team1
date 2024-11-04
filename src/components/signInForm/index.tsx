@@ -102,7 +102,7 @@ export const LoginForm: React.FC = () => {
         {...register('email', {
           required: 'Email is required',
           pattern: {
-            value: /^(admin|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)/,
+            value: /^(admin$|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)/,
             message: 'Invalid email format',
           },
         })}
