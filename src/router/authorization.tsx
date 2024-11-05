@@ -8,8 +8,7 @@ import { ROUTES } from './routes'
 export const Authorization: FC<AuthorizationProps> = observer(
   ({ requireAuth }) => {
     const { isAuth, isAdmin } = authStore
-    console.log(isAuth, isAdmin)
-    // route авторизации, но пользователь уже авторизован -> редирект на домашнюю страницу согласно роли
+    // маршрут /sign-in если пользователь уже авторизован, редирект на домашнюю страницу согласно роли
     if (!requireAuth && isAuth) {
       return <Navigate to={isAdmin ? ROUTES.admin() : ROUTES.app()} />
     }
