@@ -1,4 +1,4 @@
-import {DocumentType} from "@/types/sharedTypes.ts";
+import { DocumentType } from '@/types/sharedTypes.ts'
 
 const defaultDocumentType = {
   id: 17181920,
@@ -128,5 +128,16 @@ export const testDocumentsType: DocumentType[] = [
         required: false,
       },
     ],
+  },
+]
+
+export const agreement = [
+  {
+    id: 343453,
+    text: 'На согласование',
+  },
+  {
+    id: 4341299,
+    text: 'На подпись',
   },
 ]

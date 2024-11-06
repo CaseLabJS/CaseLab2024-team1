@@ -1,8 +1,8 @@
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import { testContractors } from '@/stories/autocomplete/autocomplete.stories.tsx'
-import { CustomAutocomplete } from '@/components/autocomplete/autocomplete.tsx'
+import { Autocomplete } from '@/components/autocomplete/autocomplete.tsx'
 import { forwardRef, Ref } from 'react'
+import { testContractors } from '@/stories/autocomplete/testData/testData.ts'
 
 interface DocumentOptionsProps {
   sx?: object
@@ -22,7 +22,7 @@ export const DocumentOptions = forwardRef(
           Отправить
         </Typography>
 
-        <CustomAutocomplete
+        <Autocomplete
           ref={ref}
           options={testContractors}
           label="Введите название или ИНН контрагента"
@@ -37,3 +37,5 @@ export const DocumentOptions = forwardRef(
     )
   }
 )
+
+DocumentOptions.displayName = 'DocumentOptions'
