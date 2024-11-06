@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import authStore from '@/stores/authStore'
 import type { AuthorizationProps } from './types'
-import { ROUTES } from './routes'
+import { ROUTES } from '@/router/constants.ts'
 
 export const Authorization: FC<AuthorizationProps> = observer(
   ({ requireAuth }) => {
@@ -17,10 +17,6 @@ export const Authorization: FC<AuthorizationProps> = observer(
       return <Navigate to={ROUTES.signIn} />
     }
 
-    return (
-      <section className="main">
-        <Outlet />
-      </section>
-    )
+    return <Outlet />
   }
 )

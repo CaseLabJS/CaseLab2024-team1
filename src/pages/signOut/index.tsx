@@ -2,7 +2,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import authStore from '@/stores/authStore'
-import { ROUTES } from '@/router/routes'
+import { ROUTES } from '@/router/constants.ts'
 
 export const SignOutPage = () => {
   const navigate = useNavigate()
