@@ -2,13 +2,15 @@ import { makeAutoObservable, autorun, runInAction } from 'mobx'
 import { authControllerApi } from '@/api/authController'
 import { token } from '@/lib/tokenManager'
 import { SerializedError } from '@/api/core/serializedError'
-import { userIsAdmin } from './helpers'
+import { getUserFromToken } from './helpers'
+import type { TokenPayloadUser } from './types'
+import { Roles } from '@/types/sharedTypes'
 
 class AuthStore {
   loading = false
   error: SerializedError | null = null
   isAuth = false
-  isAdmin = false
+  user: TokenPayloadUser | null = null
   constructor() {
     makeAutoObservable(this)
     autorun(() => {
@@ -41,13 +43,16 @@ class AuthStore {
   }
   checkAuth = (): void => {
     runInAction(() => {
-      this.isAdmin = userIsAdmin(token)
+      this.user = getUserFromToken(token)
       this.isAuth = !!token.value && !token.isExpired
     })
   }
   private setToken(tokenValue: string | null, rememberMe: boolean): void {
     token.storageType = rememberMe ? localStorage : sessionStorage
     token.value = tokenValue ?? ''
+  }
+  get isAdmin(): boolean {
+    return this.user?.roles.includes(Roles.ADMIN) ?? false
   }
 }
 
