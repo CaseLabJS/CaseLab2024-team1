@@ -1,4 +1,5 @@
 import { Paper, Box } from '@mui/material'
+import Footer from '../footer/footer'
 
 const AdminPage = () => {
   return (
@@ -24,12 +25,12 @@ const AdminPage = () => {
       </Box>
       <Box
         sx={{
-          width: '90vw',
+          width: '100vw',
           height: '7vh',
-          borderRadius: '15px',
+          backgroundColor: 'background.default',
         }}
       >
-        Footer
+        <Footer />
       </Box>
     </Paper>
   )

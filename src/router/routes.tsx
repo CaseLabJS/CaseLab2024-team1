@@ -4,13 +4,14 @@ import CreateUser from '@/components/createUser/CreateUser'
 
 import { Authorization } from './authorization'
 import { CreateDocumentForm } from '@/components/createDocumentForm/createDocumentForm.tsx'
+import { SignInPage } from '@/pages/signIn'
+import { SignOutPage } from '@/pages/signOut'
 
 export const ROUTES = {
   home: '/',
   admin: (page = '') => `/admin/${page}`,
   app: (page = '') => `/app/${page}`,
   signIn: '/sign-in',
-  signUp: '/sign-up',
   signOut: '/sign-out',
 }
 
@@ -23,6 +24,10 @@ export const publicRoutes = [
     path: ROUTES.home,
     element: <div>home</div>,
   },
+  {
+    path: ROUTES.signOut,
+    element: <SignOutPage />,
+  },
 ]
 
 export const authRoutes = [
@@ -31,15 +36,7 @@ export const authRoutes = [
     children: [
       {
         path: ROUTES.signIn,
-        element: <div>Sign In</div>,
-      },
-      {
-        path: ROUTES.signUp,
-        element: <div>Sign Up</div>,
-      },
-      {
-        path: ROUTES.signUp,
-        element: <div>Sign Out</div>,
+        element: <SignInPage />,
       },
     ],
   },
@@ -48,7 +45,7 @@ export const authRoutes = [
 export const adminRoutes = [
   {
     path: ROUTES.admin(),
-    element: <Authorization />,
+    element: <Authorization requireAuth />,
     children: [
       {
         path: ROUTES.admin(),
