@@ -2,9 +2,9 @@ import AdminPage from '@/components/adminPage/adminPage'
 import UserTable from '@/components/userTable/userTable'
 
 import { Authorization } from './authorization'
-import { CreateDocumentForm } from '@/components/createDocumentForm/createDocumentForm.tsx'
 import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
+import { CreateDocumentPage } from '@/components/appDashboardLayout/pages/createDocumentPage/createDocumentPage.tsx'
 
 export const ROUTES = {
   home: '/',
@@ -77,7 +77,7 @@ export const appRoutes = [
       },
       {
         path: ROUTES.app('document'),
-        element: <CreateDocumentForm />,
+        element: <CreateDocumentPage />,
       },
     ],
   },
