@@ -128,8 +128,7 @@ const CreateUser: React.FC = observer(() => {
             {...register('email', {
               required: 'Email required',
               pattern: {
-                value:
-                  /^(admin$|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)/,
+                value: /^([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)/,
                 message: 'Invalid email format',
               },
             })}

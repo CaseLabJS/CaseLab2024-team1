@@ -56,7 +56,7 @@ export const adminRoutes = [
         element: <UserTable />,
       },
       {
-        path: ROUTES.admin('create-user'),
+        path: ROUTES.admin('users/create'),
         element: <CreateUser />,
       },
       {
