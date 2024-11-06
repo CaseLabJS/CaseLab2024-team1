@@ -1,7 +1,7 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { Box, Typography, Link } from '@mui/material'
-import authStore from '@/stores/authStore'
+import authStore from '@/stores/AuthStore'
 
 const Footer: React.FC = observer(() => {
   const { isAuth, isAdmin } = authStore
