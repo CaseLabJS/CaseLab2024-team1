@@ -41,7 +41,7 @@ export const authRoutes = [
 export const appRoutes = [
   {
     path: ROUTES.app(),
-    element: <Authorization />,
+    element: <Authorization requireAuth />,
     children: [
       {
         path: ROUTES.app(),
