@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { ROUTES } from '@/router/routes'
 import { Loader } from '@/components/loader/loader'
 import { UserCredentials } from '@/types/sharedTypes'
 import { usersListStore } from '@/stores/UsersListStore'
@@ -30,8 +29,8 @@ const CreateUser: React.FC = observer(() => {
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
   const { loading, error } = usersListStore
   const navigate = useNavigate()
-  const navigateToUsersTable = () => {
-    navigate(ROUTES.admin('users'))
+  const navigateBack = () => {
+    navigate(-1)
   }
   const {
     register,
@@ -68,7 +67,7 @@ const CreateUser: React.FC = observer(() => {
         variant="contained"
         size="small"
         color="secondary"
-        onClick={navigateToUsersTable}
+        onClick={navigateBack}
         startIcon={<ChevronLeftIcon />}
         style={{
           fontSize: 10,
@@ -77,7 +76,7 @@ const CreateUser: React.FC = observer(() => {
           margin: 20,
         }}
       >
-        Вернуться на страницу пользователей
+        Вернуться на предыдущую страницу
       </Button>
       <Box>
         <img src={Bird} alt="Logo" width={50} height={50} />
