@@ -1,51 +1,56 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/router/routes'
+import { Loader } from '@/components/loader/loader'
 import { UserCredentials } from '@/types/sharedTypes'
 import { usersListStore } from '@/stores/UsersListStore'
 import { observer } from 'mobx-react-lite'
 import {
   Box,
   Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Typography,
+  Modal,
+  IconButton,
+  InputAdornment,
+  Alert,
+  Snackbar,
 } from '@mui/material'
+import {
+  Visibility,
+  VisibilityOff,
+  Email as EmailIcon,
+} from '@mui/icons-material'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import Bird from '@/assets/bird.svg'
 const CreateUser: React.FC = observer(() => {
-  const [userId, setUserId] = useState(0)
-  const [name, setName] = useState('')
-  const [surname, setSurname] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [role, setRole] = useState('USER')
-  const resetAll = () => {
-    setUserId(0)
-    setName('')
-    setSurname('')
-    setEmail('')
-    setPassword('')
-    setRole('USER')
+  const [showPassword, setShowPassword] = useState(true)
+  const [loaderIsOpen, setLoaderIsOpen] = useState(true)
+  const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
+  const { loading, error } = usersListStore
+  const navigate = useNavigate()
+  const navigateToUsersTable = () => {
+    navigate(ROUTES.admin('users'))
   }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const newUser: UserCredentials = {
-      // id: userId,
-      name,
-      surname,
-      email,
-      password,
-      // role,
+  const {
+    register,
+    formState: { errors, isValid },
+    handleSubmit,
+    reset,
+  } = useForm<UserCredentials>({
+    mode: 'onChange',
+  })
+  const onSubmit: SubmitHandler<UserCredentials> = async (data) => {
+    await usersListStore.createUser(data)
+    reset()
+    setSnackbarIsOpen(true)
+  }
+  useEffect(() => {
+    if (error) {
+      setSnackbarIsOpen(true)
     }
-    usersListStore
-      .createUser(newUser)
-      .then((res) => res)
-      .catch((err) => {
-        console.log(err)
-      })
-    resetAll()
-  }
+  }, [error])
   return (
     <Box
       sx={{
@@ -53,104 +58,152 @@ const CreateUser: React.FC = observer(() => {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh',
         padding: 2,
+        maxWidth: 400,
+        margin: 'auto',
+        minHeight: 600,
       }}
     >
-      <Box
-        sx={{
+      <Button
+        variant="contained"
+        size="small"
+        color="secondary"
+        onClick={navigateToUsersTable}
+        startIcon={<ChevronLeftIcon />}
+        style={{
+          fontSize: 10,
           display: 'flex',
-          justifyContent: 'flex-end',
-          width: '100%',
-          marginBottom: 2,
+          alignItems: 'center',
+          margin: 20,
         }}
-      ></Box>
+      >
+        Вернуться на страницу пользователей
+      </Button>
+      <Box>
+        <img src={Bird} alt="Logo" width={50} height={50} />
+      </Box>
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          width: '100%',
-          maxWidth: '400px',
           padding: 2,
           borderRadius: 2,
+          textAlign: 'center',
         }}
       >
-        <Typography variant="h4" gutterBottom>
-          Создание пользователя
+        <Typography component="h1" variant="h5" gutterBottom>
+          Введите данные нового пользователя
         </Typography>
-        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-          <Box sx={{ marginBottom: 2 }}>
-            <TextField
-              label="ID"
-              variant="outlined"
-              fullWidth
-              value={userId}
-              type="number"
-              onChange={(e) => setUserId(Number(e.target.value))}
-            />
-          </Box>
-          <Box sx={{ marginBottom: 2 }}>
-            <TextField
-              label="Имя"
-              variant="outlined"
-              fullWidth
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </Box>
-          <Box sx={{ marginBottom: 2 }}>
-            <TextField
-              label="Фамилия"
-              variant="outlined"
-              fullWidth
-              value={surname}
-              onChange={(e) => setSurname(e.target.value)}
-            />
-          </Box>
-          <Box sx={{ marginBottom: 2 }}>
-            <TextField
-              label="Email"
-              variant="outlined"
-              fullWidth
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Box>
-          <Box sx={{ marginBottom: 2 }}>
-            <TextField
-              label="Пароль"
-              variant="outlined"
-              fullWidth
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Box>
-          <Box sx={{ marginBottom: 2 }}>
-            <FormControl fullWidth>
-              <InputLabel id="role-label">Роль</InputLabel>
-              <Select
-                labelId="role-label"
-                id="role-select"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                label="Роль"
-                fullWidth
-              >
-                <MenuItem value="USER">Пользователь</MenuItem>
-                <MenuItem value="ADMIN">Администратор</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-            <Button variant="contained" color="primary" type="submit">
-              Создать пользователя
-            </Button>
-          </Box>
-        </form>
+        <Box
+          component="form"
+          onSubmit={(event) => void handleSubmit(onSubmit)(event)}
+        >
+          <TextField
+            sx={{ marginBottom: 2 }}
+            label="Имя"
+            variant="outlined"
+            fullWidth
+            {...register('name', {
+              required: 'Name required',
+            })}
+            error={!!errors.name}
+            helperText={errors.name?.message}
+          />
+          <TextField
+            sx={{ marginBottom: 2 }}
+            label="Фамилия"
+            variant="outlined"
+            fullWidth
+            {...register('surname', {
+              required: 'Surname required',
+            })}
+            error={!!errors.surname}
+            helperText={errors.surname?.message}
+          />
+          <TextField
+            sx={{ marginBottom: 2 }}
+            label="Email"
+            variant="outlined"
+            fullWidth
+            {...register('email', {
+              required: 'Email required',
+              pattern: {
+                value:
+                  /^(admin$|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)/,
+                message: 'Invalid email format',
+              },
+            })}
+            error={!!errors.email}
+            helperText={errors.email?.message}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <EmailIcon />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          <TextField
+            sx={{ marginBottom: 2 }}
+            label="Пароль"
+            variant="outlined"
+            fullWidth
+            type={showPassword ? 'text' : 'password'}
+            {...register('password', {
+              required: 'Password required',
+            })}
+            error={!!errors.password}
+            helperText={errors.password?.message}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          <Button variant="contained" type="submit" disabled={!isValid}>
+            Создать пользователя
+          </Button>
+        </Box>
+        <Snackbar
+          open={snackbarIsOpen}
+          autoHideDuration={6000}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          onClose={() => setSnackbarIsOpen(false)}
+        >
+          <Alert severity={error ? 'error' : 'success'} sx={{ width: '100%' }}>
+            {error ? error : 'Пользователь создан'}
+          </Alert>
+        </Snackbar>
       </Box>
+      <Modal
+        open={loading && loaderIsOpen}
+        onClick={() => setLoaderIsOpen(false)}
+        closeAfterTransition
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+          }}
+        >
+          <Loader />
+        </Box>
+      </Modal>
     </Box>
   )
 })
