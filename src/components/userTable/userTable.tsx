@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { Button, Typography, Box, Paper } from '@mui/material'
 import { User, Role, Roles } from '@/types/sharedTypes'
+import { usersListStore } from '@/stores/UsersListStore'
 import { observer } from 'mobx-react-lite'
 
 const UserTable: React.FC = observer(() => {
+  useEffect(() => {
+    console.log(usersListStore.fetchUsers())
+  }, [])
+
   const rows: User[] = [
     {
       id: 1,

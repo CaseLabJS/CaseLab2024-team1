@@ -1,7 +1,11 @@
 import { Document, DocumentVersion } from '@/types/sharedTypes'
 import { BaseApi } from '../core/baseApi'
 import { privateApi } from '../core/private.api'
-import { DocumentModel, DocumentVersionFields, DocumentVersionModel } from './types'
+import {
+  DocumentModel,
+  DocumentVersionFields,
+  DocumentVersionModel,
+} from './types'
 
 const SERVICE_URL = '/documents'
 class DocumentControllerApi extends BaseApi {
@@ -17,15 +21,23 @@ class DocumentControllerApi extends BaseApi {
       mock: () => import('./mock/document'),
     })
   //возвращает новую версию документа
-  createDocumentVersion = (documentId: number, documentVersion: DocumentVersionModel) =>
+  createDocumentVersion = (
+    documentId: number,
+    documentVersion: DocumentVersionModel
+  ) =>
     this.createRequest<DocumentVersion>({
-      request: () => privateApi.put(`${SERVICE_URL}/${documentId}`, documentVersion),
+      request: () =>
+        privateApi.put(`${SERVICE_URL}/${documentId}`, documentVersion),
       mock: () => Promise.resolve(() => documentVersion),
     })
   //возвращает новую версию документа
-  patchDocumentVersion = (versionId: number, documentFields: DocumentVersionFields) =>
+  patchDocumentVersion = (
+    versionId: number,
+    documentFields: DocumentVersionFields
+  ) =>
     this.createRequest<Document>({
-      request: () => privateApi.patch(`${SERVICE_URL}/${versionId}`, documentFields),
+      request: () =>
+        privateApi.patch(`${SERVICE_URL}/${versionId}`, documentFields),
       mock: async () => {
         const version = await this.getDocumentVersion(1, 1)
         return () => ({ ...version, ...documentFields })
