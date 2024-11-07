@@ -52,6 +52,12 @@ export interface Attribute {
   required: boolean
 }
 
+export interface NewAttribute {
+  documentTypesIds: number[]
+  name: string
+  required: boolean
+}
+
 export interface DocumentVersion {
   id: number
   versionId: number
