@@ -4,7 +4,8 @@ import { Box, Typography, Link } from '@mui/material'
 import authStore from '@/stores/AuthStore'
 
 const Footer: React.FC = observer(() => {
-  const { isAuth, isAdmin } = authStore
+  const { isAuth } = authStore
+  const isAdmin = authStore.isAdmin
 
   const linkStyles = {
     textDecoration: 'none',
