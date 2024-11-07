@@ -2,6 +2,7 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { Box, Typography, Link } from '@mui/material'
 import authStore from '@/stores/AuthStore'
+import Bird from '@/assets/bird.svg'
 
 const Footer: React.FC = observer(() => {
   const { isAuth } = authStore
@@ -26,7 +27,10 @@ const Footer: React.FC = observer(() => {
 
   const commonContent = (
     <>
-      <Typography variant="h6">Лого</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <img src={Bird} alt="Logo." width={30} height={30} />
+        <Typography variant="h6">TechDoc</Typography>
+      </Box>
       {isAdmin
         ? renderLink('#', 'Документация')
         : isAuth
@@ -42,7 +46,7 @@ const Footer: React.FC = observer(() => {
         display: 'flex',
         flexDirection: { xs: 'column', sm: 'row' },
         justifyContent: 'space-between',
-        alignItems: 'baseline',
+        alignItems: 'center',
         p: { xs: '1rem', sm: '1.5rem' },
         backgroundColor: 'background.default',
         textAlign: 'center',
