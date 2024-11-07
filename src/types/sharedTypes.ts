@@ -16,9 +16,14 @@ export interface UserCredentials {
   roles?: Role[]
 }
 
+export enum Roles {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
+
 export interface Role {
   id: number
-  name: string
+  name: Roles
 }
 
 // documents-controller / document-type-controller
