@@ -1,3 +1,4 @@
+import { SerializedError } from '@/api/core/serializedError'
 import { documentTypesControllerApi } from '@/api/documentTypesController'
 import { DocumentType, NewDocumentType } from '@/types/sharedTypes'
 import { executeWithLoading } from '@/utils/executeWithLoading'
@@ -6,7 +7,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 class DocumentTypeStore {
   data: DocumentType
   loading: boolean = false
-  error: string | null = null
+  error: SerializedError | null = null
 
   constructor(documentData: DocumentType) {
     this.data = documentData
