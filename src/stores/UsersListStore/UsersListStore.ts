@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 
 import { UserCredentials } from '@/types/sharedTypes'
 
+import { SerializedError } from '@/api/core/serializedError'
 import { userControllerApi } from '@/api/userController'
 
 import { executeWithLoading } from '@/utils/executeWithLoading'
@@ -11,7 +12,7 @@ import UserStore from '../UserStore'
 class UsersListStore {
   users: InstanceType<typeof UserStore>[] = []
   loading: boolean = false
-  error: string | null = null
+  error: SerializedError | null = null
 
   constructor() {
     makeAutoObservable(this)
