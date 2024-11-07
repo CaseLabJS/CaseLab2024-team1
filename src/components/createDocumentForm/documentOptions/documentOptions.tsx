@@ -28,7 +28,6 @@ export const DocumentOptions = forwardRef(
           label="Введите название или ИНН контрагента"
           id="contractor-id"
           displayFields={['name', 'inn']}
-          sx={{ flex: 7 }}
           noOptionsText="Нет организаций в списке ваших контрагентов. Найдите и пригласите их, чтобы отправлять документы"
           errorMessage={errorMessage}
           {...otherProps}

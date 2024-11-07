@@ -107,13 +107,16 @@ const CustomAutocomplete = <T extends GenericOption>(
           ref={ref}
           error={!!errorMessage}
           helperText={errorMessage}
+          sx={{
+            '& .MuiInputBase-root': {
+              backgroundColor: 'background.paper',
+            },
+          }}
           {...otherProps}
         />
       )}
       id={id}
       sx={{
-        minWidth: '25rem',
-        backgroundColor: 'background.paper',
         borderRadius: '0.5rem',
         ...sx,
       }}
