@@ -45,7 +45,7 @@ export const authRoutes = [
 export const adminRoutes = [
   {
     path: ROUTES.admin(),
-    element: <Authorization />,
+    element: <Authorization requireAuth />,
     children: [
       {
         path: ROUTES.admin(),
