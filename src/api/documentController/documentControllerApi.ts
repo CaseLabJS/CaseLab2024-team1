@@ -84,7 +84,9 @@ class DocumentControllerApi extends BaseApi {
   addComment = (documentId: number, comment: string) =>
     this.createRequest<Comment>({
       request: () =>
-        privateApi.post(`${SERVICE_URL}/${documentId}/comment`, comment),
+        privateApi.post(`${SERVICE_URL}/${documentId}/comment`, {
+          content: comment,
+        }),
       mock: async () => {
         const document = await this.getDocumentById(1)
         return () => ({
@@ -97,8 +99,8 @@ class DocumentControllerApi extends BaseApi {
     })
 
   recover = (documentId: number) =>
-    this.createRequest<Document>({
-      request: () => privateApi.post(`${SERVICE_URL}/${documentId}/recover`),
+    this.createRequest<never>({
+      request: () => privateApi.patch(`${SERVICE_URL}/${documentId}/recover`),
     })
 }
 
