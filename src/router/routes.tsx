@@ -6,6 +6,9 @@ import { Authorization } from './authorization'
 import { CreateDocumentForm } from '@/components/createDocumentForm/createDocumentForm.tsx'
 import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
+import DocumentsPage from '@/pages/testApi/documents'
+import UsersPage from '@/pages/testApi/users'
+import SignaturePage from '@/pages/testApi/signature'
 
 export const ROUTES = {
   home: '/',
@@ -27,6 +30,18 @@ export const publicRoutes = [
   {
     path: ROUTES.signOut,
     element: <SignOutPage />,
+  },
+  {
+    path: '/test-api/documents',
+    element: <DocumentsPage />,
+  },
+  {
+    path: '/test-api/users',
+    element: <UsersPage />,
+  },
+  {
+    path: '/test-api/signature',
+    element: <SignaturePage />,
   },
 ]
 
