@@ -95,9 +95,8 @@ export const CreateDocumentForm = () => {
     [uploadedFiles, form]
   )
 
-  const onSubmit = useCallback((data: FormValues) => {
+  const onSubmit = useCallback(() => {
     //TODO обработка документа и post запрос
-    console.log('data', data)
   }, [])
 
   const handleFormSubmit = useCallback(
