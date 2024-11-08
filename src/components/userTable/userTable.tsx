@@ -1,31 +1,31 @@
 import React from 'react'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { Button, Typography, Box, Paper } from '@mui/material'
+import { User, Role, Roles } from '@/types/sharedTypes'
+import { observer } from 'mobx-react-lite'
 
-import { User } from '@/types/sharedTypes'
-
-const UserTable: React.FC = () => {
+const UserTable: React.FC = observer(() => {
   const rows: User[] = [
     {
       id: 1,
       name: 'Владимир',
       surname: 'Бурнин',
       email: 'test1@example.com',
-      roles: [{ id: 1, name: 'Admin' }],
+      roles: [{ id: 1, name: Roles.ADMIN }],
     },
     {
       id: 2,
       name: 'Никита',
       surname: 'Друкман',
       email: 'test2@example.com',
-      roles: [{ id: 2, name: 'User' }],
+      roles: [{ id: 2, name: Roles.USER }],
     },
     {
       id: 3,
       name: 'Павел',
       surname: 'Егоров',
       email: 'test3@example.com',
-      roles: [{ id: 2, name: 'User' }],
+      roles: [{ id: 2, name: Roles.USER }],
     },
   ]
 
@@ -54,6 +54,9 @@ const UserTable: React.FC = () => {
       field: 'roles',
       headerName: 'Роль',
       width: 200,
+      valueGetter: (roles: Role[]) => {
+        return `${roles[0].name}`
+      },
     },
   ]
 
@@ -77,6 +80,6 @@ const UserTable: React.FC = () => {
       </Box>
     </Paper>
   )
-}
+})
 
 export default UserTable
