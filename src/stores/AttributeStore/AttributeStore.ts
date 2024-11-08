@@ -15,9 +15,9 @@ class AttributeStore {
     this.data = attribute
   }
 
-  async updateAttribute(attributeId: number, attribute: NewAttribute) {
+  async updateAttribute(attribute: NewAttribute) {
     const updatedAttribute = await executeWithLoading(this, async () =>
-      attributeControllerApi.updateAttribute(attributeId, attribute)
+      attributeControllerApi.updateAttribute(this.data.id, attribute)
     )
 
     if (updatedAttribute) {
@@ -27,9 +27,9 @@ class AttributeStore {
     }
   }
 
-  async pathAttribute(attributeId: number, attribute: Partial<NewAttribute>) {
+  async pathAttribute(attribute: Partial<NewAttribute>) {
     const patchedAttribute = await executeWithLoading(this, async () =>
-      attributeControllerApi.patchAttribute(attributeId, attribute)
+      attributeControllerApi.patchAttribute(this.data.id, attribute)
     )
 
     if (patchedAttribute) {
