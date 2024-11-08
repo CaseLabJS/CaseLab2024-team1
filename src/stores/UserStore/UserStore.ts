@@ -4,12 +4,13 @@ import { Role, User, UserCredentials } from '@/types/sharedTypes'
 
 import { userControllerApi } from '@/api/userController'
 
+import { SerializedError } from '@/api/core/serializedError'
 import { executeWithLoading } from '@/utils/executeWithLoading'
 
 class UserStore {
   userData: User
   loading: boolean = false
-  error: string | null = null
+  error: SerializedError | null = null
 
   constructor(user: User) {
     makeAutoObservable(this)

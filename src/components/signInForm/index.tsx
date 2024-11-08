@@ -20,7 +20,7 @@ import {
   VisibilityOff,
   Email as EmailIcon,
 } from '@mui/icons-material'
-import authStore from '@/stores/authStore'
+import authStore from '@/stores/AuthStore'
 import { Loader } from '@/components/loader/loader'
 import { ROUTES } from '@/router/routes'
 import Bird from '@/assets/bird.svg'
@@ -54,7 +54,7 @@ export const LoginForm: React.FC = () => {
     if (isAuth) {
       navigate(isAdmin ? ROUTES.admin() : ROUTES.app())
     }
-  }, [isAuth, isAdmin])
+  }, [isAuth, isAdmin, navigate])
 
   useEffect(() => {
     if (error) {
