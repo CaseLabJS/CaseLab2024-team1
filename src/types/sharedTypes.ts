@@ -26,12 +26,20 @@ export interface Role {
   name: Roles
 }
 
+export interface Comment {
+  id: number
+  author: User
+  createdAt: string //ISOString
+  content: string
+}
+
 // documents-controller / document-type-controller
 export interface Document {
   id: number
   user: User
   documentType: DocumentType
   documentVersions: DocumentVersion[]
+  comments: Comment[]
 }
 
 // document-types / attributes
