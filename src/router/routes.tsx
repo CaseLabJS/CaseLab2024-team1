@@ -1,5 +1,5 @@
-import AdminPage from '@/components/adminPage/adminPage'
-import UserTable from '@/components/userTable/userTable'
+import AdminPage from '@/components/adminPage/AdminPage'
+import UserTable from '@/components/userTable/UserTable'
 import CreateUser from '@/components/createUser/CreateUser'
 
 import { Authorization } from './authorization'
