@@ -6,12 +6,17 @@ import {
   DocumentVersionFields,
   DocumentVersionModel,
 } from './types'
+import type { QueryParams } from '../core/types'
 
 const SERVICE_URL = '/documents'
 class DocumentControllerApi extends BaseApi {
-  getDocumentById = (id: number) =>
+  getDocumentById = (id: number, queryParams?: QueryParams) =>
     this.createRequest<Document>({
-      request: () => privateApi.get(`${SERVICE_URL}/${id}`),
+      request: () =>
+        privateApi.get(
+          `${SERVICE_URL}/${id}`,
+          queryParams ? { queryParams } : {}
+        ),
       mock: () => import('./mock/document'),
     })
   //возвращает документ
@@ -49,23 +54,53 @@ class DocumentControllerApi extends BaseApi {
       request: () => privateApi.delete(`${SERVICE_URL}/${id}`),
     })
 
-  getDocuments = () =>
+  getDocuments = (queryParams?: QueryParams) =>
     this.createRequest<Document[]>({
-      request: () => privateApi.get(`${SERVICE_URL}`),
+      request: () =>
+        privateApi.get(`${SERVICE_URL}`, queryParams && { queryParams }),
       mock: async () => {
         const document = await this.getDocumentById(1)
         return () => [document]
       },
     })
 
-  getDocumentVersion = (documentId: number, versionId: number) =>
+  getDocumentVersion = (
+    documentId: number,
+    versionId: number,
+    queryParams?: QueryParams
+  ) =>
     this.createRequest<Document>({
       request: () =>
-        privateApi.get(`${SERVICE_URL}/${documentId}/${versionId}`),
+        privateApi.get(
+          `${SERVICE_URL}/${documentId}/${versionId}`,
+          queryParams && { queryParams }
+        ),
       mock: async () => {
         const document = await this.getDocumentById(1)
         return () => document.documentVersions[0]
       },
+    })
+
+  addComment = (documentId: number, comment: string) =>
+    this.createRequest<Comment>({
+      request: () =>
+        privateApi.post(`${SERVICE_URL}/${documentId}/comment`, {
+          content: comment,
+        }),
+      mock: async () => {
+        const document = await this.getDocumentById(1)
+        return () => ({
+          author: document.user,
+          id: 2,
+          content: comment,
+          createdAt: new Date().toISOString(),
+        })
+      },
+    })
+
+  recover = (documentId: number) =>
+    this.createRequest<never>({
+      request: () => privateApi.patch(`${SERVICE_URL}/${documentId}/recover`),
     })
 }
 

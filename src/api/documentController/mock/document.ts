@@ -1,19 +1,21 @@
-import { Document } from '@/types/sharedTypes'
+import { Document, Roles } from '@/types/sharedTypes'
+
+const user = {
+  id: 1,
+  name: 'admin',
+  surname: 'admin',
+  email: 'admin',
+  roles: [
+    {
+      id: 1,
+      name: Roles.ADMIN,
+    },
+  ],
+}
 
 const document: Document = {
   id: 1,
-  user: {
-    id: 1,
-    name: 'admin',
-    surname: 'admin',
-    email: 'admin',
-    roles: [
-      {
-        id: 1,
-        name: 'ADMIN',
-      },
-    ],
-  },
+  user,
   documentType: {
     id: 1,
     name: 'testType',
@@ -48,20 +50,17 @@ const document: Document = {
         {
           hash: 1322131231,
           placeholderTitle: 'testPlaceholder',
-          user: {
-            id: 1,
-            name: 'admin',
-            surname: 'admin',
-            email: 'admin',
-            roles: [
-              {
-                id: 1,
-                name: 'ADMIN',
-              },
-            ],
-          },
+          user,
         },
       ],
+    },
+  ],
+  comments: [
+    {
+      id: 2,
+      author: user,
+      content: 'Случайный комментарий',
+      createdAt: '2024-11-07T10:07:16.357068023',
     },
   ],
 }
