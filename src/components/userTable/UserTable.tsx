@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { Button, Typography, Box, Paper } from '@mui/material'
 import { User, Role } from '@/types/sharedTypes'
@@ -6,6 +7,10 @@ import { observer } from 'mobx-react-lite'
 import { usersListStore } from '@/stores/UsersListStore'
 
 const UserTable: React.FC = observer(() => {
+  const navigate = useNavigate()
+  const handleAddUser = () => {
+    navigate('/admin/users/create')
+  }
   useEffect(() => {
     void usersListStore.fetchUsers()
   }, [])
@@ -55,7 +60,9 @@ const UserTable: React.FC = observer(() => {
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-          <Button variant="outlined">Добавить пользователя</Button>
+          <Button variant="outlined" onClick={handleAddUser}>
+            Добавить пользователя
+          </Button>
         </Box>
 
         <DataGrid
