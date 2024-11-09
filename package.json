@@ -25,6 +25,7 @@
     "@mui/icons-material": "^6.1.5",
     "@mui/material": "^6.1.5",
     "@mui/x-data-grid": "^7.22.0",
+    "@toolpad/core": "^0.8.1",
     "@types/node": "^22.7.9",
     "axios": "^1.7.7",
     "cross-env": "^7.0.3",

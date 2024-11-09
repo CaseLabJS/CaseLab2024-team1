@@ -2,18 +2,14 @@ import AdminPage from '@/components/adminPage/AdminPage'
 import UserTable from '@/components/userTable/UserTable'
 import CreateUser from '@/components/createUser/CreateUser'
 
-import { Authorization } from './authorization'
+import { AppDashboardLayout } from '@/components/appDashboardLayout/appDashboardLayout.tsx'
 import { CreateDocumentForm } from '@/components/createDocumentForm/createDocumentForm.tsx'
+import { AppProvider } from '@/components/appProvider/appProvider.tsx'
+import { Authorization } from '@/router/authorization.tsx'
+import { ROUTES } from '@/router/constants.ts'
+
 import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
-
-export const ROUTES = {
-  home: '/',
-  admin: (page = '') => `/admin/${page}`,
-  app: (page = '') => `/app/${page}`,
-  signIn: '/sign-in',
-  signOut: '/sign-out',
-}
 
 export const publicRoutes = [
   {
@@ -37,6 +33,25 @@ export const authRoutes = [
       {
         path: ROUTES.signIn,
         element: <SignInPage />,
+      },
+    ],
+  },
+]
+
+export const appRoutes = [
+  {
+    path: ROUTES.app(),
+    element: <Authorization requireAuth />,
+    children: [
+      {
+        path: ROUTES.app(),
+        Component: AppDashboardLayout,
+        children: [
+          {
+            path: ROUTES.app('document'),
+            Component: CreateDocumentForm,
+          },
+        ],
       },
     ],
   },
@@ -71,19 +86,9 @@ export const adminRoutes = [
   },
 ]
 
-export const appRoutes = [
+export const routes = [
   {
-    path: ROUTES.app(),
-    element: <Authorization requireAuth />,
-    children: [
-      {
-        path: ROUTES.app(),
-        element: <div>App</div>,
-      },
-      {
-        path: ROUTES.app('document'),
-        element: <CreateDocumentForm />,
-      },
-    ],
+    Component: AppProvider,
+    children: [...publicRoutes, ...appRoutes, ...adminRoutes, ...authRoutes],
   },
 ]
