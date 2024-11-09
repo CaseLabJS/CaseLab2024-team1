@@ -1,8 +1,9 @@
+import { SerializedError } from '@/api/core/serializedError'
 import { runInAction } from 'mobx'
 
 interface Context {
   loading: boolean
-  error: string | null
+  error: SerializedError | null
 }
 
 export async function executeWithLoading<T>(
@@ -19,7 +20,7 @@ export async function executeWithLoading<T>(
     return result
   } catch (err) {
     runInAction(() => {
-      context.error = err instanceof Error ? err.message : String(err)
+      context.error = err as SerializedError
     })
   } finally {
     runInAction(() => {

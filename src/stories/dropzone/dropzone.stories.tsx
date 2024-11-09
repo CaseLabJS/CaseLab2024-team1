@@ -1,7 +1,7 @@
-import {Dropzone} from "@/components/dropzone/dropzone.tsx";
-import CssBaseline from "@mui/material/CssBaseline";
-import {Meta, StoryObj} from "@storybook/react";
-import {ThemeProvider} from "@/theme/theme-provider/theme-provider.tsx";
+import { Dropzone } from '@/components/dropzone/dropzone.tsx'
+import CssBaseline from '@mui/material/CssBaseline'
+import { Meta, StoryObj } from '@storybook/react'
+import { ThemeProvider } from '@/theme/theme-provider/theme-provider.tsx'
 
 const meta = {
   title: 'Components/Dropzone',
@@ -15,13 +15,13 @@ const meta = {
       </ThemeProvider>
     ),
   ],
-} satisfies Meta<typeof Dropzone>;
+} satisfies Meta<typeof Dropzone>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    onFilesAccepted: (files) => console.log(files)
+    onFilesAccepted: (files) => console.log(files),
   },
-};
+}

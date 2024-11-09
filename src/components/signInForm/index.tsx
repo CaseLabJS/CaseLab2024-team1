@@ -54,7 +54,7 @@ export const LoginForm: React.FC = () => {
     if (isAuth) {
       navigate(isAdmin ? ROUTES.admin() : ROUTES.app())
     }
-  }, [isAuth, isAdmin])
+  }, [isAuth, isAdmin, navigate])
 
   useEffect(() => {
     if (error) {

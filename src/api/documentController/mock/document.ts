@@ -1,69 +1,68 @@
-import { Document } from '@/types/sharedTypes'
+import { Document, Roles } from '@/types/sharedTypes'
+
+const user = {
+  id: 1,
+  name: 'admin',
+  surname: 'admin',
+  email: 'admin',
+  roles: [
+    {
+      id: 1,
+      name: Roles.ADMIN,
+    },
+  ],
+}
 
 const document: Document = {
-  "id": 1,
-  "user": {
-    "id": 1,
-    "name": "admin",
-    "surname": "admin",
-    "email": "admin",
-    "roles": [
+  id: 1,
+  user,
+  documentType: {
+    id: 1,
+    name: 'testType',
+    attributes: [
       {
-        "id": 1,
-        "name": "ADMIN"
-      }
-    ]
-  },
-  "documentType": {
-    "id": 1,
-    "name": "testType",
-    "attributes": [
-      {
-        "id": 1,
-        "name": "testAttr1",
-        "required": false
+        id: 1,
+        name: 'testAttr1',
+        required: false,
       },
       {
-        "id": 2,
-        "name": "testAttr2",
-        "required": true
-      }
-    ]
+        id: 2,
+        name: 'testAttr2',
+        required: true,
+      },
+    ],
   },
-  "documentVersions": [
+  documentVersions: [
     {
-      "id": 1,
-      "versionId": 1,
-      "title": "hw.txt",
-      "description": "test",
-      "createdAt": "2024-12-12T23:59:59.425",
-      "values": [
+      id: 1,
+      versionId: 1,
+      title: 'hw.txt',
+      description: 'test',
+      createdAt: '2024-12-12T23:59:59.425',
+      values: [
         {
-          "attributeName": "testAttr2",
-          "value": "52"
-        }
+          attributeName: 'testAttr2',
+          value: '52',
+        },
       ],
-      "base64Content": "SGVsbG8sIFdvcmxkIQ==",
-      "signatures": [
+      base64Content: 'SGVsbG8sIFdvcmxkIQ==',
+      signatures: [
         {
-          "hash": 1322131231,
-          "placeholderTitle": "testPlaceholder",
-          "user": {
-            "id": 1,
-            "name": "admin",
-            "surname": "admin",
-            "email": "admin",
-            "roles": [
-              {
-                "id": 1,
-                "name": "ADMIN"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  ]
+          hash: 1322131231,
+          placeholderTitle: 'testPlaceholder',
+          user,
+        },
+      ],
+    },
+  ],
+  comments: [
+    {
+      id: 2,
+      author: user,
+      content: 'Случайный комментарий',
+      createdAt: '2024-11-07T10:07:16.357068023',
+    },
+  ],
 }
 
 export default Promise.resolve(() => document)

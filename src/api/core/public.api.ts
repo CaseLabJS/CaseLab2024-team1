@@ -1,5 +1,5 @@
-import { CoreApi } from './coreApi';
+import { CoreApi } from './coreApi'
 
 class PublicApi extends CoreApi {}
 
-export const publicApi = new PublicApi();
+export const publicApi = new PublicApi()
