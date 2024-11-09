@@ -29,7 +29,7 @@ export const style: Record<string, SxProps<Theme>> = {
   icons: {
     height: '2.5rem',
     width: '2.5rem',
-    color: "grey.600"
+    color: 'grey.600',
   },
   bottomSectionContainer: {
     display: 'flex',

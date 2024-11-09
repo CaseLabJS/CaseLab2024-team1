@@ -3,7 +3,7 @@ import { ThemeProvider } from '@/theme/theme-provider/theme-provider.tsx'
 import CssBaseline from '@mui/material/CssBaseline'
 import { Meta, StoryObj } from '@storybook/react'
 import { testDocumentsType } from '@/stories/selectField/testData/testData.ts'
-import {SelectField} from "@/components/selectField/selectField.tsx";
+import { SelectField } from '@/components/selectField/selectField.tsx'
 
 export const agreement = [
   {
@@ -38,7 +38,7 @@ const meta = {
           <CssBaseline />
           <Story />
         </ThemeProvider>
-      );
+      )
     },
   ],
 } satisfies Meta<typeof SelectField>
@@ -52,7 +52,9 @@ export const Default: Story = {
       testDocumentsType[0].name
     )
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (
+      event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
       const value = event.target.value
       setSelectedValue(value)
       console.log('Выбранное значение:', value)
@@ -84,7 +86,9 @@ export const AgreementSelect: Story = {
   render: () => {
     const [selectedValue, setSelectedValue] = useState(agreement[0].text)
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (
+      event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
       const value = event.target.value
       setSelectedValue(value)
       console.log('Выбранное значение:', value)
