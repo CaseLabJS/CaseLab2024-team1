@@ -1,7 +1,7 @@
-import { Attribute } from '@/types/sharedTypes'
+import { Attribute, NewAttribute } from '@/types/sharedTypes'
 import { BaseApi } from '../core/baseApi'
 import { privateApi } from '../core/private.api'
-import { AttributeFields, AttributeModel } from './types'
+import { AttributeFields } from './types'
 
 const SERVICE_URL = '/attributes'
 class AttributeControllerApi extends BaseApi {
@@ -11,16 +11,15 @@ class AttributeControllerApi extends BaseApi {
       mock: () => import('./mock/attribute'),
     })
 
-  createAttribute = (attributeModel: AttributeModel) =>
+  createAttribute = (newAttribute: NewAttribute) =>
     this.createRequest<Attribute>({
-      request: () => privateApi.post(SERVICE_URL, attributeModel),
+      request: () => privateApi.post(SERVICE_URL, newAttribute),
       mock: () => import('./mock/attribute'),
     })
 
-  updateAttribute = (attribute: AttributeModel) =>
+  updateAttribute = (id: number, attribute: NewAttribute) =>
     this.createRequest<Attribute>({
-      request: () =>
-        privateApi.put(`${SERVICE_URL}/${attribute.id}`, attribute),
+      request: () => privateApi.put(`${SERVICE_URL}/${id}`, attribute),
       mock: () => import('./mock/attribute'),
     })
 
