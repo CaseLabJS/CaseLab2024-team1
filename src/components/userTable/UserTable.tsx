@@ -1,34 +1,26 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { Button, Typography, Box, Paper } from '@mui/material'
-import { User, Role, Roles } from '@/types/sharedTypes'
+import { User, Role } from '@/types/sharedTypes'
 import { observer } from 'mobx-react-lite'
+import { usersListStore } from '@/stores/UsersListStore'
 
 const UserTable: React.FC = observer(() => {
-  const rows: User[] = [
-    {
-      id: 1,
-      name: 'Владимир',
-      surname: 'Бурнин',
-      email: 'test1@example.com',
-      roles: [{ id: 1, name: Roles.ADMIN }],
-    },
-    {
-      id: 2,
-      name: 'Никита',
-      surname: 'Друкман',
-      email: 'test2@example.com',
-      roles: [{ id: 2, name: Roles.USER }],
-    },
-    {
-      id: 3,
-      name: 'Павел',
-      surname: 'Егоров',
-      email: 'test3@example.com',
-      roles: [{ id: 2, name: Roles.USER }],
-    },
-  ]
-
+  const navigate = useNavigate()
+  const handleAddUser = () => {
+    navigate('/admin/users/create')
+  }
+  useEffect(() => {
+    void usersListStore.fetchUsers()
+  }, [])
+  const rows: User[] = usersListStore.users.map((user) => ({
+    id: user.userData.id,
+    name: user.userData.name,
+    surname: user.userData.surname,
+    email: user.userData.email,
+    roles: user.userData.roles,
+  }))
   const columns: GridColDef[] = [
     {
       field: 'id',
@@ -68,7 +60,9 @@ const UserTable: React.FC = observer(() => {
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-          <Button variant="outlined">Добавить пользователя</Button>
+          <Button variant="outlined" onClick={handleAddUser}>
+            Добавить пользователя
+          </Button>
         </Box>
 
         <DataGrid
