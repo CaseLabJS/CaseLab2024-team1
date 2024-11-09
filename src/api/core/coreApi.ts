@@ -4,9 +4,9 @@ import axios, {
   type AxiosResponse,
 } from 'axios'
 import { apiPath } from '@/config'
-import { RequestType, RequestTypeWithData } from '../types'
-import { token } from '@/lib/tokenManager'
+import { RequestType, RequestTypeWithData } from './types'
 import { SerializedError } from './serializedError'
+import { buildQueryString, getQueryStringSeparator } from './helpers'
 
 export abstract class CoreApi {
   protected api = axios.create({
@@ -23,7 +23,6 @@ export abstract class CoreApi {
         }
 
         if (error.status === 401) {
-          token.clear()
           return Promise.reject(
             new SerializedError({
               status,
@@ -43,7 +42,15 @@ export abstract class CoreApi {
     )
   }
 
-  get: RequestType = (...req) => this.api.get(...req)
+  get: RequestType = (url, options = {}) => {
+    if (options?.queryParams) {
+      const queryString = buildQueryString(options.queryParams)
+      const separator = getQueryStringSeparator(url)
+      delete options.queryParams
+      return this.api.get(`${url}${separator}${queryString}`, { ...options })
+    }
+    return this.api.get(url, options)
+  }
 
   post: RequestTypeWithData = (...req) => this.api.post(...req)
 
