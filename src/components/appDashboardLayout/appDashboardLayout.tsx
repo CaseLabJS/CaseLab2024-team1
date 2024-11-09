@@ -25,7 +25,6 @@ export const AppDashboardLayout = () => {
           },
         },
       }}
-      s
     >
       <section className="main">
         <Outlet />

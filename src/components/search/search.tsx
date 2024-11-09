@@ -6,7 +6,7 @@ import SearchIcon from '@mui/icons-material/Search'
 export const Search = () => {
   return (
     <>
-      <Tooltip title="Search" enterDelay={1000} sx={{}}>
+      <Tooltip title="Search" enterDelay={1000}>
         <div>
           <IconButton
             type="button"
