@@ -1,12 +1,13 @@
 import { makeAutoObservable } from 'mobx'
-import DocumentStore from '@/stores/documentStore/documentStore.ts'
+import DocumentStore from '@/stores/DocumentStore/DocumentStore.ts'
 import { executeWithLoading } from '@/utils/executeWithLoading.ts'
 import { documentControllerApi, DocumentModel } from '@/api/documentController'
+import { SerializedError } from '@/api/core/serializedError.ts'
 
 class DocumentsListStore {
   documents: InstanceType<typeof DocumentStore>[] = []
   loading: boolean = false
-  error: string | null = null
+  error: SerializedError | null = null
 
   constructor() {
     makeAutoObservable(this)
@@ -36,18 +37,31 @@ class DocumentsListStore {
     )
 
     if (createdDocument) {
-      this.documents.push(new DocumentStore(createdDocument))
+      this.documents = [...this.documents, new DocumentStore(createdDocument)]
     }
   }
 
   async deleteDocument(documentId: number) {
-    await executeWithLoading(this, () =>
-      documentControllerApi.deleteDocument(documentId)
+    const documentExists = this.documents.some(
+      (doc) => doc.documentData.id === documentId
     )
+    if (!documentExists) {
+      console.warn(`Document with ID ${documentId} does not exist.`)
+      return false
+    }
 
-    this.documents = this.documents.filter(
-      (currentDocument) => currentDocument.documentData.id !== documentId
-    )
+    try {
+      await executeWithLoading(this, () =>
+        documentControllerApi.deleteDocument(documentId)
+      )
+      this.documents = this.documents.filter(
+        (currentDocument) => currentDocument.documentData.id !== documentId
+      )
+      return true
+    } catch (error) {
+      console.error(`Failed to delete document with ID ${documentId}:`, error)
+      return false
+    }
   }
 }
 
