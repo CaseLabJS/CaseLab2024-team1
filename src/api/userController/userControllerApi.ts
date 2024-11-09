@@ -1,13 +1,18 @@
-import { User, UserCredentials } from '@/types/sharedTypes'
+import { Roles, User, UserCredentials } from '@/types/sharedTypes'
 import { BaseApi } from '../core/baseApi'
 import { privateApi } from '../core/private.api'
 import { UserFields } from './types'
+import { QueryParams } from '../core/types'
 
 const SERVICE_URL = '/users'
 class UserControllerApi extends BaseApi {
-  getUserById = (id: number) =>
+  getUserById = (id: number, queryParams?: QueryParams) =>
     this.createRequest<User>({
-      request: () => privateApi.get(`${SERVICE_URL}/${id}`),
+      request: () =>
+        privateApi.get(
+          `${SERVICE_URL}/${id}`,
+          queryParams ? { queryParams } : {}
+        ),
       mock: () => import('./mock/user'),
     })
 
@@ -37,7 +42,7 @@ class UserControllerApi extends BaseApi {
       request: () => privateApi.delete(`${SERVICE_URL}/${id}`),
     })
 
-  addUserRole = (id: number, roleName: string) =>
+  addUserRole = (id: number, roleName: Roles) =>
     this.createRequest<User>({
       request: () =>
         privateApi.put(`${SERVICE_URL}/${id}/role`, { name: roleName }),
@@ -48,7 +53,7 @@ class UserControllerApi extends BaseApi {
       },
     })
 
-  removeUserRole = (id: number, roleName: string) =>
+  removeUserRole = (id: number, roleName: Roles) =>
     this.createRequest<User>({
       request: () =>
         privateApi.delete(`${SERVICE_URL}/${id}/role`, {
@@ -61,13 +66,19 @@ class UserControllerApi extends BaseApi {
       },
     })
 
-  getUsers = () =>
+  getUsers = (queryParams?: QueryParams) =>
     this.createRequest<User[]>({
-      request: () => privateApi.get(`${SERVICE_URL}`),
+      request: () =>
+        privateApi.get(`${SERVICE_URL}`, queryParams && { queryParams }),
       mock: async () => {
         const user = await this.getUserById(2)
         return () => [user]
       },
+    })
+
+  recover = (id: number) =>
+    this.createRequest<never>({
+      request: () => privateApi.patch(`${SERVICE_URL}/${id}/recover`),
     })
 }
 
