@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { ThemeProvider } from '@/theme/theme-provider/theme-provider.tsx'
 import CssBaseline from '@mui/material/CssBaseline'
-import {CustomAutocomplete} from "@/components/autocomplete/autocomplete.tsx";
+import { CustomAutocomplete } from '@/components/autocomplete/autocomplete.tsx'
 
 export const testContractors = [
   { id: 1, name: 'Контрагент А', inn: '1234567890' },

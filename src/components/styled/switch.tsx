@@ -1,22 +1,22 @@
-import {ChangeEvent} from "react";
-import {styled} from "@mui/material";
-import Switch from "@mui/material/Switch";
+import { ChangeEvent } from 'react'
+import { styled } from '@mui/material'
+import Switch from '@mui/material/Switch'
 
 interface StyledSwitchProps {
   /**
    * Indicates whether the switch is checked or not
    */
-  checked?: boolean;
+  checked?: boolean
 
   /**
    * Function to call when the switch is toggled
    */
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void
 
   /**
    * Custom styles for the switch
    */
-  sx?: object;
+  sx?: object
 }
 
 export const StyledSwitch = styled((props: StyledSwitchProps) => (

@@ -8,7 +8,7 @@ import { useFormContext } from 'react-hook-form'
 import Paper from '@mui/material/Paper'
 import { useTheme } from '@mui/material'
 import { alpha } from '@mui/material/styles'
-import {FormValues} from "@/components/createDocumentForm/types.ts";
+import { FormValues } from '@/components/createDocumentForm/types.ts'
 
 interface DocumentPackageInfoProps {
   initialValue: File[]
@@ -46,8 +46,8 @@ export const DocumentPackageInfo = (props: DocumentPackageInfoProps) => {
           gap: '0.5rem',
         }}
         errorMessage={formState.errors.recipient?.message}
-        {...register("recipient", {
-          required: "Отправитель обязателен"
+        {...register('recipient', {
+          required: 'Отправитель обязателен',
         })}
       />
 
