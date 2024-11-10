@@ -57,3 +57,5 @@ class AttributeControllerApi extends BaseApi {
       request: () => privateApi.patch(`${SERVICE_URL}/${id}/recover`),
     })
 }
+
+export const attributeControllerApi = new AttributeControllerApi()
