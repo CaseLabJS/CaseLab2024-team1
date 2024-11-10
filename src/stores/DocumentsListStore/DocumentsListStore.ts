@@ -29,9 +29,13 @@ class DocumentsListStore {
   }
 
   getDocumentById = async (documentId: number, showOnlyAlive?: boolean) => {
-    return await executeWithLoading(this, async () =>
+    const document = await executeWithLoading(this, async () =>
       documentControllerApi.getDocumentById(documentId, { showOnlyAlive })
     )
+
+    if (document) {
+      return new DocumentStore(document)
+    }
   }
 
   createDocument = async (document: DocumentModel) => {
