@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { attributeControllerApi } from '@/api/attributeController'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
+import Input from '@mui/material/Input'
 import Grid2 from '@mui/material/Grid2'
+import Success from '@/pages/CreateAttributePage/_components/success'
+import Error from '@/pages/CreateAttributePage/_components/error'
 import { observer } from 'mobx-react-lite'
 
 interface Attribute {
@@ -11,7 +14,7 @@ interface Attribute {
   required: boolean
 }
 
-const CreateAttributePage: React.FC = observer(() => {
+const CreateAttributePage = observer(() => {
   const [attribute, setAttribute] = useState<Attribute>({
     documentTypesNames: [],
     name: '',
@@ -22,7 +25,7 @@ const CreateAttributePage: React.FC = observer(() => {
   const [countAttributeTypes, setCountAttributeTypes] = useState<number>(1)
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target
     if (name.startsWith('documentTypesNames')) {
@@ -66,7 +69,7 @@ const CreateAttributePage: React.FC = observer(() => {
           <label htmlFor={`documentTypesNames${i}`}>
             {`${i + 1}) Тип документа `}
           </label>
-          <input
+          <Input
             type="text"
             id={`documentTypesNames${i}`}
             name={`documentTypesNames${i}`}
@@ -113,7 +116,7 @@ const CreateAttributePage: React.FC = observer(() => {
           spacing={2}
           direction="column"
           alignItems="center"
-          bgcolor="bisque"
+          bgcolor="gray"
           padding="15px"
           justifyContent="center"
         >
@@ -150,8 +153,8 @@ const CreateAttributePage: React.FC = observer(() => {
           </Grid2>
         </Grid2>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+      {error && <Error error={error} />}
+      {success && <Success success={success} />}
     </Grid2>
   )
 })
