@@ -68,15 +68,9 @@ class DocumentStore {
   }
 
   async recoverDocument() {
-    try {
-      await executeWithLoading(this, () =>
-        documentControllerApi.recover(this.documentData.id)
-      )
-      return true
-    } catch (error) {
-      console.error('Error recovering document:', error)
-      return false
-    }
+    await executeWithLoading(this, () =>
+      documentControllerApi.recover(this.documentData.id)
+    )
   }
 }
 

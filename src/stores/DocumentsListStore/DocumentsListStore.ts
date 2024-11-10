@@ -47,21 +47,15 @@ class DocumentsListStore {
     )
     if (!documentExists) {
       console.warn(`Document with ID ${documentId} does not exist.`)
-      return false
+      return
     }
 
-    try {
-      await executeWithLoading(this, () =>
-        documentControllerApi.deleteDocument(documentId)
-      )
-      this.documents = this.documents.filter(
-        (currentDocument) => currentDocument.documentData.id !== documentId
-      )
-      return true
-    } catch (error) {
-      console.error(`Failed to delete document with ID ${documentId}:`, error)
-      return false
-    }
+    await executeWithLoading(this, () =>
+      documentControllerApi.deleteDocument(documentId)
+    )
+    this.documents = this.documents.filter(
+      (currentDocument) => currentDocument.documentData.id !== documentId
+    )
   }
 }
 
