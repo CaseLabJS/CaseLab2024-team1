@@ -2,12 +2,14 @@ import { DocumentType, NewDocumentType } from '@/types/sharedTypes'
 import { BaseApi } from '../core/baseApi'
 import { privateApi } from '../core/private.api'
 import { DocumentTypesFields } from './types'
+import { QueryParams } from '../core/types'
 
 const SERVICE_URL = '/document-types'
 class DocumentTypesControllerApi extends BaseApi {
-  getDocumentTypeById = (id: number) =>
+  getDocumentTypeById = (id: number, queryParams?: QueryParams) =>
     this.createRequest<DocumentType>({
-      request: () => privateApi.get(`${SERVICE_URL}/${id}`),
+      request: () =>
+        privateApi.get(`${SERVICE_URL}/${id}`, queryParams && { queryParams }),
       mock: () => import('./mock/documentTypes'),
     })
 
@@ -41,13 +43,19 @@ class DocumentTypesControllerApi extends BaseApi {
       request: () => privateApi.delete(`${SERVICE_URL}/${id}`),
     })
 
-  getDocumentTypes = () =>
+  getDocumentTypes = (queryParams?: QueryParams) =>
     this.createRequest<DocumentType[]>({
-      request: () => privateApi.get(`${SERVICE_URL}`),
+      request: () =>
+        privateApi.get(`${SERVICE_URL}`, queryParams && { queryParams }),
       mock: async () => {
         const document = await this.getDocumentTypeById(1)
         return () => [document]
       },
+    })
+
+  recover = (id: number) =>
+    this.createRequest<never>({
+      request: () => privateApi.patch(`${SERVICE_URL}/${id}/recover`),
     })
 }
 

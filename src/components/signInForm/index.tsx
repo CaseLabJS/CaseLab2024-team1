@@ -22,7 +22,7 @@ import {
 } from '@mui/icons-material'
 import authStore from '@/stores/AuthStore'
 import { Loader } from '@/components/loader/loader'
-import { ROUTES } from '@/router/routes'
+import { ROUTES } from '@/router/constants.ts'
 import Bird from '@/assets/bird.svg'
 
 type FormData = {
