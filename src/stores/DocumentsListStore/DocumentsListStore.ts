@@ -1,8 +1,9 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import DocumentStore from '@/stores/DocumentStore/DocumentStore.ts'
 import { executeWithLoading } from '@/utils/executeWithLoading.ts'
 import { documentControllerApi, DocumentModel } from '@/api/documentController'
 import { SerializedError } from '@/api/core/serializedError.ts'
+import type { QueryParams } from '@/api/core/types.ts'
 
 class DocumentsListStore {
   documents: InstanceType<typeof DocumentStore>[] = []
@@ -13,35 +14,39 @@ class DocumentsListStore {
     makeAutoObservable(this)
   }
 
-  async fetchDocuments() {
+  fetchDocuments = async (queryParams?: QueryParams) => {
     const fetchedDocuments = await executeWithLoading(this, async () =>
-      documentControllerApi.getDocuments()
+      documentControllerApi.getDocuments(queryParams)
     )
 
     if (fetchedDocuments) {
-      this.documents = fetchedDocuments.map(
-        (documentData) => new DocumentStore(documentData)
-      )
+      runInAction(() => {
+        this.documents = fetchedDocuments.map(
+          (documentData) => new DocumentStore(documentData)
+        )
+      })
     }
   }
 
-  async getDocumentById(documentId: number) {
+  getDocumentById = async (documentId: number, showOnlyAlive?: boolean) => {
     return await executeWithLoading(this, async () =>
-      documentControllerApi.getDocumentById(documentId)
+      documentControllerApi.getDocumentById(documentId, { showOnlyAlive })
     )
   }
 
-  async createDocument(document: DocumentModel) {
+  createDocument = async (document: DocumentModel) => {
     const createdDocument = await executeWithLoading(this, () =>
       documentControllerApi.createDocument(document)
     )
 
     if (createdDocument) {
-      this.documents = [...this.documents, new DocumentStore(createdDocument)]
+      runInAction(() => {
+        this.documents = [...this.documents, new DocumentStore(createdDocument)]
+      })
     }
   }
 
-  async deleteDocument(documentId: number) {
+  deleteDocument = async (documentId: number) => {
     const documentExists = this.documents.some(
       (doc) => doc.documentData.id === documentId
     )
@@ -53,10 +58,13 @@ class DocumentsListStore {
     await executeWithLoading(this, () =>
       documentControllerApi.deleteDocument(documentId)
     )
-    this.documents = this.documents.filter(
-      (currentDocument) => currentDocument.documentData.id !== documentId
-    )
+    runInAction(() => {
+      this.documents = this.documents.filter(
+        (currentDocument) => currentDocument.documentData.id !== documentId
+      )
+    })
   }
 }
 
-export default DocumentsListStore
+const documentsListStore = new DocumentsListStore()
+export default documentsListStore

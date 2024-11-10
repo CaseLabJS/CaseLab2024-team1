@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import {
   documentControllerApi,
   DocumentVersionModel,
@@ -18,56 +18,55 @@ class DocumentStore {
     this.documentData = document
   }
 
-  async patchDocumentVersion(fields: Partial<DocumentVersionModel>) {
-    const documentVersions = this.documentData.documentVersions
-    const latestVersion = documentVersions[documentVersions.length - 1]
+  patchDocumentVersion = async (fields: Partial<DocumentVersionModel>) => {
+    const patchedDocument = await executeWithLoading(this, () =>
+      documentControllerApi.patchDocumentVersion(this.documentData.id, fields)
+    )
 
-    if (latestVersion) {
-      const patchedDocument = await executeWithLoading(this, () =>
-        documentControllerApi.patchDocumentVersion(latestVersion.id, fields)
-      )
-
-      if (patchedDocument) {
+    if (patchedDocument) {
+      runInAction(() => {
         this.documentData = patchedDocument
-      }
-    } else {
-      console.warn('No document versions available to patch.')
+      })
     }
   }
 
-  async createDocumentVersion(documentVersion: DocumentVersionModel) {
-    const createDocumentVersion = await executeWithLoading(this, () =>
+  createDocumentVersion = async (documentVersion: DocumentVersionModel) => {
+    const createdDocumentVersion = await executeWithLoading(this, () =>
       documentControllerApi.createDocumentVersion(
         this.documentData.id,
         documentVersion
       )
     )
 
-    if (createDocumentVersion) {
-      this.documentData = {
-        ...this.documentData,
-        documentVersions: [
-          ...this.documentData.documentVersions,
-          createDocumentVersion,
-        ],
-      }
+    if (createdDocumentVersion) {
+      runInAction(() => {
+        this.documentData = {
+          ...this.documentData,
+          documentVersions: [
+            ...this.documentData.documentVersions,
+            createdDocumentVersion,
+          ],
+        }
+      })
     }
   }
 
-  async addComment(comment: string) {
+  addComment = async (comment: string) => {
     const addedComment = await executeWithLoading(this, () =>
       documentControllerApi.addComment(this.documentData.id, comment)
     )
 
     if (addedComment) {
-      this.documentData = {
-        ...this.documentData,
-        comments: [...this.documentData.comments, addedComment],
-      }
+      runInAction(() => {
+        this.documentData = {
+          ...this.documentData,
+          comments: [...this.documentData.comments, addedComment],
+        }
+      })
     }
   }
 
-  async recoverDocument() {
+  recoverDocument = async () => {
     await executeWithLoading(this, () =>
       documentControllerApi.recover(this.documentData.id)
     )
