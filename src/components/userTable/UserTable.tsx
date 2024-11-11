@@ -4,19 +4,9 @@ import { User, Role } from '@/types/sharedTypes'
 import { usersListStore } from '@/stores/UsersListStore'
 import { observer } from 'mobx-react-lite'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import {
-  Button,
-  Typography,
-  Box,
-  Paper,
-  Popover,
-  IconButton,
-} from '@mui/material'
-import {
-  Delete as DeleteIcon,
-  Close as CloseIcon,
-  Edit as EditIcon,
-} from '@mui/icons-material'
+import { Box, IconButton, Paper, Typography, Button } from '@mui/material'
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material'
+import ConfirmPopover from './ConfirmPopover'
 
 const UserTable: React.FC = observer(() => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -78,7 +68,14 @@ const UserTable: React.FC = observer(() => {
       headerName: 'Действия',
       width: 200,
       renderCell: (params: GridRenderCellParams<User>) => (
-        <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 1,
+            width: 'fit-content',
+          }}
+        >
           <IconButton
             aria-label="delete"
             onClick={(event) => {
@@ -117,34 +114,13 @@ const UserTable: React.FC = observer(() => {
           disableRowSelectionOnClick
         />
       </Box>
-      <Popover
+      <ConfirmPopover
         open={popoverIsOpen}
         anchorEl={anchorEl}
+        title="Вы уверены?"
+        onConfirm={() => handleDelete(idToDelete)}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <Box
-          sx={{
-            padding: 1,
-            display: 'flex',
-            alignItems: 'center',
-            borderRadius: '26px',
-          }}
-        >
-          <Typography>Вы уверены?</Typography>
-          <Button onClick={() => handleDelete(idToDelete)}>Да</Button>
-          <IconButton aria-label="close" onClick={handleClose}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-      </Popover>
+      />
     </Paper>
   )
 })
