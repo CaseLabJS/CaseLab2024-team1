@@ -12,7 +12,11 @@ import {
   Popover,
   IconButton,
 } from '@mui/material'
-import { Delete as DeleteIcon, Close as CloseIcon } from '@mui/icons-material'
+import {
+  Delete as DeleteIcon,
+  Close as CloseIcon,
+  Edit as EditIcon,
+} from '@mui/icons-material'
 
 const UserTable: React.FC = observer(() => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -74,16 +78,21 @@ const UserTable: React.FC = observer(() => {
       headerName: 'Действия',
       width: 200,
       renderCell: (params: GridRenderCellParams<User>) => (
-        <IconButton
-          aria-label="delete"
-          onClick={(event) => {
-            setAnchorEl(event.currentTarget)
-            setPopoverIsOpen(true)
-            setIdToDelete(params.row.id)
-          }}
-        >
-          <DeleteIcon />
-        </IconButton>
+        <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+          <IconButton
+            aria-label="delete"
+            onClick={(event) => {
+              setAnchorEl(event.currentTarget)
+              setPopoverIsOpen(true)
+              setIdToDelete(params.row.id)
+            }}
+          >
+            <DeleteIcon />
+          </IconButton>
+          <IconButton aria-label="edit">
+            <EditIcon />
+          </IconButton>
+        </Box>
       ),
     },
   ]
