@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { User, Role } from '@/types/sharedTypes'
+import EditUser from '../editUser/EditUser'
+import { User, Role, UserCredentials } from '@/types/sharedTypes'
 import { usersListStore } from '@/stores/UsersListStore'
 import { observer } from 'mobx-react-lite'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
@@ -11,6 +12,7 @@ import {
   Paper,
   Popover,
   IconButton,
+  Modal,
 } from '@mui/material'
 import {
   Delete as DeleteIcon,
@@ -22,6 +24,8 @@ const UserTable: React.FC = observer(() => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [popoverIsOpen, setPopoverIsOpen] = useState(false)
   const [idToDelete, setIdToDelete] = useState<number>(0)
+  const [selectedUser, setSelectedUser] = useState<UserCredentials | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const navigate = useNavigate()
   const handleAddUser = () => {
     navigate('/admin/users/create')
@@ -33,6 +37,21 @@ const UserTable: React.FC = observer(() => {
   const handleDelete = (id: number) => {
     void usersListStore.deleteUser(id)
     handleClose()
+  }
+  const handleEdit = (user: UserCredentials) => {
+    setSelectedUser({
+      id: user.id,
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
+      password: user.password,
+      roles: user.roles,
+    })
+    setIsEditModalOpen(true)
+  }
+  const handleCloseEdit = () => {
+    setIsEditModalOpen(false)
+    setSelectedUser(null)
   }
   useEffect(() => {
     void usersListStore.fetchUsers()
@@ -89,7 +108,7 @@ const UserTable: React.FC = observer(() => {
           >
             <DeleteIcon />
           </IconButton>
-          <IconButton aria-label="edit">
+          <IconButton aria-label="edit" onClick={() => handleEdit(params.row)}>
             <EditIcon />
           </IconButton>
         </Box>
@@ -145,6 +164,21 @@ const UserTable: React.FC = observer(() => {
           </IconButton>
         </Box>
       </Popover>
+      <Modal open={isEditModalOpen} onClose={handleCloseEdit}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            borderRadius: 2,
+          }}
+        >
+          <EditUser user={selectedUser} onClose={handleCloseEdit} />
+        </Box>
+      </Modal>
     </Paper>
   )
 })
