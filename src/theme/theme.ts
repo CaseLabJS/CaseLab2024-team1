@@ -1,22 +1,29 @@
 import { createTheme } from '@mui/material/styles'
 
-export const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-    // primary: {
-    //   main: '#909bd2',
-    //   contrastText: '#fff',
-    // },
-    // secondary: {
-    //   main: '#5d9ede',
-    // },
-    background: {
-      paper: '#050c27',
-      default: '#121212',
+export const theme = createTheme({
+  cssVariables: {
+    colorSchemeSelector: 'class',
+  },
+  //to customize palette colors you can use next structure instead of boolean:
+  colorSchemes: {
+    light: {
+      palette: {
+        background: {
+          default: '#F9F9FE',
+        },
+      },
+    },
+    dark: true,
+  },
+  // colorSchemes: { light: true, dark: true },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1536,
     },
   },
+  defaultColorScheme: 'dark',
 })
-
-export const Pallete = {
-  dark: darkTheme,
-}

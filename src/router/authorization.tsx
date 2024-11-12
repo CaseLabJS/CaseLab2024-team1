@@ -1,15 +1,14 @@
 import type { FC } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
-import authStore from '@/stores/authStore'
+import authStore from '@/stores/AuthStore'
 import type { AuthorizationProps } from './types'
-import { ROUTES } from './routes'
+import { ROUTES } from '@/router/constants.ts'
 
 export const Authorization: FC<AuthorizationProps> = observer(
   ({ requireAuth }) => {
     const { isAuth, isAdmin } = authStore
-    console.log(isAuth, isAdmin)
-    // route авторизации, но пользователь уже авторизован -> редирект на домашнюю страницу согласно роли
+    // маршрут /sign-in если пользователь уже авторизован, редирект на домашнюю страницу согласно роли
     if (!requireAuth && isAuth) {
       return <Navigate to={isAdmin ? ROUTES.admin() : ROUTES.app()} />
     }
@@ -18,10 +17,6 @@ export const Authorization: FC<AuthorizationProps> = observer(
       return <Navigate to={ROUTES.signIn} />
     }
 
-    return (
-      <section className="main">
-        <Outlet />
-      </section>
-    )
+    return <Outlet />
   }
 )

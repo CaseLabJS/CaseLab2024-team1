@@ -1,4 +1,4 @@
-import { User } from '@/types/sharedTypes'
+import { Roles, User } from '@/types/sharedTypes'
 
 const user: User = {
   id: 1,
@@ -8,7 +8,7 @@ const user: User = {
   roles: [
     {
       id: 1,
-      name: 'ADMIN',
+      name: Roles.ADMIN,
     },
   ],
 }

@@ -16,9 +16,21 @@ export interface UserCredentials {
   roles?: Role[]
 }
 
+export enum Roles {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
+
 export interface Role {
   id: number
-  name: string
+  name: Roles
+}
+
+export interface Comment {
+  id: number
+  author: User
+  createdAt: string //ISOString
+  content: string
 }
 
 // documents-controller / document-type-controller
@@ -27,6 +39,7 @@ export interface Document {
   user: User
   documentType: DocumentType
   documentVersions: DocumentVersion[]
+  comments: Comment[]
 }
 
 // document-types / attributes
@@ -36,8 +49,19 @@ export interface DocumentType {
   attributes: Attribute[]
 }
 
+export interface NewDocumentType {
+  name: string
+  attributeIds: number[]
+}
+
 export interface Attribute {
   id: number
+  name: string
+  required: boolean
+}
+
+export interface NewAttribute {
+  documentTypesIds: number[]
   name: string
   required: boolean
 }

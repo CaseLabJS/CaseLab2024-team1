@@ -1,6 +1,8 @@
 import { Paper, Box } from '@mui/material'
+import Footer from '@/components/footer/Footer'
+import { observer } from 'mobx-react-lite'
 
-const AdminPage = () => {
+const AdminPage = observer(() => {
   return (
     <Paper>
       <Box
@@ -24,15 +26,15 @@ const AdminPage = () => {
       </Box>
       <Box
         sx={{
-          width: '90vw',
+          width: '100vw',
           height: '7vh',
-          borderRadius: '15px',
+          backgroundColor: 'background.default',
         }}
       >
-        Footer
+        <Footer />
       </Box>
     </Paper>
   )
-}
+})
 
 export default AdminPage

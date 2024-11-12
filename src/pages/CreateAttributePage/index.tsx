@@ -1,56 +1,71 @@
-import React, { ChangeEvent, useState } from 'react'
-import { attributeControllerApi } from '@/api/attributeController'
-import DeleteIcon from '@mui/icons-material/Delete'
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
-import Input from '@mui/material/Input'
-import Grid2 from '@mui/material/Grid2'
-import Success from '@/pages/CreateAttributePage/_components/success'
-import Error from '@/pages/CreateAttributePage/_components/error'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import DocumentTypeId from '@/pages/CreateAttributePage/_components/DocumentTypeId'
+import CreateAttributeForm from '@/pages/CreateAttributePage/_components/CreateAttributeForm'
 import { observer } from 'mobx-react-lite'
-
-interface Attribute {
-  documentTypesNames: string[]
-  name: string
-  required: boolean
-}
+import { DocumentType, NewAttribute } from '@/types/sharedTypes.ts'
+import documentTypeListStore from '@/stores/DocumentTypeListStore/DocumentTypeListStore.ts'
+import { SelectChangeEvent } from '@mui/material'
+import attributeListStore from '@/stores/AttributeListStore/AttributeListStore.ts'
 
 const CreateAttributePage = observer(() => {
-  const [attribute, setAttribute] = useState<Attribute>({
-    documentTypesNames: [],
+  const [attribute, setAttribute] = useState<NewAttribute>({
+    documentTypesIds: [],
     name: '',
     required: false,
   })
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [countAttributeTypes, setCountAttributeTypes] = useState<number>(1)
+  const [documentTypesIds, setDocumentTypesIds] = useState<DocumentType[]>([])
+  useEffect(() => {
+    const fetchDocumentTypesIds = async () => {
+      await documentTypeListStore.fetchDocumentTypes()
+    }
+    void fetchDocumentTypesIds().then(() => {
+      setDocumentTypesIds(getDocumentTypesIds)
+    })
+  }, [])
 
+  const getDocumentTypesIds = () => {
+    const array: DocumentType[] = documentTypeListStore.types.map((type) => ({
+      id: type.data.id,
+      name: type.data.name,
+      attributes: type.data.attributes,
+    }))
+    return array
+  }
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value, type } = e.target
-    if (name.startsWith('documentTypesNames')) {
+    setAttribute((prev) => ({
+      ...prev,
+      [name]:
+        type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
+    }))
+  }
+  const handleChangeSelect = (e: SelectChangeEvent<number>) => {
+    const { name, value } = e.target
+    if (name.startsWith('documentTypesIds')) {
       setAttribute((prev) => {
-        const index = parseInt(name.replace('documentTypesNames', ''), 10)
-        const newDocumentTypesNames = [...prev.documentTypesNames]
-        newDocumentTypesNames[index] = value
+        const index = parseInt(name.replace('documentTypesIds', ''), 10)
+        const newDocumentTypesIds: number[] = [...prev.documentTypesIds]
+        newDocumentTypesIds[index] = parseInt(value as string, 10)
         return {
           ...prev,
-          documentTypesNames: newDocumentTypesNames,
+          documentTypesIds: newDocumentTypesIds,
         }
       })
-    } else {
-      setAttribute((prev) => ({
-        ...prev,
-        [name]:
-          type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
-      }))
     }
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    attributeControllerApi
-      .createAttribute(attribute)
+    console.log(attribute)
+    const createAttribute = async () => {
+      await attributeListStore.createAttribute(attribute)
+    }
+    void createAttribute()
       .then(() => {
         setSuccess('Атрибут успешно создан!')
         setError(null)
@@ -61,42 +76,33 @@ const CreateAttributePage = observer(() => {
       })
   }
 
-  const printHtmlDocumentTypesNames = (count: number = 1) => {
-    const htmlElementsArray = []
+  const getHtmlDocumentTypesIds = (count: number) => {
+    const htmlElementsArray: JSX.Element[] = []
     for (let i = 0; i < count; i++) {
       htmlElementsArray.push(
-        <Grid2 key={i}>
-          <label htmlFor={`documentTypesNames${i}`}>
-            {`${i + 1}) Тип документа `}
-          </label>
-          <Input
-            type="text"
-            id={`documentTypesNames${i}`}
-            name={`documentTypesNames${i}`}
-            value={attribute.documentTypesNames[i] || ''}
-            onChange={handleChange}
-          />
-          {i !== 0 && (
-            <button onClick={deleteDocumentTypesNames(i)}>
-              <DeleteIcon />
-            </button>
-          )}
-        </Grid2>
+        <DocumentTypeId
+          key={i}
+          i={i}
+          attribute={attribute}
+          documentTypesIds={documentTypesIds}
+          handleChangeSelect={handleChangeSelect}
+          deleteDocumentTypesNames={deleteDocumentTypesNames}
+        />
       )
     }
-    return htmlElementsArray.map((element) => element)
+    return htmlElementsArray
   }
 
   const deleteDocumentTypesNames =
     (index: number) => (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault()
       setAttribute((prev) => {
-        const newDocumentTypesNames = prev.documentTypesNames.filter(
+        const newDocumentTypesIds = prev.documentTypesIds.filter(
           (_, i) => i !== index
         )
         return {
           ...prev,
-          documentTypesNames: newDocumentTypesNames,
+          documentTypesIds: newDocumentTypesIds,
         }
       })
       setCountAttributeTypes(countAttributeTypes - 1)
@@ -108,54 +114,16 @@ const CreateAttributePage = observer(() => {
   }
 
   return (
-    <Grid2>
-      <h1>Создание атрибута</h1>
-      <form onSubmit={handleSubmit}>
-        <Grid2
-          container
-          spacing={2}
-          direction="column"
-          alignItems="center"
-          bgcolor="gray"
-          padding="15px"
-          justifyContent="center"
-        >
-          <Grid2>
-            <label htmlFor="name">Название атрибута</label>
-          </Grid2>
-
-          <Grid2>
-            <input
-              id="name"
-              name="name"
-              value={attribute.name}
-              onChange={handleChange}
-            />
-          </Grid2>
-          {printHtmlDocumentTypesNames(countAttributeTypes)}
-          <Grid2>
-            <button onClick={addDocumentTypesNames}>
-              <AddCircleOutlineIcon />
-            </button>
-          </Grid2>
-          <Grid2>
-            <label htmlFor="required">Обязательный</label>
-            <input
-              type="checkbox"
-              id="required"
-              name="required"
-              checked={attribute.required}
-              onChange={handleChange}
-            />
-          </Grid2>
-          <Grid2>
-            <button type="submit">Создать атрибут</button>
-          </Grid2>
-        </Grid2>
-      </form>
-      {error && <Error error={error} />}
-      {success && <Success success={success} />}
-    </Grid2>
+    <CreateAttributeForm
+      attribute={attribute}
+      countAttributeTypes={countAttributeTypes}
+      error={error}
+      success={success}
+      handleSubmit={handleSubmit}
+      handleChange={handleChange}
+      getHtmlDocumentTypesIds={getHtmlDocumentTypesIds}
+      addDocumentTypesNames={addDocumentTypesNames}
+    />
   )
 })
 

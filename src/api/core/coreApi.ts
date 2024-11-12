@@ -4,9 +4,9 @@ import axios, {
   type AxiosResponse,
 } from 'axios'
 import { apiPath } from '@/config'
-import { RequestType, RequestTypeWithData } from '../types'
-import { token } from '@/lib/tokenManager'
+import { RequestType, RequestTypeWithData } from './types'
 import { SerializedError } from './serializedError'
+import { buildQueryString, getQueryStringSeparator } from './helpers'
 
 export abstract class CoreApi {
   protected api = axios.create({
@@ -16,27 +16,41 @@ export abstract class CoreApi {
   constructor() {
     this.api.interceptors.response.use(
       <T>(response: AxiosResponse<T>) => response.data,
-      (error: AxiosError<string>) => {
+      (error: AxiosError<string | { error: string }>) => {
         const { status, data } = error.response ?? {
           status: error.status,
           data: 'Unknown error',
         }
 
         if (error.status === 401) {
-          token.clear()
+          return Promise.reject(
+            new SerializedError({
+              status,
+              message:
+                'Ошибка авторизации. Предоставлены не верные логин или пароль',
+            })
+          )
         }
 
         return Promise.reject(
           new SerializedError({
             status,
-            message: data,
+            message: typeof data === 'string' ? data : data.error,
           })
         )
       }
     )
   }
 
-  get: RequestType = (...req) => this.api.get(...req)
+  get: RequestType = (url, options = {}) => {
+    if (options?.queryParams) {
+      const queryString = buildQueryString(options.queryParams)
+      const separator = getQueryStringSeparator(url)
+      delete options.queryParams
+      return this.api.get(`${url}${separator}${queryString}`, { ...options })
+    }
+    return this.api.get(url, options)
+  }
 
   post: RequestTypeWithData = (...req) => this.api.post(...req)
 
