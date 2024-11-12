@@ -62,11 +62,14 @@ class DocumentsListStore {
     await executeWithLoading(this, () =>
       documentControllerApi.deleteDocument(documentId)
     )
-    runInAction(() => {
-      this.documents = this.documents.filter(
-        (currentDocument) => currentDocument.documentData.id !== documentId
-      )
-    })
+
+    if (!this.error) {
+      runInAction(() => {
+        this.documents = this.documents.filter(
+          (currentDocument) => currentDocument.documentData.id !== documentId
+        )
+      })
+    }
   }
 }
 
