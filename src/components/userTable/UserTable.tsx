@@ -1,25 +1,58 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { Button, Typography, Box, Paper } from '@mui/material'
+import { ROUTES } from '@/router/constants.ts'
+import { Loader } from '@/components/loader/loader'
 import { User, Role } from '@/types/sharedTypes'
-import { observer } from 'mobx-react-lite'
 import { usersListStore } from '@/stores/UsersListStore'
+import { observer } from 'mobx-react-lite'
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import {
+  Box,
+  IconButton,
+  Paper,
+  Typography,
+  Button,
+  Modal,
+  Alert,
+  Snackbar,
+} from '@mui/material'
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material'
+import ConfirmPopover from './ConfirmPopover'
 
 const UserTable: React.FC = observer(() => {
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [popoverIsOpen, setPopoverIsOpen] = useState(false)
+  const [idToDelete, setIdToDelete] = useState<number>(0)
+  const [loaderIsOpen, setLoaderIsOpen] = useState(true)
+  const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
+  const { loading, error } = usersListStore
   const navigate = useNavigate()
   const handleAddUser = () => {
-    navigate('/admin/users/create')
+    navigate(ROUTES.admin('users/create'))
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+    setPopoverIsOpen(false)
+  }
+  const handleDelete = async (id: number) => {
+    await usersListStore.deleteUser(id)
+    setSnackbarIsOpen(true)
+    handleClose()
   }
   useEffect(() => {
     void usersListStore.fetchUsers()
   }, [])
-  const rows: User[] = usersListStore.users.map((user) => ({
-    id: user.userData.id,
-    name: user.userData.name,
-    surname: user.userData.surname,
-    email: user.userData.email,
-    roles: user.userData.roles,
+  useEffect(() => {
+    if (error) {
+      setSnackbarIsOpen(true)
+    }
+  }, [error])
+  const rows: User[] = usersListStore.users.map(({ userData }) => ({
+    id: userData.id,
+    name: userData.name,
+    surname: userData.surname,
+    email: userData.email,
+    roles: userData.roles,
   }))
   const columns: GridColDef[] = [
     {
@@ -50,6 +83,35 @@ const UserTable: React.FC = observer(() => {
         return `${roles[0].name}`
       },
     },
+    {
+      field: 'actions',
+      headerName: 'Действия',
+      width: 200,
+      renderCell: (params: GridRenderCellParams<User>) => (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 1,
+            width: 'fit-content',
+          }}
+        >
+          <IconButton
+            aria-label="delete"
+            onClick={(event) => {
+              setAnchorEl(event.currentTarget)
+              setPopoverIsOpen(true)
+              setIdToDelete(params.row.id)
+            }}
+          >
+            <DeleteIcon />
+          </IconButton>
+          <IconButton aria-label="edit">
+            <EditIcon />
+          </IconButton>
+        </Box>
+      ),
+    },
   ]
 
   return (
@@ -72,6 +134,39 @@ const UserTable: React.FC = observer(() => {
           disableRowSelectionOnClick
         />
       </Box>
+      <ConfirmPopover
+        open={popoverIsOpen}
+        anchorEl={anchorEl}
+        title="Вы уверены?"
+        onConfirm={() => void handleDelete(idToDelete)}
+        onClose={handleClose}
+      />
+      <Snackbar
+        open={snackbarIsOpen}
+        autoHideDuration={6000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => setSnackbarIsOpen(false)}
+      >
+        <Alert severity={error ? 'error' : 'success'} sx={{ width: '100%' }}>
+          {error ? error.message : 'Пользователь удален'}
+        </Alert>
+      </Snackbar>
+      <Modal
+        open={loading && loaderIsOpen}
+        onClick={() => setLoaderIsOpen(false)}
+        closeAfterTransition
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+          }}
+        >
+          <Loader />
+        </Box>
+      </Modal>
     </Paper>
   )
 })
