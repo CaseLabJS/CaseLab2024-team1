@@ -23,9 +23,10 @@ import {
 const UserTable: React.FC = observer(() => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [popoverIsOpen, setPopoverIsOpen] = useState(false)
-  const [idToDelete, setIdToDelete] = useState<number>(0)
+  const [idToDelete, setIdToDelete] = useState<number | undefined>(0)
   const [selectedUser, setSelectedUser] = useState<UserCredentials | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [selectedRow, setSelectedRow] = useState<User | null>(null)
   const navigate = useNavigate()
   const handleAddUser = () => {
     navigate('/admin/users/create')
@@ -34,7 +35,7 @@ const UserTable: React.FC = observer(() => {
     setAnchorEl(null)
     setPopoverIsOpen(false)
   }
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: number | undefined) => {
     void usersListStore.deleteUser(id)
     handleClose()
   }
@@ -96,7 +97,7 @@ const UserTable: React.FC = observer(() => {
       field: 'actions',
       headerName: 'Действия',
       width: 200,
-      renderCell: (params: GridRenderCellParams<User>) => (
+      renderCell: (params: GridRenderCellParams<UserCredentials>) => (
         <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
           <IconButton
             aria-label="delete"
@@ -108,7 +109,13 @@ const UserTable: React.FC = observer(() => {
           >
             <DeleteIcon />
           </IconButton>
-          <IconButton aria-label="edit" onClick={() => handleEdit(params.row)}>
+          <IconButton
+            aria-label="edit"
+            onClick={() => {
+              handleEdit(params.row)
+              setSelectedRow(params.row as User)
+            }}
+          >
             <EditIcon />
           </IconButton>
         </Box>
@@ -176,7 +183,11 @@ const UserTable: React.FC = observer(() => {
             borderRadius: 2,
           }}
         >
-          <EditUser user={selectedUser} onClose={handleCloseEdit} />
+          <EditUser
+            user={selectedUser}
+            userRow={selectedRow}
+            onClose={handleCloseEdit}
+          />
         </Box>
       </Modal>
     </Paper>
