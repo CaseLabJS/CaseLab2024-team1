@@ -1,3 +1,4 @@
+/* eslint-disable mobx/missing-observer */
 import { Box, CircularProgress } from '@mui/material'
 
 export const Loader = () => {
