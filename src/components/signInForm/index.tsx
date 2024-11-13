@@ -1,29 +1,28 @@
-/* eslint-disable mobx/missing-observer */
-import React, { useEffect, useState } from 'react'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import Bird from '@/assets/bird.svg'
+import { Loader } from '@/components/loader/loader'
+import { ROUTES } from '@/router/constants.ts'
+import authStore from '@/stores/AuthStore'
 import {
-  TextField,
-  Button,
+  Email as EmailIcon,
+  Visibility,
+  VisibilityOff,
+} from '@mui/icons-material'
+import {
+  Alert,
   Box,
-  Typography,
+  Button,
   Checkbox,
   FormControlLabel,
   IconButton,
   InputAdornment,
-  Alert,
-  Snackbar,
   Modal,
+  Snackbar,
+  TextField,
+  Typography,
 } from '@mui/material'
-import {
-  Visibility,
-  VisibilityOff,
-  Email as EmailIcon,
-} from '@mui/icons-material'
-import authStore from '@/stores/AuthStore'
-import { Loader } from '@/components/loader/loader'
-import { ROUTES } from '@/router/constants.ts'
-import Bird from '@/assets/bird.svg'
+import React, { useEffect, useState } from 'react'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 
 type FormData = {
   email: string
