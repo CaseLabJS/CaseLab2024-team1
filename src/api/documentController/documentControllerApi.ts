@@ -37,12 +37,12 @@ class DocumentControllerApi extends BaseApi {
     })
   //возвращает новую версию документа
   patchDocumentVersion = (
-    versionId: number,
+    documentId: number,
     documentFields: DocumentVersionFields
   ) =>
     this.createRequest<Document>({
       request: () =>
-        privateApi.patch(`${SERVICE_URL}/${versionId}`, documentFields),
+        privateApi.patch(`${SERVICE_URL}/${documentId}`, documentFields),
       mock: async () => {
         const version = await this.getDocumentVersion(1, 1)
         return () => ({ ...version, ...documentFields })
@@ -101,6 +101,16 @@ class DocumentControllerApi extends BaseApi {
   recover = (documentId: number) =>
     this.createRequest<never>({
       request: () => privateApi.patch(`${SERVICE_URL}/${documentId}/recover`),
+    })
+
+  getTransactions = (id: number, queryParams?: QueryParams) =>
+    this.createRequest<Document>({
+      request: () =>
+        privateApi.get(
+          `${SERVICE_URL}/${id}/transactions`,
+          queryParams ? { queryParams } : {}
+        ),
+      mock: () => import('./mock/document'),
     })
 }
 

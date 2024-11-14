@@ -16,3 +16,10 @@ export type DocumentVersionModel = Omit<
 >
 
 export type DocumentVersionFields = Partial<DocumentVersionModel>
+
+export enum DocumentStatus {
+  CREATED = 'CREATED',
+  SIGNED_BY_AUTHOR = 'SIGNED_BY_AUTHOR',
+  MODIFIED = 'MODIFIED',
+  DELETED = 'DELETED',
+}
