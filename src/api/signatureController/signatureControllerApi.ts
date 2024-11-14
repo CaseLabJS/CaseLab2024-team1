@@ -2,6 +2,7 @@ import { BaseApi } from '../core/baseApi'
 import { privateApi } from '../core/private.api'
 import {
   Signature,
+  SignatureQueryParams,
   SignatureRequest,
   SignatureRequestModel,
   SignatureModel,
@@ -32,10 +33,18 @@ class SignatureControllerApi extends BaseApi {
       },
     })
 
-  sign = (signatureId: number, signature: SignatureModel) =>
+  sign = (
+    signatureId: number,
+    signature: SignatureModel,
+    params?: SignatureQueryParams
+  ) =>
     this.createRequest<Signature>({
       request: () =>
-        privateApi.post(`${SERVICE_URL}/${signatureId}`, signature),
+        privateApi.post(
+          `${SERVICE_URL}/${signatureId}`,
+          signature,
+          params && { params }
+        ),
     })
 
   createVote = (vote: VoteModel) =>
