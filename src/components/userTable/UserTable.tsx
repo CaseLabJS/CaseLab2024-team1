@@ -8,11 +8,11 @@ import { usersListStore } from '@/stores/UsersListStore'
 import { observer } from 'mobx-react-lite'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import {
-  Button,
-  Typography,
   Box,
-  Paper,
   IconButton,
+  Paper,
+  Typography,
+  Button,
   Modal,
   Alert,
   Snackbar,
@@ -23,7 +23,7 @@ import ConfirmPopover from './ConfirmPopover'
 const UserTable: React.FC = observer(() => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [popoverIsOpen, setPopoverIsOpen] = useState(false)
-  const [idToDelete, setIdToDelete] = useState<number | undefined>(0)
+  const [idToDelete, setIdToDelete] = useState<number>(0)
   const [selectedUser, setSelectedUser] = useState<UserCredentials | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState<User | null>(null)
@@ -38,8 +38,8 @@ const UserTable: React.FC = observer(() => {
     setAnchorEl(null)
     setPopoverIsOpen(false)
   }
-  const handleDelete = (id: number | undefined) => {
-    void usersListStore.deleteUser(id)
+  const handleDelete = async (id: number | undefined) => {
+    await usersListStore.deleteUser(id)
     setSnackbarIsOpen(true)
     handleClose()
   }
@@ -103,8 +103,15 @@ const UserTable: React.FC = observer(() => {
       field: 'actions',
       headerName: 'Действия',
       width: 200,
-      renderCell: (params: GridRenderCellParams<UserCredentials>) => (
-        <Box sx={{ display: 'flex', justifyContent: 'space-around' }}>
+      renderCell: (params: GridRenderCellParams<User>) => (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: 1,
+            width: 'fit-content',
+          }}
+        >
           <IconButton
             aria-label="delete"
             onClick={(event) => {

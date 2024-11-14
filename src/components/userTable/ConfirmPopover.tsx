@@ -9,7 +9,6 @@ interface ConfirmPopoverProps {
   onConfirm: () => void
   onClose: () => void
 }
-
 const ConfirmPopover: React.FC<ConfirmPopoverProps> = observer(
   ({ open, anchorEl, title, onConfirm, onClose }) => {
     return (
