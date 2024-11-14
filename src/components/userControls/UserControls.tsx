@@ -1,18 +1,20 @@
+import { ROUTES } from '@/router/constants'
+import { Roles } from '@/types/sharedTypes'
 import { observer } from 'mobx-react-lite'
 import authStore from '@/stores/AuthStore'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import {
+  Box,
   Button,
   Tooltip,
   IconButton,
   Menu,
   MenuItem,
   ListItemIcon,
+  Typography,
 } from '@mui/material'
 import { Logout, AccountCircle } from '@mui/icons-material'
-import { ROUTES } from '@/router/constants'
-import { Roles } from '@/types/sharedTypes'
 
 const UserControls = observer(() => {
   const navigate = useNavigate()
@@ -32,8 +34,8 @@ const UserControls = observer(() => {
   }
   if (isAuth) {
     return (
-      <>
-        <Tooltip title={<h3 style={{ height: 20 }}>{userCredentials}</h3>}>
+      <Box sx={{ marginLeft: 'auto' }}>
+        <Tooltip title={<Typography>{userCredentials}</Typography>}>
           <IconButton
             size="medium"
             aria-label="account of current user"
@@ -71,12 +73,16 @@ const UserControls = observer(() => {
             Logout
           </MenuItem>
         </Menu>
-      </>
+      </Box>
     )
   } else {
     return (
       <>
-        <Button variant="contained" onClick={() => navigate(ROUTES.signIn)}>
+        <Button
+          sx={{ marginLeft: 'auto' }}
+          variant="contained"
+          onClick={() => navigate(ROUTES.signIn)}
+        >
           LOGIN
         </Button>
       </>

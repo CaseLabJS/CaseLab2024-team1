@@ -1,8 +1,7 @@
-import { AppBar, Box } from '@mui/material'
-import Toolbar from '@mui/material/Toolbar'
 import UserControls from '../userControls/UserControls'
 import HomeNavigation from './HomeNavigation'
 import HomeBrand from './HomeBrand'
+import { AppBar, Toolbar } from '@mui/material'
 
 const HomeHeader = () => {
   const appBarStyle = {
@@ -15,9 +14,7 @@ const HomeHeader = () => {
       <Toolbar>
         <HomeBrand />
         <HomeNavigation />
-        <Box sx={{ marginLeft: 'auto' }}>
-          <UserControls />
-        </Box>
+        <UserControls />
       </Toolbar>
     </AppBar>
   )

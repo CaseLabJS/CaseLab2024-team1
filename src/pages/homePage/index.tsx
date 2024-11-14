@@ -1,20 +1,21 @@
 import HomeHeader from '@/components/homePage/HomeHeader'
-import { Box } from '@mui/material'
 import Footer from '@/components/footer/Footer'
 import HomeContent from '@/components/homePage/HomeContent'
+import { Box } from '@mui/material'
 
 const HomePage = () => {
   const generalStyle = {
     minWidth: 100,
-    minHeight: '93vh',
     display: 'flex',
     justifyContent: 'center',
+    mt: '100px',
+    minHeight: '85svh',
   }
 
   return (
     <>
+      <HomeHeader />
       <Box sx={generalStyle}>
-        <HomeHeader />
         <HomeContent />
       </Box>
       <Footer />
