@@ -1,5 +1,4 @@
 import { ROUTES } from '@/router/constants'
-import { Roles } from '@/types/sharedTypes'
 import { observer } from 'mobx-react-lite'
 import authStore from '@/stores/AuthStore'
 import { useNavigate } from 'react-router-dom'
@@ -18,7 +17,7 @@ import { Logout, AccountCircle } from '@mui/icons-material'
 
 const UserControls = observer(() => {
   const navigate = useNavigate()
-  const { isAuth, user } = authStore
+  const { isAuth, isAdmin, user } = authStore
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget)
@@ -28,9 +27,7 @@ const UserControls = observer(() => {
   }
   let userCredentials = ''
   if (user) {
-    userCredentials = !user.roles.includes(Roles.ADMIN)
-      ? user.email
-      : `${user.email} (administrator)`
+    userCredentials = !isAdmin ? user.email : `${user.email} (administrator)`
   }
   if (isAuth) {
     return (

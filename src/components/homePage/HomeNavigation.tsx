@@ -1,5 +1,4 @@
 import { ROUTES } from '@/router/constants'
-import { Roles } from '@/types/sharedTypes'
 import { observer } from 'mobx-react-lite'
 import authStore from '@/stores/AuthStore'
 import { useNavigate } from 'react-router-dom'
@@ -9,7 +8,7 @@ import ArticleIcon from '@mui/icons-material/Article'
 
 const HomeNavigation = observer(() => {
   const navigate = useNavigate()
-  const { isAuth, user } = authStore
+  const { isAuth, isAdmin } = authStore
   const buttonStyle = {
     color: 'white',
     display: 'flex',
@@ -23,7 +22,7 @@ const HomeNavigation = observer(() => {
   return (
     <>
       <Box sx={routesBoxStyle}>
-        {user?.roles.includes(Roles.ADMIN) && (
+        {isAdmin && (
           <Box onClick={() => navigate(ROUTES.admin())}>
             <Button size="large" sx={buttonStyle}>
               <AdminPanelSettingsIcon sx={{ height: 30, width: 30 }} />
