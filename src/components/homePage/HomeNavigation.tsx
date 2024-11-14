@@ -23,19 +23,21 @@ const HomeNavigation = observer(() => {
   return (
     <Box sx={routesBoxStyle}>
       {isAdmin && (
-        <Box onClick={() => navigate(ROUTES.admin())}>
-          <Button size="large" sx={buttonStyle}>
-            <AdminPanelSettingsIcon sx={{ height: 30, width: 30 }} />
-            <Typography
-              variant="subtitle1"
-              sx={{ display: { xs: 'none', md: 'flex' }, ml: 1 }}
-            >
-              Панель администратора
-            </Typography>
-          </Button>
-        </Box>
+        <>
+          <Box onClick={() => navigate(ROUTES.admin())}>
+            <Button size="large" sx={buttonStyle}>
+              <AdminPanelSettingsIcon sx={{ height: 30, width: 30 }} />
+              <Typography
+                variant="subtitle1"
+                sx={{ display: { xs: 'none', md: 'flex' }, ml: 1 }}
+              >
+                Панель администратора
+              </Typography>
+            </Button>
+          </Box>
+          <Divider orientation="vertical" variant="middle" flexItem />
+        </>
       )}
-      <Divider orientation="vertical" variant="middle" flexItem />
       {isAuth && (
         <Button
           size="large"
