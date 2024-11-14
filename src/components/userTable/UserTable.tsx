@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/router/constants.ts'
+import { Loader } from '@/components/loader/loader'
 import EditUser from '../editUser/EditUser'
 import { User, Role, UserCredentials } from '@/types/sharedTypes'
 import { usersListStore } from '@/stores/UsersListStore'
@@ -10,15 +12,13 @@ import {
   Typography,
   Box,
   Paper,
-  Popover,
   IconButton,
   Modal,
+  Alert,
+  Snackbar,
 } from '@mui/material'
-import {
-  Delete as DeleteIcon,
-  Close as CloseIcon,
-  Edit as EditIcon,
-} from '@mui/icons-material'
+import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material'
+import ConfirmPopover from './ConfirmPopover'
 
 const UserTable: React.FC = observer(() => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -27,9 +27,12 @@ const UserTable: React.FC = observer(() => {
   const [selectedUser, setSelectedUser] = useState<UserCredentials | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState<User | null>(null)
+  const [loaderIsOpen, setLoaderIsOpen] = useState(true)
+  const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
+  const { loading, error } = usersListStore
   const navigate = useNavigate()
   const handleAddUser = () => {
-    navigate('/admin/users/create')
+    navigate(ROUTES.admin('users/create'))
   }
   const handleClose = () => {
     setAnchorEl(null)
@@ -37,16 +40,14 @@ const UserTable: React.FC = observer(() => {
   }
   const handleDelete = (id: number | undefined) => {
     void usersListStore.deleteUser(id)
+    setSnackbarIsOpen(true)
     handleClose()
   }
   const handleEdit = (user: UserCredentials) => {
     setSelectedUser({
-      id: user.id,
       name: user.name,
       surname: user.surname,
       email: user.email,
-      password: user.password,
-      roles: user.roles,
     })
     setIsEditModalOpen(true)
   }
@@ -57,6 +58,11 @@ const UserTable: React.FC = observer(() => {
   useEffect(() => {
     void usersListStore.fetchUsers()
   }, [])
+  useEffect(() => {
+    if (error) {
+      setSnackbarIsOpen(true)
+    }
+  }, [error])
   const rows: User[] = usersListStore.users.map(({ userData }) => ({
     id: userData.id,
     name: userData.name,
@@ -143,34 +149,13 @@ const UserTable: React.FC = observer(() => {
           disableRowSelectionOnClick
         />
       </Box>
-      <Popover
+      <ConfirmPopover
         open={popoverIsOpen}
         anchorEl={anchorEl}
+        title="Вы уверены?"
+        onConfirm={() => void handleDelete(idToDelete)}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <Box
-          sx={{
-            padding: 1,
-            display: 'flex',
-            alignItems: 'center',
-            borderRadius: '26px',
-          }}
-        >
-          <Typography>Вы уверены?</Typography>
-          <Button onClick={() => handleDelete(idToDelete)}>Да</Button>
-          <IconButton aria-label="close" onClick={handleClose}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-      </Popover>
+      />
       <Modal open={isEditModalOpen} onClose={handleCloseEdit}>
         <Box
           sx={{
@@ -188,6 +173,32 @@ const UserTable: React.FC = observer(() => {
             userRow={selectedRow}
             onClose={handleCloseEdit}
           />
+        </Box>
+      </Modal>
+      <Snackbar
+        open={snackbarIsOpen}
+        autoHideDuration={6000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => setSnackbarIsOpen(false)}
+      >
+        <Alert severity={error ? 'error' : 'success'} sx={{ width: '100%' }}>
+          {error ? error.message : 'Пользователь удален'}
+        </Alert>
+      </Snackbar>
+      <Modal
+        open={loading && loaderIsOpen}
+        onClick={() => setLoaderIsOpen(false)}
+        closeAfterTransition
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+          }}
+        >
+          <Loader />
         </Box>
       </Modal>
     </Paper>
