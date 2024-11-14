@@ -110,7 +110,7 @@ class DocumentControllerApi extends BaseApi {
           `${SERVICE_URL}/${id}/transactions`,
           queryParams ? { queryParams } : {}
         ),
-      mock: () => import('./mock/document'),
+      mock: () => import('./mock/status'),
     })
 }
 
