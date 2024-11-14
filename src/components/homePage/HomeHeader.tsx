@@ -11,7 +11,7 @@ const HomeHeader = () => {
   }
   return (
     <AppBar position="fixed" sx={appBarStyle}>
-      <Toolbar>
+      <Toolbar sx={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr' }}>
         <HomeBrand />
         <HomeNavigation />
         <UserControls />

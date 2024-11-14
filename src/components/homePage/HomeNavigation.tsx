@@ -18,41 +18,40 @@ const HomeNavigation = observer(() => {
     display: { xs: 'flex', md: 'flex' },
     height: 50,
     alignItems: 'center',
+    justifyContent: 'center',
   }
   return (
-    <>
-      <Box sx={routesBoxStyle}>
-        {isAdmin && (
-          <Box onClick={() => navigate(ROUTES.admin())}>
-            <Button size="large" sx={buttonStyle}>
-              <AdminPanelSettingsIcon sx={{ height: 30, width: 30 }} />
-              <Typography
-                variant="subtitle1"
-                sx={{ display: { xs: 'none', md: 'flex' }, ml: 1 }}
-              >
-                Панель администратора
-              </Typography>
-            </Button>
-          </Box>
-        )}
-        <Divider orientation="vertical" variant="middle" flexItem />
-        {isAuth && (
-          <Button
-            size="large"
-            onClick={() => navigate(ROUTES.app())}
-            sx={buttonStyle}
-          >
-            <ArticleIcon sx={{ height: 30, width: 30 }} />
+    <Box sx={routesBoxStyle}>
+      {isAdmin && (
+        <Box onClick={() => navigate(ROUTES.admin())}>
+          <Button size="large" sx={buttonStyle}>
+            <AdminPanelSettingsIcon sx={{ height: 30, width: 30 }} />
             <Typography
               variant="subtitle1"
               sx={{ display: { xs: 'none', md: 'flex' }, ml: 1 }}
             >
-              Перейти к приложению
+              Панель администратора
             </Typography>
           </Button>
-        )}
-      </Box>
-    </>
+        </Box>
+      )}
+      <Divider orientation="vertical" variant="middle" flexItem />
+      {isAuth && (
+        <Button
+          size="large"
+          onClick={() => navigate(ROUTES.app())}
+          sx={buttonStyle}
+        >
+          <ArticleIcon sx={{ height: 30, width: 30 }} />
+          <Typography
+            variant="subtitle1"
+            sx={{ display: { xs: 'none', md: 'flex' }, ml: 1 }}
+          >
+            Перейти к приложению
+          </Typography>
+        </Button>
+      )}
+    </Box>
   )
 })
 export default HomeNavigation
