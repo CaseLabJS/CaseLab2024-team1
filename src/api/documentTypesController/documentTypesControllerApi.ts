@@ -6,10 +6,10 @@ import { QueryParams } from '../core/types'
 
 const SERVICE_URL = '/document-types'
 class DocumentTypesControllerApi extends BaseApi {
-  getDocumentTypeById = (id: number, queryParams?: QueryParams) =>
+  getDocumentTypeById = (id: number, params?: QueryParams) =>
     this.createRequest<DocumentType>({
       request: () =>
-        privateApi.get(`${SERVICE_URL}/${id}`, queryParams && { queryParams }),
+        privateApi.get(`${SERVICE_URL}/${id}`, params && { params }),
       mock: () => import('./mock/documentTypes'),
     })
 
@@ -43,10 +43,9 @@ class DocumentTypesControllerApi extends BaseApi {
       request: () => privateApi.delete(`${SERVICE_URL}/${id}`),
     })
 
-  getDocumentTypes = (queryParams?: QueryParams) =>
+  getDocumentTypes = (params?: QueryParams) =>
     this.createRequest<DocumentType[]>({
-      request: () =>
-        privateApi.get(`${SERVICE_URL}`, queryParams && { queryParams }),
+      request: () => privateApi.get(`${SERVICE_URL}`, params && { params }),
       mock: async () => {
         const document = await this.getDocumentTypeById(1)
         return () => [document]

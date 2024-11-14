@@ -10,13 +10,10 @@ import type { QueryParams } from '../core/types'
 
 const SERVICE_URL = '/documents'
 class DocumentControllerApi extends BaseApi {
-  getDocumentById = (id: number, queryParams?: QueryParams) =>
+  getDocumentById = (id: number, params?: QueryParams) =>
     this.createRequest<Document>({
       request: () =>
-        privateApi.get(
-          `${SERVICE_URL}/${id}`,
-          queryParams ? { queryParams } : {}
-        ),
+        privateApi.get(`${SERVICE_URL}/${id}`, params && { params }),
       mock: () => import('./mock/document'),
     })
   //возвращает документ
@@ -54,10 +51,9 @@ class DocumentControllerApi extends BaseApi {
       request: () => privateApi.delete(`${SERVICE_URL}/${id}`),
     })
 
-  getDocuments = (queryParams?: QueryParams) =>
+  getDocuments = (params?: QueryParams) =>
     this.createRequest<Document[]>({
-      request: () =>
-        privateApi.get(`${SERVICE_URL}`, queryParams && { queryParams }),
+      request: () => privateApi.get(`${SERVICE_URL}`, params && { params }),
       mock: async () => {
         const document = await this.getDocumentById(1)
         return () => [document]
@@ -67,13 +63,13 @@ class DocumentControllerApi extends BaseApi {
   getDocumentVersion = (
     documentId: number,
     versionId: number,
-    queryParams?: QueryParams
+    params?: QueryParams
   ) =>
     this.createRequest<Document>({
       request: () =>
         privateApi.get(
           `${SERVICE_URL}/${documentId}/${versionId}`,
-          queryParams && { queryParams }
+          params && { params }
         ),
       mock: async () => {
         const document = await this.getDocumentById(1)
@@ -103,12 +99,12 @@ class DocumentControllerApi extends BaseApi {
       request: () => privateApi.patch(`${SERVICE_URL}/${documentId}/recover`),
     })
 
-  getTransactions = (id: number, queryParams?: QueryParams) =>
+  getTransactions = (id: number, params?: QueryParams) =>
     this.createRequest<Document>({
       request: () =>
         privateApi.get(
           `${SERVICE_URL}/${id}/transactions`,
-          queryParams ? { queryParams } : {}
+          params && { params }
         ),
       mock: () => import('./mock/status'),
     })
