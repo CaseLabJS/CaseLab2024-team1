@@ -182,7 +182,7 @@ const CreateUser: React.FC = observer(() => {
           onClose={() => setSnackbarIsOpen(false)}
         >
           <Alert severity={error ? 'error' : 'success'} sx={{ width: '100%' }}>
-            {error ? error : 'Пользователь создан'}
+            {error ? error.message : 'Пользователь создан'}
           </Alert>
         </Snackbar>
       </Box>

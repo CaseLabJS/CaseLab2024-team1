@@ -1,5 +1,5 @@
 import { Paper, Box } from '@mui/material'
-import Footer from '../footer/footer'
+import Footer from '@/components/footer/Footer'
 import { observer } from 'mobx-react-lite'
 
 const AdminPage = observer(() => {

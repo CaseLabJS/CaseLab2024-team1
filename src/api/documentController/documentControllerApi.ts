@@ -1,4 +1,4 @@
-import { Document, DocumentVersion } from '@/types/sharedTypes'
+import { Document, DocumentVersion, Comment } from '@/types/sharedTypes'
 import { BaseApi } from '../core/baseApi'
 import { privateApi } from '../core/private.api'
 import {
