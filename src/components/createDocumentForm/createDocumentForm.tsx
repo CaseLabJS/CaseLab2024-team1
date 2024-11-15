@@ -3,14 +3,16 @@ import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import { Dropzone } from '@/components/dropzone/dropzone'
 import { DocumentForm } from '@/components/createDocumentForm/documentForm/documentForm'
-import { ChangeEvent, useCallback, useState } from 'react'
+import { ChangeEvent, FormEvent, useCallback, useState } from 'react'
 import { SignerSection } from '@/components/createDocumentForm/signerSection/signerSection.tsx'
 import { ActionButtons } from '@/components/createDocumentForm/actionButtons/actionButtons.tsx'
 import { FormControl } from '@/components/createDocumentForm/formControl/formControl.tsx'
 import { DocumentPackageInfo } from '@/components/createDocumentForm/documentPackageInfo/documentPackageInfo.tsx'
-import { testDocumentsType } from '@/stories/selectField/testData/testData.ts'
+import {
+  agreement,
+  testDocumentsType,
+} from '@/stories/selectField/testData/testData.ts'
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
-import { agreement } from '@/stories/selectField/selectField.stories.tsx'
 import { FormValues } from '@/components/createDocumentForm/types.ts'
 
 export const CreateDocumentForm = () => {
@@ -58,7 +60,7 @@ export const CreateDocumentForm = () => {
       )
       setUploadedFiles((prevFiles) => [...prevFiles, ...files])
     },
-    [form]
+    [form, initialDocumentType.attributes, initialDocumentType.name]
   )
 
   const handleRequestAllSignaturesChange = useCallback(
@@ -93,10 +95,16 @@ export const CreateDocumentForm = () => {
     [uploadedFiles, form]
   )
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = useCallback(() => {
     //TODO обработка документа и post запрос
-    console.log('data', data)
-  }
+  }, [])
+
+  const handleFormSubmit = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      void form.handleSubmit(onSubmit)(event)
+    },
+    [form, onSubmit]
+  )
 
   return (
     <Paper
@@ -118,7 +126,7 @@ export const CreateDocumentForm = () => {
         <Dropzone onFilesAccepted={onFilesAccepted} />
       ) : (
         <FormProvider {...form}>
-          <Box component="form" onSubmit={form.handleSubmit(onSubmit)}>
+          <Box component="form" onSubmit={handleFormSubmit}>
             <FormControl
               isChecked={isChecked}
               handleChangeChecked={handleChangeChecked}
