@@ -99,11 +99,11 @@ class DocumentControllerApi extends BaseApi {
       request: () => privateApi.patch(`${SERVICE_URL}/${documentId}/recover`),
     })
 
-  getTransactions = (id: number, params?: QueryParams) =>
+  getTransitions = (id: number, params?: QueryParams) =>
     this.createRequest<Document>({
       request: () =>
         privateApi.get(
-          `${SERVICE_URL}/${id}/transactions`,
+          `${SERVICE_URL}/${id}/transitions`,
           params && { params }
         ),
       mock: () => import('./mock/status'),
