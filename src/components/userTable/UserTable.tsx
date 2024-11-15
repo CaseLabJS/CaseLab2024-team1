@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/router/constants.ts'
 import { Loader } from '@/components/loader/loader'
 import EditUser from '../editUser/EditUser'
-import { User, Role, UserCredentials } from '@/types/sharedTypes'
+import { User, Role, Roles } from '@/types/sharedTypes'
 import { usersListStore } from '@/stores/UsersListStore'
 import { observer } from 'mobx-react-lite'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
@@ -24,11 +24,20 @@ const UserTable: React.FC = observer(() => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [popoverIsOpen, setPopoverIsOpen] = useState(false)
   const [idToDelete, setIdToDelete] = useState<number>(0)
-  const [selectedUser, setSelectedUser] = useState<UserCredentials | null>(null)
+  const [selectedUser, setSelectedUser] = useState<User>({
+    id: 0,
+    name: '',
+    surname: '',
+    roles: [],
+    email: '',
+  })
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [selectedRow, setSelectedRow] = useState<User | null>(null)
   const [loaderIsOpen, setLoaderIsOpen] = useState(true)
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
+  const [selectedRole, setSelectedRole] = useState<Role>({
+    id: 1,
+    name: Roles.ADMIN,
+  })
   const { loading, error } = usersListStore
   const navigate = useNavigate()
   const handleAddUser = () => {
@@ -38,22 +47,31 @@ const UserTable: React.FC = observer(() => {
     setAnchorEl(null)
     setPopoverIsOpen(false)
   }
-  const handleDelete = async (id: number | undefined) => {
+  const handleDelete = async (id: number) => {
     await usersListStore.deleteUser(id)
     setSnackbarIsOpen(true)
     handleClose()
   }
-  const handleEdit = (user: UserCredentials) => {
+  const handleEdit = (user: User) => {
     setSelectedUser({
+      id: user.id,
       name: user.name,
       surname: user.surname,
       email: user.email,
+      roles: user.roles,
     })
+    setSelectedRole({ id: user.roles[0].id, name: user.roles[0].name })
     setIsEditModalOpen(true)
   }
   const handleCloseEdit = () => {
     setIsEditModalOpen(false)
-    setSelectedUser(null)
+    setSelectedUser({
+      id: 0,
+      name: '',
+      surname: '',
+      roles: [],
+      email: '',
+    })
   }
   useEffect(() => {
     void usersListStore.fetchUsers()
@@ -96,7 +114,7 @@ const UserTable: React.FC = observer(() => {
       headerName: 'Роль',
       width: 200,
       valueGetter: (roles: Role[]) => {
-        return `${roles[0].name}`
+        return `${roles[0]?.name || ''}`
       },
     },
     {
@@ -126,7 +144,6 @@ const UserTable: React.FC = observer(() => {
             aria-label="edit"
             onClick={() => {
               handleEdit(params.row)
-              setSelectedRow(params.row as User)
             }}
           >
             <EditIcon />
@@ -177,7 +194,7 @@ const UserTable: React.FC = observer(() => {
         >
           <EditUser
             user={selectedUser}
-            userRow={selectedRow}
+            role={selectedRole}
             onClose={handleCloseEdit}
           />
         </Box>
