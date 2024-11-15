@@ -3,7 +3,7 @@ import Footer from '@/components/footer/Footer'
 import HomeContent from '@/components/homePage/HomeContent'
 import { Box } from '@mui/material'
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
   const generalStyle = {
     minWidth: 100,
     display: 'flex',

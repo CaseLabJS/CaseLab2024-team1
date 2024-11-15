@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import Bird from '@/assets/bird.svg'
-const HomeBrand = () => {
+const HomeBrand: React.FC = () => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Box sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}>

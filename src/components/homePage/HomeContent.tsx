@@ -1,6 +1,6 @@
 import { Typography, Box, Paper, List, ListItem } from '@mui/material'
 
-const HomeContent = () => {
+const HomeContent: React.FC = () => {
   const importantTextStyle = {
     textAlign: 'center',
     fontWeight: 'bold',
@@ -16,8 +16,8 @@ const HomeContent = () => {
   const cardStyle = {
     width: {
       xs: 350,
-      md: 500,
-      lg: 600,
+      md: 350,
+      lg: 400,
     },
     maxWidth: 400,
     minHeight: 100,
@@ -47,7 +47,7 @@ const HomeContent = () => {
         alignItems: 'center',
       }}
     >
-      <Box mb={5}>
+      <Box sx={{ mb: 5 }}>
         <Typography sx={importantTextStyle} color="primary">
           TechDoc
         </Typography>
@@ -64,7 +64,7 @@ const HomeContent = () => {
           документами. Без бумаги. Без лишних затрат. Быстро и просто.
         </Typography>
       </Paper>
-      <Box my={5}>
+      <Box sx={{ my: 5 }}>
         <Typography sx={importantTextStyle}>Почему TechDoc?</Typography>
       </Box>
       <Box sx={rowContainerStyle}>
@@ -96,7 +96,7 @@ const HomeContent = () => {
           </Typography>
         </Paper>
       </Box>
-      <Box my={5}>
+      <Box sx={{ my: 5 }}>
         <Typography sx={importantTextStyle}>Возможности TechDoc</Typography>
       </Box>
       <Box sx={rowContainerStyle}>
@@ -169,7 +169,7 @@ const HomeContent = () => {
           </List>
         </Paper>
       </Box>
-      <Box my={10}>
+      <Box sx={{ my: 5 }}>
         <Typography sx={importantTextStyle}>
           Все это и многое другое вы найдете в TechDoc.
         </Typography>

@@ -6,7 +6,7 @@ import { Box, Button, Divider, Typography } from '@mui/material'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import ArticleIcon from '@mui/icons-material/Article'
 
-const HomeNavigation = observer(() => {
+const HomeNavigation: React.FC = observer(() => {
   const navigate = useNavigate()
   const { isAuth, isAdmin } = authStore
   const buttonStyle = {

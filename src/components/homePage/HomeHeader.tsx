@@ -3,7 +3,7 @@ import HomeNavigation from './HomeNavigation'
 import HomeBrand from './HomeBrand'
 import { AppBar, Toolbar } from '@mui/material'
 
-const HomeHeader = () => {
+const HomeHeader: React.FC = () => {
   const appBarStyle = {
     height: 80,
     display: 'flex',
