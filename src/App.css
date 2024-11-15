@@ -1,15 +1,15 @@
 .main {
-    padding: 0 5rem;
+  padding: 2rem 5rem;
 }
 
 @media (max-width: 1200px) {
-    .main {
-        padding: 0 2rem;
-    }
+  .main {
+    padding: 1.5rem 2rem;
+  }
 }
 
 @media (max-width: 550px) {
-    .main {
-        padding: 0 1rem;
-    }
+  .main {
+    padding: 1.5rem 1rem;
+  }
 }
