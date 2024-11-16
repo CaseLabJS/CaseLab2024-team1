@@ -38,3 +38,7 @@ export type VoteCanceled = {
   id: number
   status: string
 }
+
+export type SignatureQueryParams = {
+  signByRequest?: boolean
+}
