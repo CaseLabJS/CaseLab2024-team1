@@ -10,13 +10,10 @@ import type { QueryParams } from '../core/types'
 
 const SERVICE_URL = '/documents'
 class DocumentControllerApi extends BaseApi {
-  getDocumentById = (id: number, queryParams?: QueryParams) =>
+  getDocumentById = (id: number, params?: QueryParams) =>
     this.createRequest<Document>({
       request: () =>
-        privateApi.get(
-          `${SERVICE_URL}/${id}`,
-          queryParams ? { queryParams } : {}
-        ),
+        privateApi.get(`${SERVICE_URL}/${id}`, params && { params }),
       mock: () => import('./mock/document'),
     })
   //возвращает документ
@@ -37,12 +34,12 @@ class DocumentControllerApi extends BaseApi {
     })
   //возвращает новую версию документа
   patchDocumentVersion = (
-    versionId: number,
+    documentId: number,
     documentFields: DocumentVersionFields
   ) =>
     this.createRequest<Document>({
       request: () =>
-        privateApi.patch(`${SERVICE_URL}/${versionId}`, documentFields),
+        privateApi.patch(`${SERVICE_URL}/${documentId}`, documentFields),
       mock: async () => {
         const version = await this.getDocumentVersion(1, 1)
         return () => ({ ...version, ...documentFields })
@@ -54,10 +51,9 @@ class DocumentControllerApi extends BaseApi {
       request: () => privateApi.delete(`${SERVICE_URL}/${id}`),
     })
 
-  getDocuments = (queryParams?: QueryParams) =>
+  getDocuments = (params?: QueryParams) =>
     this.createRequest<Document[]>({
-      request: () =>
-        privateApi.get(`${SERVICE_URL}`, queryParams && { queryParams }),
+      request: () => privateApi.get(`${SERVICE_URL}`, params && { params }),
       mock: async () => {
         const document = await this.getDocumentById(1)
         return () => [document]
@@ -67,13 +63,13 @@ class DocumentControllerApi extends BaseApi {
   getDocumentVersion = (
     documentId: number,
     versionId: number,
-    queryParams?: QueryParams
+    params?: QueryParams
   ) =>
     this.createRequest<Document>({
       request: () =>
         privateApi.get(
           `${SERVICE_URL}/${documentId}/${versionId}`,
-          queryParams && { queryParams }
+          params && { params }
         ),
       mock: async () => {
         const document = await this.getDocumentById(1)
@@ -101,6 +97,16 @@ class DocumentControllerApi extends BaseApi {
   recover = (documentId: number) =>
     this.createRequest<never>({
       request: () => privateApi.patch(`${SERVICE_URL}/${documentId}/recover`),
+    })
+
+  getTransitions = (id: number, params?: QueryParams) =>
+    this.createRequest<Document>({
+      request: () =>
+        privateApi.get(
+          `${SERVICE_URL}/${id}/transitions`,
+          params && { params }
+        ),
+      mock: () => import('./mock/status'),
     })
 }
 

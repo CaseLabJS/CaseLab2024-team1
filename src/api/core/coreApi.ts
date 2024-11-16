@@ -6,7 +6,6 @@ import axios, {
 import { apiPath } from '@/config'
 import { RequestType, RequestTypeWithData } from './types'
 import { SerializedError } from './serializedError'
-import { buildQueryString, getQueryStringSeparator } from './helpers'
 
 export abstract class CoreApi {
   protected api = axios.create({
@@ -42,15 +41,7 @@ export abstract class CoreApi {
     )
   }
 
-  get: RequestType = (url, options = {}) => {
-    if (options?.queryParams) {
-      const queryString = buildQueryString(options.queryParams)
-      const separator = getQueryStringSeparator(url)
-      delete options.queryParams
-      return this.api.get(`${url}${separator}${queryString}`, { ...options })
-    }
-    return this.api.get(url, options)
-  }
+  get: RequestType = (...req) => this.api.get(...req)
 
   post: RequestTypeWithData = (...req) => this.api.post(...req)
 
