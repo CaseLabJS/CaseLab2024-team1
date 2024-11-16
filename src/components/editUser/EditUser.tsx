@@ -9,10 +9,12 @@ interface EditUserProps {
   user: User
   role: Role
   onClose: () => void
+  setSnackbarIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setSnackbarText: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const EditUser: React.FC<EditUserProps> = observer(
-  ({ user, role, onClose }) => {
+  ({ user, role, onClose, setSnackbarIsOpen, setSnackbarText }) => {
     const {
       register,
       setValue,
@@ -25,6 +27,8 @@ const EditUser: React.FC<EditUserProps> = observer(
       } as User & { roleName: string },
       mode: 'onChange',
     })
+    const userStore = new UserStore(user)
+    const { error } = userStore
     useEffect(() => {
       if (user?.roles?.[0]?.name) {
         setValue('roleName', user.roles[0].name)
@@ -33,7 +37,6 @@ const EditUser: React.FC<EditUserProps> = observer(
     const onSubmit: SubmitHandler<User & { roleName: string }> = async (
       data
     ) => {
-      const userStore = new UserStore(user)
       let isChanged = false
       if (
         data.name !== user?.name ||
@@ -56,10 +59,18 @@ const EditUser: React.FC<EditUserProps> = observer(
         })
       }
       if (isChanged) {
-        void usersListStore.fetchUsers()
+        await usersListStore.fetchUsers()
+        setSnackbarText('Пользователь изменен')
+        setSnackbarIsOpen(true)
       }
       onClose()
     }
+    useEffect(() => {
+      if (error) {
+        setSnackbarText(error.message)
+        setSnackbarIsOpen(true)
+      }
+    }, [error, setSnackbarIsOpen, setSnackbarText])
     return (
       <Box
         sx={{

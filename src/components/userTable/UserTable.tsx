@@ -38,6 +38,7 @@ const UserTable: React.FC = observer(() => {
     id: 1,
     name: Roles.ADMIN,
   })
+  const [snackbarText, setSnackbarText] = useState<string | null>(null)
   const { loading, error } = usersListStore
   const navigate = useNavigate()
   const handleAddUser = () => {
@@ -49,6 +50,7 @@ const UserTable: React.FC = observer(() => {
   }
   const handleDelete = async (id: number) => {
     await usersListStore.deleteUser(id)
+    setSnackbarText('Пользователь удален')
     setSnackbarIsOpen(true)
     handleClose()
   }
@@ -78,6 +80,7 @@ const UserTable: React.FC = observer(() => {
   }, [])
   useEffect(() => {
     if (error) {
+      setSnackbarText(error.message)
       setSnackbarIsOpen(true)
     }
   }, [error])
@@ -196,6 +199,8 @@ const UserTable: React.FC = observer(() => {
             user={selectedUser}
             role={selectedRole}
             onClose={handleCloseEdit}
+            setSnackbarIsOpen={setSnackbarIsOpen}
+            setSnackbarText={setSnackbarText}
           />
         </Box>
       </Modal>
@@ -206,7 +211,7 @@ const UserTable: React.FC = observer(() => {
         onClose={() => setSnackbarIsOpen(false)}
       >
         <Alert severity={error ? 'error' : 'success'} sx={{ width: '100%' }}>
-          {error ? error.message : 'Пользователь удален'}
+          {snackbarText}
         </Alert>
       </Snackbar>
       <Modal
