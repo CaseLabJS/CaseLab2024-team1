@@ -1,20 +1,38 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { User, Role, Roles } from '@/types/sharedTypes'
 import { usersListStore } from '@/stores/UsersListStore'
 import UserStore from '@/stores/UserStore'
 import { observer } from 'mobx-react-lite'
-import { Box, Button, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from '@mui/material'
+import { SerializedError } from '@/api/core/serializedError'
 interface EditUserProps {
   user: User
   role: Role
   onClose: () => void
   setSnackbarIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   setSnackbarText: React.Dispatch<React.SetStateAction<string | null>>
+  setSnackbarError: React.Dispatch<React.SetStateAction<SerializedError | null>>
 }
 
 const EditUser: React.FC<EditUserProps> = observer(
-  ({ user, role, onClose, setSnackbarIsOpen, setSnackbarText }) => {
+  ({
+    user,
+    role,
+    onClose,
+    setSnackbarIsOpen,
+    setSnackbarText,
+    setSnackbarError,
+  }) => {
     const {
       register,
       setValue,
@@ -28,23 +46,18 @@ const EditUser: React.FC<EditUserProps> = observer(
       mode: 'onChange',
     })
     const userStore = new UserStore(user)
-    const { error } = userStore
-    useEffect(() => {
-      if (user?.roles?.[0]?.name) {
-        setValue('roleName', user.roles[0].name)
-      }
-    }, [user, setValue])
     const onSubmit: SubmitHandler<User & { roleName: string }> = async (
       data
     ) => {
       let isChanged = false
+      let patchError = null
       if (
         data.name !== user?.name ||
         data.surname !== user.surname ||
         data.email !== user.email
       ) {
         isChanged = true
-        await userStore.patchUser({
+        patchError = await userStore.patchUser({
           name: data.name,
           surname: data.surname,
           email: data.email,
@@ -54,23 +67,24 @@ const EditUser: React.FC<EditUserProps> = observer(
         isChanged = true
         await userStore.removeUserRole(role)
         await userStore.addUserRole({
-          id: (data.roleName as Roles) === Roles.ADMIN ? 1 : 2,
+          id: data.roleName === 'ADMIN' ? 1 : 2,
           name: data.roleName === 'ADMIN' ? Roles.ADMIN : Roles.USER,
         })
       }
-      if (isChanged) {
+      if (isChanged && patchError == null) {
         await usersListStore.fetchUsers()
         setSnackbarText('Пользователь изменен')
+        setSnackbarError(null)
         setSnackbarIsOpen(true)
+      } else {
+        setSnackbarText(
+          patchError?.message !== undefined ? patchError.message : null
+        )
+        setSnackbarError(patchError)
       }
       onClose()
     }
-    useEffect(() => {
-      if (error) {
-        setSnackbarText(error.message)
-        setSnackbarIsOpen(true)
-      }
-    }, [error, setSnackbarIsOpen, setSnackbarText])
+
     return (
       <Box
         sx={{
@@ -134,21 +148,20 @@ const EditUser: React.FC<EditUserProps> = observer(
               error={!!errors.email}
               helperText={errors.email?.message}
             />
-            <TextField
-              sx={{ marginBottom: 2 }}
-              label="Роль"
-              variant="outlined"
-              fullWidth
-              {...register('roleName', {
-                required: 'Role required',
-                pattern: {
-                  value: /^(ADMIN|USER)$/,
-                  message: 'Invalid role format',
-                },
-              })}
-              error={!!errors.roleName}
-              helperText={errors.roleName?.message}
-            />
+            <FormControl sx={{ marginBottom: 2 }} fullWidth>
+              <InputLabel id="role-select-label">Роль</InputLabel>
+              <Select
+                sx={{ textAlign: 'start' }}
+                labelId="role-select-label"
+                label="Роль"
+                defaultValue={user?.roles[0]?.name}
+                {...register('roleName')}
+                onChange={(event) => setValue('roleName', event.target.value)}
+              >
+                <MenuItem value={Roles.ADMIN}>ADMIN</MenuItem>
+                <MenuItem value={Roles.USER}>USER</MenuItem>
+              </Select>
+            </FormControl>
             <Button variant="contained" type="submit" disabled={!isValid}>
               Сохранить
             </Button>

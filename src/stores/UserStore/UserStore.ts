@@ -40,6 +40,7 @@ class UserStore {
         this.userData = patchedUser
       })
     }
+    return this.error
   }
 
   async addUserRole(role: Role) {

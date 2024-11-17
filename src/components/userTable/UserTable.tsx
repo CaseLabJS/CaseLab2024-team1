@@ -19,6 +19,7 @@ import {
 } from '@mui/material'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material'
 import ConfirmPopover from './ConfirmPopover'
+import { SerializedError } from '@/api/core/serializedError'
 
 const UserTable: React.FC = observer(() => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -39,6 +40,9 @@ const UserTable: React.FC = observer(() => {
     name: Roles.ADMIN,
   })
   const [snackbarText, setSnackbarText] = useState<string | null>(null)
+  const [snackbarError, setSnackbarError] = useState<SerializedError | null>(
+    null
+  )
   const { loading, error } = usersListStore
   const navigate = useNavigate()
   const handleAddUser = () => {
@@ -81,9 +85,13 @@ const UserTable: React.FC = observer(() => {
   useEffect(() => {
     if (error) {
       setSnackbarText(error.message)
+      setSnackbarError(error)
       setSnackbarIsOpen(true)
     }
-  }, [error])
+    if (snackbarError) {
+      setSnackbarIsOpen(true)
+    }
+  }, [error, snackbarText, snackbarError])
   const rows: User[] = usersListStore.users.map(({ userData }) => ({
     id: userData.id,
     name: userData.name,
@@ -201,6 +209,7 @@ const UserTable: React.FC = observer(() => {
             onClose={handleCloseEdit}
             setSnackbarIsOpen={setSnackbarIsOpen}
             setSnackbarText={setSnackbarText}
+            setSnackbarError={setSnackbarError}
           />
         </Box>
       </Modal>
@@ -210,7 +219,10 @@ const UserTable: React.FC = observer(() => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         onClose={() => setSnackbarIsOpen(false)}
       >
-        <Alert severity={error ? 'error' : 'success'} sx={{ width: '100%' }}>
+        <Alert
+          severity={snackbarError ? 'error' : 'success'}
+          sx={{ width: '100%' }}
+        >
           {snackbarText}
         </Alert>
       </Snackbar>
