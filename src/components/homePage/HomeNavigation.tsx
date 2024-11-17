@@ -9,23 +9,20 @@ import ArticleIcon from '@mui/icons-material/Article'
 const HomeNavigation: React.FC = observer(() => {
   const navigate = useNavigate()
   const { isAuth, isAdmin } = authStore
-  const buttonStyle = {
-    color: 'white',
-    display: 'flex',
-  }
-  const routesBoxStyle = {
-    flexGrow: 1,
-    display: { xs: 'flex', md: 'flex' },
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
   return (
-    <Box sx={routesBoxStyle}>
+    <Box
+      sx={{
+        flexGrow: 1,
+        display: { xs: 'flex', md: 'flex' },
+        height: 50,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       {isAdmin && (
         <>
           <Box onClick={() => navigate(ROUTES.admin())}>
-            <Button size="large" sx={buttonStyle}>
+            <Button size="large" sx={{ color: 'white', display: 'flex' }}>
               <AdminPanelSettingsIcon sx={{ height: 30, width: 30 }} />
               <Typography
                 variant="subtitle1"
@@ -42,7 +39,7 @@ const HomeNavigation: React.FC = observer(() => {
         <Button
           size="large"
           onClick={() => navigate(ROUTES.app())}
-          sx={buttonStyle}
+          sx={{ color: 'white', display: 'flex' }}
         >
           <ArticleIcon sx={{ height: 30, width: 30 }} />
           <Typography

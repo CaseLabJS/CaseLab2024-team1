@@ -4,13 +4,11 @@ import HomeBrand from './HomeBrand'
 import { AppBar, Toolbar } from '@mui/material'
 
 const HomeHeader: React.FC = () => {
-  const appBarStyle = {
-    height: 80,
-    display: 'flex',
-    justifyContent: 'center',
-  }
   return (
-    <AppBar position="fixed" sx={appBarStyle}>
+    <AppBar
+      position="fixed"
+      sx={{ height: 80, display: 'flex', justifyContent: 'center' }}
+    >
       <Toolbar sx={{ display: 'grid', gridTemplateColumns: '1fr 2fr 1fr' }}>
         <HomeBrand />
         <HomeNavigation />
