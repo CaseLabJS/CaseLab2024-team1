@@ -3,18 +3,18 @@ import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import FormControl from '@mui/material/FormControl'
 import { forwardRef, Ref, useCallback, useState } from 'react'
-import { Attribute } from '@/types/sharedTypes.ts'
 import Box from '@mui/material/Box'
 
 interface DynamicFormFieldProps {
-  attr: Attribute
+  title: string
+  required: boolean
   errorMessage?: string
 }
 
 export const DynamicFormField = forwardRef(
   (props: DynamicFormFieldProps, ref: Ref<HTMLInputElement>) => {
-    const { attr, errorMessage, ...otherProps } = props
-    const [visible, setVisible] = useState(attr.required)
+    const { title, required, errorMessage, ...otherProps } = props
+    const [visible, setVisible] = useState(required)
 
     const handleShowField = useCallback(() => {
       setVisible((prev) => !prev)
@@ -22,7 +22,6 @@ export const DynamicFormField = forwardRef(
 
     return (
       <FormControl
-        key={attr.id}
         fullWidth
         sx={{
           display: 'flex',
@@ -31,9 +30,6 @@ export const DynamicFormField = forwardRef(
           '& .MuiFormControl-root': {
             maxWidth: '25rem',
           },
-          '& .MuiInputBase-input': {
-            padding: '.5rem',
-          },
         }}
       >
         <Box
@@ -41,13 +37,13 @@ export const DynamicFormField = forwardRef(
             height: '2.5rem',
             display: 'flex',
             alignItems: 'center',
-            overflow: 'hidden',
             minWidth: { xs: '2rem', sm: '4rem', md: '6rem' },
+            flexShrink: 0,
           }}
         >
-          <Typography variant="body2">{attr.name}</Typography>
+          <Typography variant="body2">{title}</Typography>
         </Box>
-        {!attr.required && !visible && (
+        {!required && !visible && (
           <Button
             onClick={() => handleShowField()}
             variant="text"
@@ -64,6 +60,7 @@ export const DynamicFormField = forwardRef(
           <TextField
             fullWidth
             ref={ref}
+            size="small"
             error={!!errorMessage}
             helperText={errorMessage}
             slotProps={{
