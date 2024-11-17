@@ -1,24 +1,10 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import authStore from '@/stores/AuthStore'
 import { ROUTES } from '@/router/constants'
-import {
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  IconButton,
-  Drawer,
-} from '@mui/material'
+import { List, IconButton, Drawer } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-
-interface MainNavLinksProps {
-  isAdmin: boolean
-  isAuth: boolean
-  adminLinks: Array<{ text: string; path: string }>
-  userLinks: Array<{ text: string; path: string }>
-}
+import MainNavigationLinks from './MainNavigationLinks'
 
 const MainNavigation: React.FC = observer(() => {
   const { isAuth, isAdmin } = authStore
@@ -34,31 +20,6 @@ const MainNavigation: React.FC = observer(() => {
     { text: 'Управление пользователями', path: ROUTES.admin('users') },
     { text: 'Создать пользователя', path: ROUTES.admin('users/create') },
   ]
-
-  const MainNavLinks: React.FC<MainNavLinksProps> = ({
-    isAdmin,
-    isAuth,
-    adminLinks,
-    userLinks,
-  }) => {
-    const links = isAdmin ? adminLinks : isAuth ? userLinks : []
-
-    return (
-      <>
-        {links.map((link) => (
-          <ListItem
-            key={link.text}
-            disablePadding
-            sx={{ width: 'fit-content', textTransform: 'uppercase' }}
-          >
-            <ListItemButton component={Link} to={link.path}>
-              <ListItemText primary={link.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </>
-    )
-  }
 
   const toggleDrawer = (open: boolean) => () => {
     setDrawerOpen(open)
@@ -92,7 +53,7 @@ const MainNavigation: React.FC = observer(() => {
 
       <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
         <List sx={{ width: '20rem', marginTop: '7vh', padding: 2 }}>
-          <MainNavLinks
+          <MainNavigationLinks
             isAdmin={isAdmin}
             isAuth={isAuth}
             adminLinks={adminLinks}
@@ -112,7 +73,7 @@ const MainNavigation: React.FC = observer(() => {
           margin: 0,
         }}
       >
-        <MainNavLinks
+        <MainNavigationLinks
           isAdmin={isAdmin}
           isAuth={isAuth}
           adminLinks={adminLinks}
