@@ -11,6 +11,7 @@ import { ROUTES } from '@/router/constants.ts'
 import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
 import HomePage from '@/pages/homePage'
+import CreateAttributePage from '@/pages/CreateAttributePage'
 
 export const publicRoutes = [
   {
@@ -82,6 +83,10 @@ export const adminRoutes = [
       {
         path: ROUTES.admin('attribute-type'),
         element: <div>Attribute Type</div>,
+      },
+      {
+        path: ROUTES.admin('attribute-type/create-attribute'),
+        element: <CreateAttributePage />,
       },
     ],
   },
