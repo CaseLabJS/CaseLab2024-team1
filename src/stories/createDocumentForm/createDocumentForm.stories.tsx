@@ -11,10 +11,8 @@ const meta = {
   decorators: [
     (Story) => (
       <ThemeProvider>
-        {/*<BrowserRouter>*/}
         <CssBaseline />
         <Story />
-        {/*</BrowserRouter>*/}
       </ThemeProvider>
     ),
   ],

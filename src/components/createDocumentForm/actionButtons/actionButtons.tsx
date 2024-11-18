@@ -1,14 +1,26 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import { agreement } from '@/stories/selectField/selectField.stories.tsx'
+
 import { Controller, useFormContext } from 'react-hook-form'
 import { SelectField } from '@/components/selectField/selectField.tsx'
+import { agreement } from '@/stories/selectField/testData/testData.ts'
 
 export const ActionButtons = () => {
   const { control } = useFormContext()
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        justifyContent: { xs: 'center', lg: 'left' },
+        gap: {
+          xs: '0.5rem',
+          md: '1.5rem',
+        },
+      }}
+    >
       <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
         <Box>
           <Button color="primary" variant="contained" fullWidth type="submit">
@@ -24,6 +36,7 @@ export const ActionButtons = () => {
                 <SelectField
                   options={agreement}
                   fullWidth
+                  label="Статус"
                   getOptionLabel={(option) => option.text}
                   {...field}
                 />
@@ -33,7 +46,7 @@ export const ActionButtons = () => {
         </Box>
       </Box>
 
-      <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+      <Box sx={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
         <Box>
           <Button color="primary" fullWidth variant="text">
             Сохранить в черновиках

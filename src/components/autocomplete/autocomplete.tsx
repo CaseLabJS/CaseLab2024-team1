@@ -1,10 +1,13 @@
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
-import Autocomplete from '@mui/material/Autocomplete'
-import { forwardRef, Ref, useCallback } from 'react'
+import MuiAutocomplete from '@mui/material/Autocomplete'
+import { ForwardedRef, forwardRef, useCallback } from 'react'
 
-//any необходимо, чтобы компонент мог принимать любой массив данных в виде опций
-interface CustomAutocompleteProps<T extends Record<string, any>> {
+interface GenericOption {
+  id: number
+}
+
+interface CustomAutocompleteProps<T extends GenericOption> {
   /**
    * An array of options to be displayed in the autocomplete dropdown
    */
@@ -46,74 +49,87 @@ interface CustomAutocompleteProps<T extends Record<string, any>> {
   errorMessage?: string
 }
 
-export const CustomAutocomplete = forwardRef(
-  <T extends Record<string, any>>(
-    props: CustomAutocompleteProps<T>,
-    ref: Ref<HTMLInputElement>
-  ) => {
-    const {
-      options,
-      label,
-      id,
-      noOptionsText = 'Нет вариантов',
-      displayFields,
-      sx = { minWidth: '25rem' },
-      defaultValue,
-      errorMessage,
-      ...otherProps
-    } = props
+const CustomAutocomplete = <T extends GenericOption>(
+  props: CustomAutocompleteProps<T>,
+  ref: ForwardedRef<HTMLInputElement>
+) => {
+  const {
+    options,
+    label,
+    id,
+    noOptionsText = 'Нет вариантов',
+    displayFields,
+    sx,
+    defaultValue,
+    errorMessage,
+    ...otherProps
+  } = props
 
-    const getOptionLabel = useCallback(
-      (option: T) => {
-        return displayFields.map((field) => option[field]).join(' ')
-      },
-      [displayFields]
-    )
+  const getOptionLabel = useCallback(
+    (option: T) => {
+      return displayFields.map((field) => option[field]).join(' ')
+    },
+    [displayFields]
+  )
 
-    const filterOptions = useCallback(
-      (options: T[], { inputValue }: { inputValue: string }) => {
-        const lowercasedInput = inputValue.toLowerCase()
-        return options.filter((option) =>
-          displayFields.some((field) =>
-            String(option[field]).toLowerCase().includes(lowercasedInput)
-          )
+  const filterOptions = useCallback(
+    (options: T[], { inputValue }: { inputValue: string }) => {
+      const lowercasedInput = inputValue.toLowerCase()
+      return options.filter((option) =>
+        displayFields.some((field) =>
+          String(option[field]).toLowerCase().includes(lowercasedInput)
         )
-      },
-      [displayFields]
-    )
+      )
+    },
+    [displayFields]
+  )
 
-    return (
-      <Autocomplete
-        fullWidth
-        disablePortal
-        options={options}
-        getOptionLabel={getOptionLabel}
-        filterOptions={filterOptions}
-        renderOption={(props, option) => {
-          const { key, ...optionProps } = props
-          return (
-            <Box key={key} component="li" {...optionProps}>
-              {getOptionLabel(option)}
-            </Box>
-          )
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label={label}
-            variant="outlined"
-            fullWidth
-            ref={ref}
-            error={!!errorMessage}
-            helperText={errorMessage}
-            {...otherProps}
-          />
-        )}
-        id={id}
-        sx={sx}
-        noOptionsText={noOptionsText}
-        defaultValue={defaultValue}
-      />
-    )
-  }
-)
+  return (
+    <MuiAutocomplete
+      fullWidth
+      disablePortal
+      options={options}
+      getOptionLabel={getOptionLabel}
+      filterOptions={filterOptions}
+      renderOption={(props, option) => {
+        return (
+          <Box component="li" {...props} key={props.id}>
+            {getOptionLabel(option)}
+          </Box>
+        )
+      }}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          label={label}
+          variant="outlined"
+          fullWidth
+          ref={ref}
+          error={!!errorMessage}
+          helperText={errorMessage}
+          sx={{
+            '& .MuiInputBase-root': {
+              backgroundColor: 'background.paper',
+            },
+          }}
+          {...otherProps}
+        />
+      )}
+      id={id}
+      sx={{
+        borderRadius: '0.5rem',
+        ...sx,
+      }}
+      noOptionsText={noOptionsText}
+      defaultValue={defaultValue}
+    />
+  )
+}
+
+CustomAutocomplete.displayName = 'CustomAutocomplete'
+
+export const Autocomplete = forwardRef(CustomAutocomplete) as <
+  T extends GenericOption,
+>(
+  props: CustomAutocompleteProps<T> & { ref?: ForwardedRef<HTMLInputElement> }
+) => ReturnType<typeof CustomAutocomplete>

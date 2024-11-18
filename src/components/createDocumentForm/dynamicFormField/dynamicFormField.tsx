@@ -75,3 +75,5 @@ export const DynamicFormField = forwardRef(
     )
   }
 )
+
+DynamicFormField.displayName = 'DynamicFormField'
