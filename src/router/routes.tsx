@@ -9,6 +9,7 @@ import { ROUTES } from '@/router/constants.ts'
 
 import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
+import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
 
 export const publicRoutes = [
@@ -18,7 +19,7 @@ export const publicRoutes = [
   },
   {
     path: ROUTES.home,
-    element: <div>home</div>,
+    element: <HomePage />,
   },
   {
     path: ROUTES.signOut,
