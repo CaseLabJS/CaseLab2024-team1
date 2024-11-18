@@ -44,6 +44,11 @@ interface CustomAutocompleteProps<T extends GenericOption> {
   defaultValue?: T
 
   /**
+   * Disabled
+   */
+  disabled?: boolean
+
+  /**
    * Error message
    */
   errorMessage?: string
@@ -61,6 +66,7 @@ const CustomAutocomplete = <T extends GenericOption>(
     displayFields,
     sx,
     defaultValue,
+    disabled,
     errorMessage,
     ...otherProps
   } = props
@@ -91,6 +97,7 @@ const CustomAutocomplete = <T extends GenericOption>(
       options={options}
       getOptionLabel={getOptionLabel}
       filterOptions={filterOptions}
+      disabled={disabled}
       renderOption={(props, option) => {
         return (
           <Box component="li" {...props} key={props.id}>

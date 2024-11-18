@@ -3,13 +3,13 @@ import UserTable from '@/components/userTable/UserTable'
 import CreateUser from '@/components/createUser/CreateUser'
 
 import { AppDashboardLayout } from '@/components/appDashboardLayout/appDashboardLayout.tsx'
-import { CreateDocumentForm } from '@/components/createDocumentForm/createDocumentForm.tsx'
 import { AppProvider } from '@/components/appProvider/appProvider.tsx'
 import { Authorization } from '@/router/authorization.tsx'
 import { ROUTES } from '@/router/constants.ts'
 
 import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
+import { CreateDocumentPage } from '@/pages/createDocumentPage'
 
 export const publicRoutes = [
   {
@@ -48,8 +48,8 @@ export const appRoutes = [
         Component: AppDashboardLayout,
         children: [
           {
-            path: ROUTES.app('document'),
-            Component: CreateDocumentForm,
+            path: ROUTES.app('new-document'),
+            Component: CreateDocumentPage,
           },
         ],
       },

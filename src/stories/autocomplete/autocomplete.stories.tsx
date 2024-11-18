@@ -38,14 +38,8 @@ export const Disabled: Story = {
     id: 'contractor-id-disabled',
     noOptionsText: 'Нет организаций в списке ваших контрагентов.',
     sx: { opacity: 0.5, minWidth: '25rem' },
+    disabled: true,
   },
-  decorators: [
-    (Story) => (
-      <div style={{ pointerEvents: 'none' }}>
-        <Story />
-      </div>
-    ),
-  ],
 }
 
 export const WithPredefinedValue: Story = {
@@ -55,6 +49,7 @@ export const WithPredefinedValue: Story = {
     id: 'contractor-id-predefined',
     noOptionsText: 'Нет организаций в списке ваших контрагентов.',
     defaultValue: testContractors[0],
+    sx: { minWidth: '25rem' },
   },
 }
 
@@ -64,5 +59,6 @@ export const NoOptions: Story = {
     label: 'Введите название или ИНН контрагента',
     id: 'contractor-id-no-options',
     noOptionsText: 'Нет доступных вариантов.',
+    sx: { minWidth: '25rem' },
   },
 }

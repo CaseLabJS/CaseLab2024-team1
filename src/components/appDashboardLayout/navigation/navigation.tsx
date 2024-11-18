@@ -10,7 +10,7 @@ import { ROUTES } from '@/router/constants.ts'
 
 export const NAVIGATION: Navigation = [
   {
-    segment: `.${ROUTES.app('document')}`,
+    segment: `.${ROUTES.app('new-document')}`,
     title: 'Добавить документ',
     icon: <AddIcon />,
   },
