@@ -103,27 +103,27 @@ const UserTable: React.FC = observer(() => {
     {
       field: 'id',
       headerName: 'ID',
-      width: 200,
+      flex: 1,
     },
     {
       field: 'name',
       headerName: 'Имя',
-      width: 200,
+      flex: 2,
     },
     {
       field: 'surname',
       headerName: 'Фамилия',
-      width: 200,
+      flex: 2,
     },
     {
       field: 'email',
       headerName: 'Email',
-      width: 200,
+      flex: 2,
     },
     {
       field: 'roles',
       headerName: 'Роль',
-      width: 200,
+      flex: 1.5,
       valueGetter: (roles: Role[]) => {
         return `${roles[0]?.name || ''}`
       },
@@ -131,7 +131,7 @@ const UserTable: React.FC = observer(() => {
     {
       field: 'actions',
       headerName: 'Действия',
-      width: 200,
+      flex: 1.5,
       renderCell: (params: GridRenderCellParams<User>) => (
         <Box
           sx={{
