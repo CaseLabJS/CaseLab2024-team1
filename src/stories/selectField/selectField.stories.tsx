@@ -21,7 +21,6 @@ const meta = {
     value: testDocumentsType[0].name,
     onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       console.log(event.target.value),
-    fullWidth: true,
     getOptionLabel: (option) => option.name,
   },
   decorators: [
@@ -56,7 +55,6 @@ export const Default: StoryFn<typeof SelectField> = () => {
       value={selectedValue}
       onChange={handleChange}
       label="Выберите тип документа"
-      fullWidth
       getOptionLabel={(option) => option.name}
       sx={{}}
     />
@@ -88,7 +86,6 @@ export const AgreementSelect: StoryFn<typeof SelectField> = () => {
       value={selectedValue}
       onChange={handleChange}
       label="Выберите статус"
-      fullWidth
       getOptionLabel={(option) => option.text}
       sx={{}}
     />

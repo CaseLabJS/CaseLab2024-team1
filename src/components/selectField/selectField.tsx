@@ -18,11 +18,6 @@ interface SelectFieldProps<T extends GenericOption> {
   label?: string
 
   /**
-   * Determines if the field should take full width
-   */
-  fullWidth?: boolean
-
-  /**
    * Additional styles for the TextField component
    */
   sx?: object
@@ -35,7 +30,7 @@ interface SelectFieldProps<T extends GenericOption> {
   /**
    * The current value of the select field.
    */
-  value?: string
+  value?: string | number
 
   /**
    * A callback function to handle changes in the select field.
@@ -49,21 +44,13 @@ const SelectFieldInner = <T extends GenericOption>(
   props: SelectFieldProps<T>,
   ref: ForwardedRef<HTMLInputElement>
 ) => {
-  const {
-    options,
-    label,
-    fullWidth = false,
-    sx,
-    getOptionLabel,
-    value,
-    onChange,
-    ...otherProps
-  } = props
+  const { options, label, sx, getOptionLabel, value, onChange, ...otherProps } =
+    props
 
   return (
     <TextField
       select
-      fullWidth={fullWidth}
+      fullWidth
       ref={ref}
       label={label}
       sx={{
@@ -79,7 +66,7 @@ const SelectFieldInner = <T extends GenericOption>(
       margin="dense"
     >
       {options.map((option) => (
-        <MenuItem key={option.id} value={getOptionLabel(option)}>
+        <MenuItem key={option.id} value={option.id}>
           {getOptionLabel(option)}
         </MenuItem>
       ))}

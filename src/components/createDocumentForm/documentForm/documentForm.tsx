@@ -1,79 +1,97 @@
 import Box from '@mui/material/Box'
-import { ChangeEvent, useCallback, useState } from 'react'
-import Checkbox from '@mui/material/Checkbox'
-import FormControlLabel from '@mui/material/FormControlLabel'
+import { ChangeEvent, useCallback } from 'react'
 import Typography from '@mui/material/Typography'
-import { IconButton, useTheme } from '@mui/material'
+import { IconButton, InputBase, useTheme } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { DocumentOptions } from '@/components/createDocumentForm/documentOptions/documentOptions.tsx'
-import { testDocumentsType } from '@/stories/selectField/testData/testData.ts'
 import { DynamicFormField } from '@/components/createDocumentForm/dynamicFormField/dynamicFormField.tsx'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { SelectField } from '@/components/selectField/selectField.tsx'
-import { Attribute } from '@/types/sharedTypes.ts'
 import { TextareaAutosize } from '@/components/styled/textareaAutosize.tsx'
 import Paper from '@mui/material/Paper'
-import { alpha } from '@mui/material/styles'
 import { FormValues } from '@/components/createDocumentForm/types.ts'
+import InputLabel from '@mui/material/InputLabel'
+import { testDocumentsType } from '@/stories/selectField/testData/testData.ts'
+import TextField from '@mui/material/TextField'
 
 interface DocumentFormProps {
   /**
    * Represents the file being processed in the form.
    */
-  file: Partial<File>
-
-  /**
-   * Indicates whether the document is selected (e.g., for state display).
-   */
-  isChecked: boolean
-
-  /**
-   * Callback function to handle changes in the request signature checkbox.
-   * It receives the change event and a boolean indicating the new state of the checkbox.
-   */
-  onRequestSignatureChange: (toggle: boolean) => void
+  file?: Partial<File>
 
   /**
    * The index of the current file in the list of documents, used for managing state in dynamic forms.
    */
   fileIndex: number
+
+  /**
+   * Callback function to remove the document from the form.
+   */
+  onRemoveDocument: () => void
+
+  /**
+   * Indicates whether only a single file can be uploaded.
+   */
+  single: boolean
+
+  /**
+   * Function to add a file to the form.
+   * @param index - The index where the file should be added.
+   * @param file - The file to be added, optional.
+   */
+  addFile: (index: number, file?: File) => void
 }
 
 export const DocumentForm = (props: DocumentFormProps) => {
-  const { file, isChecked, onRequestSignatureChange, fileIndex } = props
+  const { file, fileIndex, onRemoveDocument, single, addFile } = props
   const theme = useTheme()
 
   const documentTypes = testDocumentsType
-  const [attributes, setAttributes] = useState<Attribute[]>(
-    documentTypes[0].attributes
-  )
 
-  const { control, register, formState } = useFormContext<FormValues>()
-  const { replace } = useFieldArray({
+  const { control, getValues } = useFormContext<FormValues>()
+  const { replace: replaceAttributes, fields: attributes } = useFieldArray({
     control: control,
     name: `items.${fileIndex}.attributes`,
   })
 
-  const handleDocumentTypeChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const selectedType = event.target.value
+  const documentTypeId = getValues(`items.${fileIndex}.documentTypeId`)
 
-      const docType = documentTypes.find((type) => type.name === selectedType)
-      if (docType) {
-        setAttributes(docType.attributes)
-        replace(
-          docType.attributes.map((attribute) => {
+  const getDocumentType = useCallback(
+    (id: number) => {
+      return documentTypes.find((documentType) => {
+        return documentType.id === id
+      })
+    },
+    [documentTypes]
+  )
+
+  const handleDocumentTypeChange = useCallback(
+    (documentTypeId: number) => {
+      const documentType = getDocumentType(documentTypeId)
+      if (documentType) {
+        replaceAttributes(
+          documentType.attributes.map((attribute) => {
             return {
               [attribute.name]: '',
             }
           })
         )
-      } else {
-        setAttributes([])
-        replace([])
       }
     },
-    [documentTypes, replace]
+    [getDocumentType, replaceAttributes]
+  )
+
+  const handleFileChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const fileList = event.target.files
+      if (fileList && fileList.length > 0) {
+        const selectedFile = fileList[0]
+        addFile(fileIndex, selectedFile)
+      } else {
+        addFile(fileIndex)
+      }
+    },
+    [addFile, fileIndex]
   )
 
   return (
@@ -89,76 +107,140 @@ export const DocumentForm = (props: DocumentFormProps) => {
         },
       }}
     >
-      {!isChecked && (
-        <DocumentOptions
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: alpha(theme.palette.grey[400], 0.25),
-            padding: '1rem',
-          }}
-          errorMessage={formState.errors.items?.[fileIndex]?.recipient?.message}
-          {...register(`items.${fileIndex}.recipient`, {
-            required: 'Получатель обязателен',
-          })}
-        />
-      )}
-
       <Box
         sx={{
           display: 'flex',
-          gap: '1rem',
+          gap: '0.5rem',
           flexDirection: 'column',
-          padding: '16px',
+          padding: '1rem',
         }}
       >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography
-            variant="body1"
-            sx={{ color: theme.palette.primary.main, fontWeight: '600' }}
-          >
-            {file.name}
-          </Typography>
-          <IconButton
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: 'primary.main',
+                fontWeight: 600,
+              }}
+            >
+              {file ? file.name : 'Файл не загружен'}
+            </Typography>
+            <>
+              <InputLabel
+                htmlFor={`upload-file-to-document-input-${fileIndex}`}
+                sx={{ color: 'primary.main', cursor: 'pointer' }}
+              >
+                {!file ? '(загрузить)' : '(изменить)'}
+              </InputLabel>
+              <InputBase
+                type="file"
+                id={`upload-file-to-document-input-${fileIndex}`}
+                sx={{ display: 'none' }}
+                inputProps={{
+                  accept: '.pdf,.png,.jpg,.jpeg,.txt,.docx',
+                  multiple: false,
+                }}
+                onChange={handleFileChange}
+              />
+            </>
+          </Box>
+
+          {!single && (
+            <IconButton
+              onClick={onRemoveDocument}
+              sx={{
+                '&:hover': {
+                  color: 'error.main',
+                },
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          )}
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            gap: { xs: '0.2rem', sm: '1rem' },
+            flexWrap: { xs: 'wrap', sm: 'nowrap' },
+          }}
+        >
+          <Box
             sx={{
-              '&:hover': {
-                color: theme.palette.error.main,
-              },
+              display: 'flex',
+              alignItems: 'center',
+              height: '2.5rem',
+              flexShrink: 0,
+              minWidth: { xs: '2rem', sm: '4rem', md: '6rem' },
             }}
           >
-            <CloseIcon />
-          </IconButton>
+            <Typography variant="body2">Название</Typography>
+          </Box>
+
+          <Controller
+            name={`items.${fileIndex}.title`}
+            rules={{
+              required: 'Название документа обязательно',
+              validate: (value) =>
+                value.trim() !== '' ||
+                'Название должно содержать хотя бы один символ',
+            }}
+            control={control}
+            render={({ field, fieldState }) => {
+              return (
+                <TextField
+                  fullWidth
+                  size="small"
+                  slotProps={{
+                    htmlInput: { ...field },
+                  }}
+                  error={!!fieldState.error?.message}
+                  helperText={fieldState.error?.message}
+                />
+              )
+            }}
+          />
         </Box>
 
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
-            gap: '1rem',
+            gap: { xs: '0.2rem', sm: '1rem' },
             flexWrap: { xs: 'wrap', sm: 'nowrap' },
           }}
         >
           <Typography
             variant="body2"
-            sx={{ minWidth: { xs: '2rem', sm: '4rem', md: '6rem' } }}
+            sx={{
+              flexShrink: 0,
+              minWidth: { xs: '2rem', sm: '4rem', md: '6rem' },
+            }}
           >
             Тип документа
           </Typography>
           <Controller
-            name={`items.${fileIndex}.documentType`}
+            name={`items.${fileIndex}.documentTypeId`}
             rules={{ required: 'Тип документа обязателен' }}
             control={control}
             render={({ field }) => {
               return (
                 <SelectField
                   options={documentTypes}
-                  fullWidth
                   getOptionLabel={(option) => option.name}
                   {...field}
                   value={field.value}
                   onChange={(e) => {
-                    field.onChange(e.target.value)
-                    handleDocumentTypeChange(e)
+                    field.onChange(+e.target.value)
+                    handleDocumentTypeChange(+e.target.value)
                   }}
                 />
               )
@@ -170,58 +252,46 @@ export const DocumentForm = (props: DocumentFormProps) => {
           <Controller
             name={`items.${fileIndex}.description`}
             control={control}
-            render={({ field }) => {
-              return (
-                <TextareaAutosize
-                  maxRows={4}
-                  aria-label="description"
-                  placeholder="Введите здесь своё описание..."
-                  {...field}
-                />
-              )
-            }}
-          />
-        </Box>
-
-        {attributes.map((attr, index) => (
-          <Controller
-            rules={{
-              required: attr.required ? `${attr.name} обязателен` : false,
-            }}
-            key={attr.id}
-            name={`items.${fileIndex}.attributes.${index}.${attr.name}`}
-            control={control}
-            render={({ field, fieldState }) => (
-              <DynamicFormField
-                errorMessage={fieldState.error?.message}
-                attr={attr}
+            render={({ field }) => (
+              <TextareaAutosize
+                aria-label="description"
+                placeholder="Введите здесь своё описание..."
+                maxLength={255}
+                minRows={3}
                 {...field}
               />
             )}
           />
-        ))}
+        </Box>
 
-        <Controller
-          name={`items.${fileIndex}.requestSignature`}
-          control={control}
-          render={({ field }) => (
-            <FormControlLabel
-              control={
-                <Checkbox
-                  role="checkbox"
-                  checked={field.value}
-                  onChange={(e) => {
-                    const checked = e.target.checked
-                    field.onChange(checked)
-                    onRequestSignatureChange(checked)
-                  }}
-                  data-testid="checkbox-control"
+        {attributes.map((_field, index) => {
+          const documentType = getDocumentType(documentTypeId)
+          if (!documentType) return null
+          const attr = documentType.attributes[index]
+
+          return (
+            <Controller
+              rules={{
+                required: attr.required ? `${attr.name} обязателен` : false,
+                validate: (value) =>
+                  !attr.required ||
+                  value.trim() !== '' ||
+                  'Название должно содержать хотя бы один символ',
+              }}
+              key={attr.id}
+              name={`items.${fileIndex}.attributes.${index}.${attr.name}`}
+              control={control}
+              render={({ field, fieldState }) => (
+                <DynamicFormField
+                  errorMessage={fieldState.error?.message}
+                  title={attr.name}
+                  required={attr.required}
+                  {...field}
                 />
-              }
-              label="Запросить подпись контрагента"
+              )}
             />
-          )}
-        />
+          )
+        })}
       </Box>
     </Paper>
   )

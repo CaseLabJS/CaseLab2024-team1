@@ -13,6 +13,7 @@ export const TextareaAutosize = styled(BaseTextareaAutosize)(
   border-radius: 4px;
   border: 1px solid ${theme.palette.mode === 'dark' ? alpha(theme.palette.common.white, 0.23) : alpha(theme.palette.common.black, 0.23)};
   background-color: transparent;
+  resize: vertical;
   
   &:hover {
     border-color: ${theme.palette.text.primary};
