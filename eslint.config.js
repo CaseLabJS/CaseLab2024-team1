@@ -9,7 +9,7 @@ import pluginMobx from 'eslint-plugin-mobx'
 import prettierRecommended from 'eslint-plugin-prettier/recommended'
 
 export default tseslint.config(
-  { ignores: ['dist', '!.storybook'] },
+  { ignores: ['dist', '!.storybook', 'README.md'] },
   {
     extends: [...storybook.configs['flat/recommended']],
     files: ['**/*.stories.@(ts|tsx|js|jsx|mjs|cjs)'],
@@ -46,6 +46,7 @@ export default tseslint.config(
       ],
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
+      'mobx/missing-observer': 'off',
     },
   }
 )

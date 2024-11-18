@@ -6,13 +6,10 @@ import { QueryParams } from '../core/types'
 
 const SERVICE_URL = '/attributes'
 class AttributeControllerApi extends BaseApi {
-  getAttributeById = (id: number, queryParams?: QueryParams) =>
+  getAttributeById = (id: number, params?: QueryParams) =>
     this.createRequest<Attribute>({
       request: () =>
-        privateApi.get(
-          `${SERVICE_URL}/${id}`,
-          queryParams ? { queryParams } : {}
-        ),
+        privateApi.get(`${SERVICE_URL}/${id}`, params && { params }),
       mock: () => import('./mock/attribute'),
     })
 
@@ -42,10 +39,9 @@ class AttributeControllerApi extends BaseApi {
       request: () => privateApi.delete(`${SERVICE_URL}/${id}`),
     })
 
-  getAttributes = (queryParams?: QueryParams) =>
+  getAttributes = (params?: QueryParams) =>
     this.createRequest<Attribute[]>({
-      request: () =>
-        privateApi.get(`${SERVICE_URL}`, queryParams && { queryParams }),
+      request: () => privateApi.get(`${SERVICE_URL}`, params && { params }),
       mock: async () => {
         const attribute = await this.getAttributeById(1)
         return () => [attribute]

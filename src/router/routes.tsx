@@ -10,7 +10,7 @@ import { ROUTES } from '@/router/constants.ts'
 
 import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
-import CreateAttributePage from '@/pages/CreateAttributePage'
+import HomePage from '@/pages/homePage'
 
 export const publicRoutes = [
   {
@@ -19,7 +19,7 @@ export const publicRoutes = [
   },
   {
     path: ROUTES.home,
-    element: <div>home</div>,
+    element: <HomePage />,
   },
   {
     path: ROUTES.signOut,
@@ -82,10 +82,6 @@ export const adminRoutes = [
       {
         path: ROUTES.admin('attribute-type'),
         element: <div>Attribute Type</div>,
-      },
-      {
-        path: ROUTES.admin('attribute-type/create-attribute'),
-        element: <CreateAttributePage />,
       },
     ],
   },

@@ -130,3 +130,14 @@ export const testDocumentsType: DocumentType[] = [
     ],
   },
 ]
+
+export const agreement = [
+  {
+    id: 343453,
+    text: 'На согласование',
+  },
+  {
+    id: 4341299,
+    text: 'На подпись',
+  },
+]

@@ -6,13 +6,10 @@ import { QueryParams } from '../core/types'
 
 const SERVICE_URL = '/users'
 class UserControllerApi extends BaseApi {
-  getUserById = (id: number, queryParams?: QueryParams) =>
+  getUserById = (id: number, params?: QueryParams) =>
     this.createRequest<User>({
       request: () =>
-        privateApi.get(
-          `${SERVICE_URL}/${id}`,
-          queryParams ? { queryParams } : {}
-        ),
+        privateApi.get(`${SERVICE_URL}/${id}`, params && { params }),
       mock: () => import('./mock/user'),
     })
 
@@ -66,10 +63,9 @@ class UserControllerApi extends BaseApi {
       },
     })
 
-  getUsers = (queryParams?: QueryParams) =>
+  getUsers = (params?: QueryParams) =>
     this.createRequest<User[]>({
-      request: () =>
-        privateApi.get(`${SERVICE_URL}`, queryParams && { queryParams }),
+      request: () => privateApi.get(`${SERVICE_URL}`, params && { params }),
       mock: async () => {
         const user = await this.getUserById(2)
         return () => [user]

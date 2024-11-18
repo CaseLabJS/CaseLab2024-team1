@@ -2,11 +2,13 @@ import { BaseApi } from '../core/baseApi'
 import { privateApi } from '../core/private.api'
 import {
   Signature,
+  SignatureQueryParams,
   SignatureRequest,
   SignatureRequestModel,
   SignatureModel,
   VoteModel,
   Vote,
+  VoteCanceled,
 } from './types'
 
 const SERVICE_URL = '/sign'
@@ -24,7 +26,7 @@ class SignatureControllerApi extends BaseApi {
     })
 
   getSignatureRequests = () =>
-    this.createRequest<SignatureRequest>({
+    this.createRequest<SignatureRequest[]>({
       request: () => privateApi.get(SERVICE_URL),
       mock: async () => {
         const signature = await this.getSignatureRequestById(1)
@@ -32,10 +34,18 @@ class SignatureControllerApi extends BaseApi {
       },
     })
 
-  sign = (signatureId: number, signature: SignatureModel) =>
+  sign = (
+    signatureId: number,
+    signature: SignatureModel,
+    params?: SignatureQueryParams
+  ) =>
     this.createRequest<Signature>({
       request: () =>
-        privateApi.post(`${SERVICE_URL}/${signatureId}`, signature),
+        privateApi.post(
+          `${SERVICE_URL}/${signatureId}`,
+          signature,
+          params && { params }
+        ),
     })
 
   createVote = (vote: VoteModel) =>
@@ -44,7 +54,7 @@ class SignatureControllerApi extends BaseApi {
     })
 
   cancelVote = (id: number) =>
-    this.createRequest<Vote>({
+    this.createRequest<VoteCanceled>({
       request: () => privateApi.delete(`${SERVICE_URL}/voting/${id}/cancel`),
     })
 }
