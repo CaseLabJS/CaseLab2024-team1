@@ -48,6 +48,8 @@ class DocumentsListStore {
         this.documents = [...this.documents, new DocumentStore(createdDocument)]
       })
     }
+
+    return createdDocument
   }
 
   deleteDocument = async (documentId: number) => {
