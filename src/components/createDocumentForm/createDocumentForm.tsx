@@ -2,14 +2,14 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import { DocumentForm } from '@/components/createDocumentForm/documentForm/documentForm'
-import { FormEvent, useCallback, useMemo } from 'react'
+import { FormEvent, useCallback, useEffect, useMemo } from 'react'
 import { ActionButtons } from '@/components/createDocumentForm/actionButtons/actionButtons.tsx'
-import { testDocumentsType } from '@/stories/selectField/testData/testData.ts'
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
 import { FormValues } from '@/components/createDocumentForm/types.ts'
 import { AddDocumentButton } from '@/components/createDocumentForm/addDocumentButton/addDocumentButton.tsx'
 import documentsListStore from '@/stores/DocumentsListStore'
 import authStore from '@/stores/AuthStore'
+import documentTypeListStore from '@/stores/DocumentTypeListStore'
 import { Value } from '@/types/sharedTypes.ts'
 import { observer } from 'mobx-react-lite'
 import { fileToBase64 } from '@/utils/fileToBase64.ts'
@@ -21,7 +21,7 @@ import { Document } from '@/types/sharedTypes.ts'
 const MAX_UPLOADABLE_FILES = 10
 
 export const CreateDocumentForm = observer(() => {
-  const initialDocumentType = testDocumentsType[0]
+  const initialDocumentType = documentTypeListStore.types[0]
   const { createDocument } = documentsListStore
   const { user } = authStore
 
@@ -31,16 +31,18 @@ export const CreateDocumentForm = observer(() => {
   const defaultFormItem = useMemo(() => {
     return {
       title: '',
-      documentTypeId: initialDocumentType.id,
+      documentTypeId: initialDocumentType?.data.id || null,
       description: '',
-      attributes: initialDocumentType.attributes.reduce<
-        Record<string, string>[]
-      >((acc, attr) => {
-        acc.push({
-          [attr.name]: '',
-        })
-        return acc
-      }, []),
+      attributes:
+        initialDocumentType?.data.attributes.reduce<Record<string, string>[]>(
+          (acc, attr) => {
+            acc.push({
+              [attr.name]: '',
+            })
+            return acc
+          },
+          []
+        ) || null,
     }
   }, [initialDocumentType])
 
@@ -97,16 +99,18 @@ export const CreateDocumentForm = observer(() => {
       for (const document of data.items) {
         const base64 = await fileToBase64(document.file ? document.file : null)
 
-        promises.push(
-          createDocument({
-            title: document.title.trim(),
-            userId: user ? user.id : 0,
-            documentTypeId: document.documentTypeId,
-            description: document.description,
-            values: convertAttributesToValues(document.attributes),
-            base64Content: base64,
-          })
-        )
+        if (document.attributes && document.documentTypeId) {
+          promises.push(
+            createDocument({
+              title: document.title.trim(),
+              userId: user ? user.id : 0,
+              documentTypeId: document.documentTypeId,
+              description: document.description,
+              values: convertAttributesToValues(document.attributes),
+              base64Content: base64,
+            })
+          )
+        }
       }
 
       const results = await Promise.all(promises)
@@ -159,6 +163,10 @@ export const CreateDocumentForm = observer(() => {
     },
     [update, fieldsValue]
   )
+
+  useEffect(() => {
+    void documentTypeListStore.fetchDocumentTypes()
+  }, [])
 
   return (
     <Paper
