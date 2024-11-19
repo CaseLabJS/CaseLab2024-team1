@@ -22,9 +22,14 @@ class UsersListStore {
     return this.users.find((user) => user.loading) || false
   }
 
-  async fetchUsers() {
+  async fetchUsers(params?: {
+    showOnlyAlive?: boolean
+    page?: number
+    size?: number
+    ascending?: boolean
+  }) {
     const fetchedUsers = await executeWithLoading(this, async () =>
-      userControllerApi.getUsers()
+      userControllerApi.getUsers(params)
     )
 
     if (fetchedUsers) {
