@@ -7,10 +7,10 @@ import { DynamicFormField } from '@/components/createDocumentForm/dynamicFormFie
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { SelectField } from '@/components/selectField/selectField.tsx'
 import { TextareaAutosize } from '@/components/styled/textareaAutosize.tsx'
+import documentTypeListStore from '@/stores/DocumentTypeListStore'
 import Paper from '@mui/material/Paper'
 import { FormValues } from '@/components/createDocumentForm/types.ts'
 import InputLabel from '@mui/material/InputLabel'
-import { testDocumentsType } from '@/stories/selectField/testData/testData.ts'
 import TextField from '@mui/material/TextField'
 
 interface DocumentFormProps {
@@ -46,7 +46,7 @@ export const DocumentForm = (props: DocumentFormProps) => {
   const { file, fileIndex, onRemoveDocument, single, addFile } = props
   const theme = useTheme()
 
-  const documentTypes = testDocumentsType
+  const documentTypes = documentTypeListStore.types
 
   const { control, getValues } = useFormContext<FormValues>()
   const { replace: replaceAttributes, fields: attributes } = useFieldArray({
@@ -57,9 +57,9 @@ export const DocumentForm = (props: DocumentFormProps) => {
   const documentTypeId = getValues(`items.${fileIndex}.documentTypeId`)
 
   const getDocumentType = useCallback(
-    (id: number) => {
+    (id: number | null) => {
       return documentTypes.find((documentType) => {
-        return documentType.id === id
+        return documentType.data.id === id
       })
     },
     [documentTypes]
@@ -70,7 +70,7 @@ export const DocumentForm = (props: DocumentFormProps) => {
       const documentType = getDocumentType(documentTypeId)
       if (documentType) {
         replaceAttributes(
-          documentType.attributes.map((attribute) => {
+          documentType.data.attributes.map((attribute) => {
             return {
               [attribute.name]: '',
             }
@@ -234,10 +234,13 @@ export const DocumentForm = (props: DocumentFormProps) => {
             render={({ field }) => {
               return (
                 <SelectField
-                  options={documentTypes}
-                  getOptionLabel={(option) => option.name}
+                  options={documentTypes.map((type) => ({
+                    id: type.data.id,
+                    data: type.data,
+                  }))}
+                  getOptionLabel={(option) => option.data.name}
                   {...field}
-                  value={field.value}
+                  value={field.value || ''}
                   onChange={(e) => {
                     field.onChange(+e.target.value)
                     handleDocumentTypeChange(+e.target.value)
@@ -267,7 +270,7 @@ export const DocumentForm = (props: DocumentFormProps) => {
         {attributes.map((_field, index) => {
           const documentType = getDocumentType(documentTypeId)
           if (!documentType) return null
-          const attr = documentType.attributes[index]
+          const attr = documentType.data.attributes[index]
 
           return (
             <Controller
