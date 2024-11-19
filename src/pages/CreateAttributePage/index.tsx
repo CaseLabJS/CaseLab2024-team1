@@ -15,6 +15,7 @@ const CreateAttributePage = observer(() => {
   })
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
   const [countAttributeTypes, setCountAttributeTypes] = useState<number>(1)
   const [documentTypesIds, setDocumentTypesIds] = useState<DocumentType[]>([])
   useEffect(() => {
@@ -74,6 +75,16 @@ const CreateAttributePage = observer(() => {
         setError(`Ошибка при создании атрибута->${error}. Попробуйте еще раз.`)
         setSuccess(null)
       })
+      .finally(() => {
+        setSnackbarIsOpen(true)
+        setTimeout(() => {
+          setAttribute({
+            documentTypesIds: [],
+            name: '',
+            required: false,
+          })
+        }, 1000)
+      })
   }
 
   const getHtmlDocumentTypesIds = (count: number) => {
@@ -119,6 +130,8 @@ const CreateAttributePage = observer(() => {
       countAttributeTypes={countAttributeTypes}
       error={error}
       success={success}
+      snackbarIsOpen={snackbarIsOpen}
+      setSnackbarIsOpen={setSnackbarIsOpen}
       handleSubmit={handleSubmit}
       handleChange={handleChange}
       getHtmlDocumentTypesIds={getHtmlDocumentTypesIds}

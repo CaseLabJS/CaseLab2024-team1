@@ -1,11 +1,9 @@
 import Grid2 from '@mui/material/Grid2'
 import TextField from '@mui/material/TextField'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
-import Error from '@/pages/CreateAttributePage/components/Error'
-import Success from '@/pages/CreateAttributePage/components/Success'
 import { NewAttribute } from '@/types/sharedTypes.ts'
 import React, { ChangeEvent } from 'react'
-import { Button } from '@mui/material'
+import { Alert, Button, Snackbar } from '@mui/material'
 import { observer } from 'mobx-react-lite'
 
 interface Props {
@@ -13,6 +11,8 @@ interface Props {
   countAttributeTypes: number
   error: string | null
   success: string | null
+  snackbarIsOpen: boolean
+  setSnackbarIsOpen: React.Dispatch<React.SetStateAction<boolean>>
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   getHtmlDocumentTypesIds: (count: number) => JSX.Element[]
@@ -66,8 +66,19 @@ const CreateAttributeForm = observer((props: Props) => {
           </Grid2>
         </Grid2>
       </form>
-      {props.error && <Error error={props.error} />}
-      {props.success && <Success success={props.success} />}
+      <Snackbar
+        open={props.snackbarIsOpen}
+        autoHideDuration={6000}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => props.setSnackbarIsOpen(false)}
+      >
+        <Alert
+          severity={props.error ? 'error' : 'success'}
+          sx={{ width: '100%' }}
+        >
+          {props.error ? props.error : props.success}
+        </Alert>
+      </Snackbar>
     </Grid2>
   )
 })
