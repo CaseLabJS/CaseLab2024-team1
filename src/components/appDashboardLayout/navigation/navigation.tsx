@@ -6,6 +6,9 @@ import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner'
 import GradingIcon from '@mui/icons-material/Grading'
 import AddIcon from '@mui/icons-material/Add'
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
+import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { ROUTES } from '@/router/constants.ts'
 
 export const NAVIGATION: Navigation = [
@@ -57,5 +60,26 @@ export const NAVIGATION: Navigation = [
     segment: `.${ROUTES.app('integrations')}`,
     title: 'Обработанные',
     icon: <GradingIcon />,
+  },
+]
+
+export const ADMIN_NAVIGATION: Navigation = [
+  {
+    segment: ROUTES.admin('admin/users/create'),
+    title: 'Добавить пользователя',
+    icon: <PersonAddIcon />,
+  },
+  {
+    kind: 'divider',
+  },
+  {
+    segment: ROUTES.admin('admin/users'),
+    title: 'Пользователи',
+    icon: <ManageAccountsIcon />,
+  },
+  {
+    segment: ROUTES.admin(),
+    title: 'На главную',
+    icon: <AdminPanelSettingsIcon />,
   },
 ]

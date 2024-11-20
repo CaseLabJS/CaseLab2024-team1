@@ -19,9 +19,9 @@ export const AppDashboardLayout = () => {
           },
         },
         '& .MuiDrawer-root': {
-          maxWidth: '230px',
+          maxWidth: '270px',
           '& .MuiPaper-root': {
-            maxWidth: '230px',
+            maxWidth: '270px',
           },
         },
       }}
