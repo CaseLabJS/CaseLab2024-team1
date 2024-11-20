@@ -9,11 +9,7 @@ const ThemeSwitch: React.FC = () => {
     return mode === 'dark' ? setMode('light') : setMode('dark')
   }
   return (
-    <IconButton
-      aria-controls="menu-appbar"
-      onClick={changeTheme}
-      sx={{ height: 40, width: 40 }}
-    >
+    <IconButton onClick={changeTheme} sx={{ height: 40, width: 40 }}>
       <SwitchThemeIcon />
     </IconButton>
   )
