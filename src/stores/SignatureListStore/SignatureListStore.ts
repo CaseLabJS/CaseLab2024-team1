@@ -6,15 +6,16 @@ import {
   signatureControllerApi,
   SignatureRequestModel,
   VoteModel,
-} from '@/api/signatureController'
-import {
+  Signature,
   SignatureRequest,
   Vote,
   VoteCanceled,
-} from '@/api/signatureController/types'
+  SignatureModel,
+} from '@/api/signatureController'
 
 class SignatureListStore {
   signatureRequests: InstanceType<typeof SignatureRequestStore>[] = []
+  votes: Vote[] = []
   loading: boolean = false
   error: SerializedError | null = null
 
@@ -72,6 +73,17 @@ class SignatureListStore {
   async cancelVote(voteId: number): Promise<void | VoteCanceled> {
     return await executeWithLoading(this, () =>
       signatureControllerApi.cancelVote(voteId)
+    )
+  }
+
+  async signDocumentByAuthor(
+    documentId: number,
+    signatureModel: SignatureModel
+  ): Promise<void | Signature> {
+    return await executeWithLoading(this, () =>
+      signatureControllerApi.sign(documentId, signatureModel, {
+        signByRequest: true,
+      })
     )
   }
 }
