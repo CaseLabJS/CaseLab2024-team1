@@ -41,4 +41,4 @@ const vote = {
   status: 'PENDING',
 }
 
-export default Promise.resolve(() => vote)
+export default Promise.resolve(() => [vote])
