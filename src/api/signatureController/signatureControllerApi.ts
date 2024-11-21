@@ -48,6 +48,15 @@ class SignatureControllerApi extends BaseApi {
         ),
     })
 
+  getVotes = () =>
+    this.createRequest<Vote[]>({
+      request: () => privateApi.get(`${SERVICE_URL}/voting`),
+      mock: async () => {
+        const signature = await this.getSignatureRequestById(1)
+        return () => [signature]
+      },
+    })
+
   createVote = (vote: VoteModel) =>
     this.createRequest<Vote>({
       request: () => privateApi.post(`${SERVICE_URL}/voting`, vote),
