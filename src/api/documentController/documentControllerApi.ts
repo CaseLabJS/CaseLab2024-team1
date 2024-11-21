@@ -108,6 +108,16 @@ class DocumentControllerApi extends BaseApi {
         ),
       mock: () => import('./mock/status'),
     })
+
+  getDocumentsCount = (params?: QueryParams) =>
+    this.createRequest<number>({
+      request: () =>
+        privateApi.get(`${SERVICE_URL}/countDocuments`, params && { params }),
+      mock: async () => {
+        const count = await Promise.resolve(1)
+        return () => count
+      },
+    })
 }
 
 export const documentControllerApi = new DocumentControllerApi()
