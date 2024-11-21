@@ -45,7 +45,10 @@ const Footer: React.FC = observer(() => {
           : null}
       <Typography
         variant="body2"
-        sx={{ gridColumn: '3/4', textAlign: { xs: 'center', sm: 'end' } }}
+        sx={{
+          gridColumn: { xs: '1/-1', sm: '3/4' },
+          textAlign: { xs: 'center', sm: 'end' },
+        }}
       >
         © 2024
       </Typography>
