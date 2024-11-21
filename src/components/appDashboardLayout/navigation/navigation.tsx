@@ -6,9 +6,9 @@ import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner'
 import GradingIcon from '@mui/icons-material/Grading'
 import AddIcon from '@mui/icons-material/Add'
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { ROUTES } from '@/router/constants.ts'
 
 export const NAVIGATION: Navigation = [
@@ -73,13 +73,13 @@ export const ADMIN_NAVIGATION: Navigation = [
     kind: 'divider',
   },
   {
+    segment: ROUTES.admin('admin'),
+    title: 'Администратор',
+    icon: <AdminPanelSettingsIcon />,
+  },
+  {
     segment: ROUTES.admin('admin/users'),
     title: 'Пользователи',
     icon: <ManageAccountsIcon />,
-  },
-  {
-    segment: ROUTES.admin(),
-    title: 'На главную',
-    icon: <AdminPanelSettingsIcon />,
   },
 ]
