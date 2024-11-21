@@ -10,6 +10,7 @@ export type SignatureRequestModel = {
 export type SignatureRequest = {
   id: number
   userTo: User
+  documentId: number
   documentVersionId: number
 }
 
