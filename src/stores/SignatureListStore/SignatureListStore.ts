@@ -23,7 +23,7 @@ class SignatureListStore {
     makeAutoObservable(this)
   }
 
-  async fetchSignatureRequests(): Promise<void> {
+  fetchSignatureRequests = async (): Promise<void> => {
     const fetchedSignatureRequests = await executeWithLoading(this, async () =>
       signatureControllerApi.getSignatureRequests()
     )
@@ -37,10 +37,13 @@ class SignatureListStore {
     }
   }
 
-  async getSignatureRequestById(id: number): Promise<void | SignatureRequest> {
+  getSignatureRequestById = async (
+    id: number
+  ): Promise<void | SignatureRequest> => {
     const signatureRequestJson = await executeWithLoading(this, async () =>
       signatureControllerApi.getSignatureRequestById(id)
     )
+
     if (signatureRequestJson) {
       const signatureRequest = new SignatureRequestStore(signatureRequestJson)
       runInAction(() => {
@@ -50,9 +53,9 @@ class SignatureListStore {
     }
   }
 
-  async createSignatureRequest(
+  createSignatureRequest = async (
     signatureRequestModel: SignatureRequestModel
-  ): Promise<void | SignatureRequest> {
+  ): Promise<void | SignatureRequest> => {
     const signatureRequest = await executeWithLoading(this, () =>
       signatureControllerApi.createSignatureRequest(signatureRequestModel)
     )
@@ -64,22 +67,22 @@ class SignatureListStore {
     }
   }
 
-  async createVote(voteModel: VoteModel): Promise<void | Vote> {
+  createVote = async (voteModel: VoteModel): Promise<void | Vote> => {
     return await executeWithLoading(this, () =>
       signatureControllerApi.createVote(voteModel)
     )
   }
 
-  async cancelVote(voteId: number): Promise<void | VoteCanceled> {
+  cancelVote = async (voteId: number): Promise<void | VoteCanceled> => {
     return await executeWithLoading(this, () =>
       signatureControllerApi.cancelVote(voteId)
     )
   }
 
-  async signDocumentByAuthor(
+  signDocumentByAuthor = async (
     documentId: number,
     signatureModel: SignatureModel
-  ): Promise<void | Signature> {
+  ): Promise<void | Signature> => {
     return await executeWithLoading(this, () =>
       signatureControllerApi.sign(documentId, signatureModel, {
         signByRequest: true,
