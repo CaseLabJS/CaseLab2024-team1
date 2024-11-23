@@ -85,7 +85,7 @@ class SignatureListStore {
   ): Promise<void | Signature> => {
     return await executeWithLoading(this, () =>
       signatureControllerApi.sign(documentId, signatureModel, {
-        signByRequest: true,
+        signByRequest: false,
       })
     )
   }
