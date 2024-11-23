@@ -16,7 +16,7 @@ export type SignatureRequest = {
 
 export type SignatureModel = {
   placeholderTitle: string
-  status: string
+  status: 'APPROVED' | 'REJECTED' | 'PENDING'
 }
 
 export type VoteModel = {
