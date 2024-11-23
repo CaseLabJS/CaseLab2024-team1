@@ -31,7 +31,7 @@ const UserControls = observer(() => {
   }
   if (isAuth) {
     return (
-      <Box sx={{ marginLeft: 'auto' }}>
+      <Box>
         <Tooltip title={<Typography>{userCredentials}</Typography>}>
           <IconButton
             size="medium"
@@ -74,15 +74,15 @@ const UserControls = observer(() => {
     )
   } else {
     return (
-      <>
+      <Box>
         <Button
-          sx={{ marginLeft: 'auto' }}
+          color="secondary"
           variant="contained"
           onClick={() => navigate(ROUTES.signIn)}
         >
           LOGIN
         </Button>
-      </>
+      </Box>
     )
   }
 })
