@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/router/constants.ts'
 import { Loader } from '@/components/loader/loader'
-import { User, Role } from '@/types/sharedTypes'
+import EditUser from '../editUser/EditUser'
+import { User, Role, Roles } from '@/types/sharedTypes'
 import { usersListStore } from '@/stores/UsersListStore'
 import { observer } from 'mobx-react-lite'
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
@@ -18,13 +19,30 @@ import {
 } from '@mui/material'
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material'
 import ConfirmPopover from './ConfirmPopover'
+import { SerializedError } from '@/api/core/serializedError'
 
 const UserTable: React.FC = observer(() => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [popoverIsOpen, setPopoverIsOpen] = useState(false)
   const [idToDelete, setIdToDelete] = useState<number>(0)
+  const [selectedUser, setSelectedUser] = useState<User>({
+    id: 0,
+    name: '',
+    surname: '',
+    roles: [],
+    email: '',
+  })
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [loaderIsOpen, setLoaderIsOpen] = useState(true)
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
+  const [selectedRole, setSelectedRole] = useState<Role>({
+    id: 1,
+    name: Roles.ADMIN,
+  })
+  const [snackbarText, setSnackbarText] = useState<string | null>(null)
+  const [snackbarError, setSnackbarError] = useState<SerializedError | null>(
+    null
+  )
   const { loading, error } = usersListStore
   const navigate = useNavigate()
   const handleAddUser = () => {
@@ -36,17 +54,44 @@ const UserTable: React.FC = observer(() => {
   }
   const handleDelete = async (id: number) => {
     await usersListStore.deleteUser(id)
+    setSnackbarText('Пользователь удален')
     setSnackbarIsOpen(true)
     handleClose()
+  }
+  const handleEdit = (user: User) => {
+    setSelectedUser({
+      id: user.id,
+      name: user.name,
+      surname: user.surname,
+      email: user.email,
+      roles: user.roles,
+    })
+    setSelectedRole({ id: user.roles[0].id, name: user.roles[0].name })
+    setIsEditModalOpen(true)
+  }
+  const handleCloseEdit = () => {
+    setIsEditModalOpen(false)
+    setSelectedUser({
+      id: 0,
+      name: '',
+      surname: '',
+      roles: [],
+      email: '',
+    })
   }
   useEffect(() => {
     void usersListStore.fetchUsers()
   }, [])
   useEffect(() => {
     if (error) {
+      setSnackbarText(error.message)
+      setSnackbarError(error)
       setSnackbarIsOpen(true)
     }
-  }, [error])
+    if (snackbarError) {
+      setSnackbarIsOpen(true)
+    }
+  }, [error, snackbarText, snackbarError])
   const rows: User[] = usersListStore.users.map(({ userData }) => ({
     id: userData.id,
     name: userData.name,
@@ -58,35 +103,35 @@ const UserTable: React.FC = observer(() => {
     {
       field: 'id',
       headerName: 'ID',
-      width: 200,
+      flex: 1,
     },
     {
       field: 'name',
       headerName: 'Имя',
-      width: 200,
+      flex: 2,
     },
     {
       field: 'surname',
       headerName: 'Фамилия',
-      width: 200,
+      flex: 2,
     },
     {
       field: 'email',
       headerName: 'Email',
-      width: 200,
+      flex: 2,
     },
     {
       field: 'roles',
       headerName: 'Роль',
-      width: 200,
+      flex: 1.5,
       valueGetter: (roles: Role[]) => {
-        return `${roles[0].name}`
+        return `${roles[0]?.name || ''}`
       },
     },
     {
       field: 'actions',
       headerName: 'Действия',
-      width: 200,
+      flex: 1.5,
       renderCell: (params: GridRenderCellParams<User>) => (
         <Box
           sx={{
@@ -106,7 +151,12 @@ const UserTable: React.FC = observer(() => {
           >
             <DeleteIcon />
           </IconButton>
-          <IconButton aria-label="edit">
+          <IconButton
+            aria-label="edit"
+            onClick={() => {
+              handleEdit(params.row)
+            }}
+          >
             <EditIcon />
           </IconButton>
         </Box>
@@ -141,14 +191,39 @@ const UserTable: React.FC = observer(() => {
         onConfirm={() => void handleDelete(idToDelete)}
         onClose={handleClose}
       />
+      <Modal open={isEditModalOpen} onClose={handleCloseEdit}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            borderRadius: 2,
+          }}
+        >
+          <EditUser
+            user={selectedUser}
+            role={selectedRole}
+            onClose={handleCloseEdit}
+            setSnackbarIsOpen={setSnackbarIsOpen}
+            setSnackbarText={setSnackbarText}
+            setSnackbarError={setSnackbarError}
+          />
+        </Box>
+      </Modal>
       <Snackbar
         open={snackbarIsOpen}
         autoHideDuration={6000}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         onClose={() => setSnackbarIsOpen(false)}
       >
-        <Alert severity={error ? 'error' : 'success'} sx={{ width: '100%' }}>
-          {error ? error.message : 'Пользователь удален'}
+        <Alert
+          severity={snackbarError ? 'error' : 'success'}
+          sx={{ width: '100%' }}
+        >
+          {snackbarText}
         </Alert>
       </Snackbar>
       <Modal

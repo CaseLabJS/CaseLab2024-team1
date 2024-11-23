@@ -1,103 +1,152 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
-import { Dropzone } from '@/components/dropzone/dropzone'
 import { DocumentForm } from '@/components/createDocumentForm/documentForm/documentForm'
-import { ChangeEvent, FormEvent, useCallback, useState } from 'react'
-import { SignerSection } from '@/components/createDocumentForm/signerSection/signerSection.tsx'
+import { FormEvent, useCallback, useEffect, useMemo } from 'react'
 import { ActionButtons } from '@/components/createDocumentForm/actionButtons/actionButtons.tsx'
-import { FormControl } from '@/components/createDocumentForm/formControl/formControl.tsx'
-import { DocumentPackageInfo } from '@/components/createDocumentForm/documentPackageInfo/documentPackageInfo.tsx'
-import {
-  agreement,
-  testDocumentsType,
-} from '@/stories/selectField/testData/testData.ts'
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
 import { FormValues } from '@/components/createDocumentForm/types.ts'
+import { AddDocumentButton } from '@/components/createDocumentForm/addDocumentButton/addDocumentButton.tsx'
+import documentsListStore from '@/stores/DocumentsListStore'
+import authStore from '@/stores/AuthStore'
+import documentTypeListStore from '@/stores/DocumentTypeListStore'
+import { Value } from '@/types/sharedTypes.ts'
+import { observer } from 'mobx-react-lite'
+import { fileToBase64 } from '@/utils/fileToBase64.ts'
+import { useNotifications } from '@toolpad/core'
+import { ROUTES } from '@/router/constants.ts'
+import { useNavigate } from 'react-router-dom'
+import { Document } from '@/types/sharedTypes.ts'
 
-export const CreateDocumentForm = () => {
-  const [isChecked, setIsChecked] = useState(true)
-  const [requestSignature, setRequestSignature] = useState(false)
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+const MAX_UPLOADABLE_FILES = 10
 
-  const initialDocumentType = testDocumentsType[0]
+export const CreateDocumentForm = observer(() => {
+  const initialDocumentType = documentTypeListStore.types[0]
+  const { createDocument } = documentsListStore
+  const { user } = authStore
 
-  const defaultValues = {
-    items: [],
-    recipient: '',
-    status: agreement[0].text,
-  }
+  const notifications = useNotifications()
+  const navigate = useNavigate()
+
+  const defaultFormItem = useMemo(() => {
+    return {
+      title: '',
+      documentTypeId: initialDocumentType?.data.id || null,
+      description: '',
+      attributes:
+        initialDocumentType?.data.attributes.reduce<Record<string, string>[]>(
+          (acc, attr) => {
+            acc.push({
+              [attr.name]: '',
+            })
+            return acc
+          },
+          []
+        ) || null,
+    }
+  }, [initialDocumentType])
 
   const form = useForm<FormValues>({
-    defaultValues,
+    defaultValues: {
+      items: [defaultFormItem],
+    },
   })
 
-  const { fields } = useFieldArray({
+  const { fields, remove, append, update } = useFieldArray({
     control: form.control,
     name: 'items',
   })
 
-  const onFilesAccepted = useCallback(
-    (files: File[]) => {
-      form.setValue(
-        'items',
-        files.map(() => {
-          return {
-            documentType: initialDocumentType.name,
-            requestSignature: false,
-            recipient: '',
-            description: '',
-            attributes: initialDocumentType.attributes.reduce<
-              Record<string, string>[]
-            >((acc, attr) => {
-              acc.push({
-                [attr.name]: '',
-              })
-              return acc
-            }, []),
-          }
-        })
-      )
-      setUploadedFiles((prevFiles) => [...prevFiles, ...files])
+  const fieldsValue = form.watch('items')
+
+  const handleRemoveDocument = useCallback(
+    (index: number) => {
+      remove(index)
     },
-    [form, initialDocumentType.attributes, initialDocumentType.name]
+    [remove]
   )
 
-  const handleRequestAllSignaturesChange = useCallback(
-    (_event: ChangeEvent<HTMLInputElement>, toggle: boolean) => {
-      setRequestSignature(toggle)
-      fields.map((_field, index) => {
-        form.setValue(`items.${index}.requestSignature`, toggle)
+  const handleAddDocument = useCallback(() => {
+    if (fields.length < MAX_UPLOADABLE_FILES) {
+      append(defaultFormItem)
+    } else {
+      notifications.show('Превышен лимит файлов', {
+        severity: 'error',
+        autoHideDuration: 2000,
       })
+    }
+  }, [append, defaultFormItem, fields.length, notifications])
+
+  const convertAttributesToValues = useCallback(
+    (attributes: Record<string, string>[]): Value[] => {
+      const values: Value[] = []
+
+      attributes.forEach((attribute) => {
+        for (const [key, value] of Object.entries(attribute)) {
+          values.push({ attributeName: key, value: value.trim() })
+        }
+      })
+
+      return values
     },
-    [fields, form]
+    []
   )
 
-  const handleRequestSignatureChange = useCallback((toggle: boolean) => {
-    if (!toggle) {
-      setRequestSignature(false)
-    }
-  }, [])
+  const onSubmit = useCallback(
+    async (data: FormValues) => {
+      const promises: Promise<void | Document>[] = []
 
-  const handleChangeChecked = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const checked = event.target.checked
-      setIsChecked(event.target.checked)
+      for (const document of data.items) {
+        const base64 = await fileToBase64(document.file ? document.file : null)
 
-      if (checked) {
-        uploadedFiles.forEach((_, index) => {
-          form.setValue(`items.${index}.recipient`, '')
+        if (document.attributes && document.documentTypeId) {
+          promises.push(
+            createDocument({
+              title: document.title.trim(),
+              userId: user ? user.id : 0,
+              documentTypeId: document.documentTypeId,
+              description: document.description,
+              values: convertAttributesToValues(document.attributes),
+              base64Content: base64,
+            })
+          )
+        }
+      }
+
+      const results = await Promise.all(promises)
+
+      results.map((result, index) => {
+        if (result) {
+          remove(index)
+        }
+      })
+
+      const items = form.getValues('items')
+
+      if (!items.length) {
+        notifications.show('Успешно сохранено', {
+          severity: 'success',
+          autoHideDuration: 2000,
         })
+
+        navigate(ROUTES.app('forward'))
       } else {
-        form.setValue(`recipient`, '')
+        notifications.show('Ошибка при операции', {
+          severity: 'error',
+          autoHideDuration: 5000,
+        })
       }
     },
-    [uploadedFiles, form]
+    [
+      form,
+      createDocument,
+      user,
+      convertAttributesToValues,
+      remove,
+      notifications,
+      navigate,
+    ]
   )
-
-  const onSubmit = useCallback(() => {
-    //TODO обработка документа и post запрос
-  }, [])
 
   const handleFormSubmit = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
@@ -106,64 +155,75 @@ export const CreateDocumentForm = () => {
     [form, onSubmit]
   )
 
+  const attachFileToDocument = useCallback(
+    (index: number, file?: File) => {
+      const documentToUpdate = fieldsValue[index]
+      documentToUpdate.file = file
+      update(index, documentToUpdate)
+    },
+    [update, fieldsValue]
+  )
+
+  useEffect(() => {
+    void documentTypeListStore.fetchDocumentTypes()
+  }, [])
+
   return (
     <Paper
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        gap: '3rem',
-        padding: '2rem',
+        gap: '0.5rem',
+        padding: '1.5rem',
       }}
       elevation={6}
     >
-      <Typography variant="h6" sx={{ fontWeight: '600' }}>
-        {uploadedFiles.length
-          ? `Загружено файлов: ${uploadedFiles.length}`
-          : 'Создать новый документ'}
-      </Typography>
+      <Box>
+        <Typography variant="h6" sx={{ fontWeight: '600' }}>
+          {`Добавлено документов: ${fields.length}`}
+        </Typography>
+        <Typography variant="caption" sx={{ color: 'grey.500' }}>
+          Максимум 10 документов
+        </Typography>
+      </Box>
 
-      {!uploadedFiles.length ? (
-        <Dropzone onFilesAccepted={onFilesAccepted} />
-      ) : (
-        <FormProvider {...form}>
-          <Box component="form" onSubmit={handleFormSubmit}>
-            <FormControl
-              isChecked={isChecked}
-              handleChangeChecked={handleChangeChecked}
-            />
+      <FormProvider {...form}>
+        <Box
+          component="form"
+          onSubmit={handleFormSubmit}
+          sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+        >
+          <AddDocumentButton
+            onAddDocument={handleAddDocument}
+            disabled={fields.length < MAX_UPLOADABLE_FILES}
+          />
 
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: isChecked ? 0 : '1.5rem',
-              }}
-            >
-              {isChecked && (
-                <DocumentPackageInfo
-                  initialValue={uploadedFiles}
-                  requestSignature={requestSignature}
-                  onChange={handleRequestAllSignaturesChange}
-                />
-              )}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.5rem',
+            }}
+          >
+            {fields.map((field, index) => {
+              const isSingleDocument = fields.length === 1
 
-              {fields.map((field, index) => (
+              return (
                 <DocumentForm
-                  file={uploadedFiles[index]}
-                  isChecked={isChecked}
-                  onRequestSignatureChange={handleRequestSignatureChange}
-                  key={field.id}
+                  file={fields[index].file}
+                  key={field.id || index}
                   fileIndex={index}
+                  onRemoveDocument={() => handleRemoveDocument(index)}
+                  single={isSingleDocument}
+                  addFile={attachFileToDocument}
                 />
-              ))}
-            </Box>
-
-            <SignerSection />
-
-            <ActionButtons />
+              )
+            })}
           </Box>
-        </FormProvider>
-      )}
+
+          <ActionButtons />
+        </Box>
+      </FormProvider>
     </Paper>
   )
-}
+})

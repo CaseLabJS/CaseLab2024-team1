@@ -36,8 +36,9 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     file: testFiles[0],
-    isChecked: false,
-    onRequestSignatureChange: (checked) => console.log(checked),
     fileIndex: 0,
+    onRemoveDocument: () => {},
+    single: true,
+    addFile: () => {},
   },
 }

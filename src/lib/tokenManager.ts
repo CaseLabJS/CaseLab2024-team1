@@ -25,6 +25,7 @@ export class TokenManager {
     if (token) {
       this.storage.setItem(ACCESS_TOKEN_KEY, token)
     } else {
+      this.decodedToken = null
       sessionStorage.removeItem(ACCESS_TOKEN_KEY)
       localStorage.removeItem(ACCESS_TOKEN_KEY)
     }

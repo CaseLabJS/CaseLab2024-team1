@@ -2,7 +2,7 @@ import { CreateDocumentForm } from '@/components/createDocumentForm/createDocume
 import { Meta, StoryObj } from '@storybook/react'
 import { ThemeProvider } from '@/theme/theme-provider/theme-provider.tsx'
 import CssBaseline from '@mui/material/CssBaseline'
-import { testFiles } from '@/stories/createDocumentForm/testData/testData.ts'
+import { MemoryRouter } from 'react-router-dom'
 
 const meta = {
   title: 'Components/CreateDocumentForm',
@@ -10,10 +10,12 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <ThemeProvider>
-        <CssBaseline />
-        <Story />
-      </ThemeProvider>
+      <MemoryRouter>
+        <ThemeProvider>
+          <CssBaseline />
+          <Story />
+        </ThemeProvider>
+      </MemoryRouter>
     ),
   ],
 } satisfies Meta<typeof CreateDocumentForm>
@@ -21,8 +23,4 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {
-  args: {
-    files: testFiles,
-  },
-}
+export const Default: Story = {}
