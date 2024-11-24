@@ -77,7 +77,7 @@ export const adminRoutes = [
         element: <CreateUser />,
       },
       {
-        path: ROUTES.admin('create-document/type'),
+        path: ROUTES.admin('document-type'),
         element: <CreateDocumentTypePage />,
       },
       {
