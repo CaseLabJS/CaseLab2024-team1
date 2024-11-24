@@ -1,6 +1,7 @@
 import AdminPage from '@/components/adminPage/AdminPage'
 import UserTable from '@/components/userTable/UserTable'
 import CreateUser from '@/components/createUser/CreateUser'
+import CreateDocumentTypePage from '@/components/createDocumentTypePage/createDocumentTypePage'
 
 import { AppDashboardLayout } from '@/components/appDashboardLayout/appDashboardLayout.tsx'
 import { AppProvider } from '@/components/appProvider/appProvider.tsx'
@@ -76,8 +77,8 @@ export const adminRoutes = [
         element: <CreateUser />,
       },
       {
-        path: ROUTES.admin('document-type'),
-        element: <div>Document Type</div>,
+        path: ROUTES.admin('create-document/type'),
+        element: <CreateDocumentTypePage />,
       },
       {
         path: ROUTES.admin('attribute-type'),
