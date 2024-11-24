@@ -11,6 +11,7 @@ import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
 import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
+import { DocumentPage } from '@/pages/document'
 
 export const publicRoutes = [
   {
@@ -51,6 +52,10 @@ export const appRoutes = [
           {
             path: ROUTES.app('new-document'),
             Component: CreateDocumentPage,
+          },
+          {
+            path: ROUTES.app('documents/:id'),
+            element: <DocumentPage />,
           },
         ],
       },
