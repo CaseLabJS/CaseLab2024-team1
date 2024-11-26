@@ -104,7 +104,7 @@ export class SignService {
     )
   }
 
-  protected get lastVersion() {
+  get lastVersion() {
     return this.document.documentData.documentVersions.at(-1)
   }
 

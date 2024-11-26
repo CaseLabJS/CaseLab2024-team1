@@ -3,6 +3,7 @@ import documentsListStore from '../DocumentsListStore'
 import signatureListStore from '../SignatureListStore'
 import type { DocumentWithSignature, GroupedSignatureRequests } from './types'
 import { combineDocumentWithSignature, groupSignatureRequests } from './helpers'
+import DocumentStore from '../DocumentStore'
 
 class DocumentSignService {
   documents: { [key: string]: DocumentWithSignature } = {}
@@ -37,10 +38,19 @@ class DocumentSignService {
       await this.fetchSignatureRequests()
     }
   }
+  wrapWithSignature = async (document: DocumentStore) => {
+    await this.initialFetch()
+
+    const documentWithSignature = combineDocumentWithSignature(
+      document,
+      this.signatureRequests[document.documentData.id]
+    )
+    this.documents[document.documentData.id] = documentWithSignature
+    return documentWithSignature
+  }
   getDocumentById = async (
     documentId: number
   ): Promise<DocumentWithSignature | null> => {
-    await this.initialFetch()
     try {
       if (!this.documents[documentId]) {
         const document = await documentsListStore.getDocumentById(documentId)
@@ -49,11 +59,7 @@ class DocumentSignService {
           return null
         }
 
-        const documentWithSignature = combineDocumentWithSignature(
-          document,
-          this.signatureRequests[documentId]
-        )
-        this.documents[document.documentData.id] = documentWithSignature
+        await this.wrapWithSignature(document)
       }
       return this.documents[documentId]
     } catch (error) {
