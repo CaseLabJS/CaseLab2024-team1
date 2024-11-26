@@ -10,12 +10,13 @@ export type SignatureRequestModel = {
 export type SignatureRequest = {
   id: number
   userTo: User
+  documentId: number
   documentVersionId: number
 }
 
 export type SignatureModel = {
   placeholderTitle: string
-  status: string
+  status: 'APPROVED' | 'REJECTED' | 'PENDING'
 }
 
 export type VoteModel = {
