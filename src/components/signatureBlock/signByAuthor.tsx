@@ -1,5 +1,5 @@
 import { FC, useState } from 'react'
-import { Stack, Button, ButtonGroup } from '@mui/material'
+import { Stack, Button, ButtonGroup, Box } from '@mui/material'
 import { SignByAuthorProps } from './types'
 import documentSignService from '@/stores/DocumentsSignService'
 import { SignatureModeSelector } from './signatureModeSelector'
@@ -15,15 +15,17 @@ export const SignByAuthor: FC<SignByAuthorProps> = ({ document }) => {
 
   if (!document.isSignedByAuthor) {
     return (
-      <Button
-        size="medium"
-        color="primary"
-        variant="contained"
-        onClick={() => void document.sign(true)}
-        disabled={loading}
-      >
-        Подписать документ
-      </Button>
+      <Box>
+        <Button
+          size="medium"
+          color="primary"
+          variant="contained"
+          onClick={() => void document.sign(true)}
+          disabled={loading}
+        >
+          Подписать документ
+        </Button>
+      </Box>
     )
   }
 
