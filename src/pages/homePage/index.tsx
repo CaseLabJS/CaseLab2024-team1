@@ -9,7 +9,6 @@ const HomePage: React.FC = () => {
       <HomeHeader />
       <Box
         sx={{
-          minWidth: 100,
           display: 'flex',
           justifyContent: 'center',
           mt: '100px',

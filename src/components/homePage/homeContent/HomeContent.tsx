@@ -4,8 +4,8 @@ const HomeContent: React.FC = () => {
   return (
     <Box
       sx={{
-        maxWidth: { xs: 400, md: 800, lg: 1400 },
-        minWidth: { xs: 400, md: 800, lg: 1400 },
+        maxWidth: { xs: 380, md: 800, lg: 1400 },
+        minWidth: { xs: 380, md: 800, lg: 1400 },
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
