@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { Loader } from '@/components/loader/loader'
 import documentTypeListStore from '@/stores/DocumentTypeListStore'
 import attributeListStore from '@/stores/AttributeListStore'
@@ -21,7 +20,6 @@ import {
   TableCell,
   TableBody,
 } from '@mui/material'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import Bird from '@/assets/bird.svg'
 
 const CreateDocumentTypePage: React.FC = observer(() => {
@@ -29,7 +27,6 @@ const CreateDocumentTypePage: React.FC = observer(() => {
   const { attributes } = attributeListStore
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
   const [loaderIsOpen, setLoaderIsOpen] = useState(true)
-  const navigate = useNavigate()
 
   const [checkedIds, setCheckedIds] = useState<Array<number>>([])
 
@@ -55,34 +52,12 @@ const CreateDocumentTypePage: React.FC = observer(() => {
     },
   })
 
-  const navigateBack = () => {
-    navigate(-1)
-  }
-
-  const fetchAttributes = async () => {
-    try {
-      await attributeListStore.fetchAttributes()
-    } catch (error) {
-      console.error('Ошибка при получении атрибутов:', error)
-    }
-  }
-
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetchAttributes()
-      } catch (error) {
-        console.error('Ошибка при получении атрибутов в useEffect:', error)
-      }
-    }
-
-    fetchData().catch((error) => {
-      console.error('Ошибка при вызове fetchData:', error)
-    })
+    void attributeListStore.fetchAttributes()
   }, [])
 
   const onSubmit: SubmitHandler<NewDocumentType> = async (data) => {
-    await documentTypeListStore.createDocumentType(data)
+    await documentTypeListStore.fetchDocumentTypes()
     console.log(data)
     setCheckedIds([])
     reset()
@@ -107,22 +82,6 @@ const CreateDocumentTypePage: React.FC = observer(() => {
         minHeight: 600,
       }}
     >
-      <Button
-        variant="contained"
-        size="small"
-        color="secondary"
-        onClick={navigateBack}
-        startIcon={<ChevronLeftIcon />}
-        style={{
-          fontSize: 10,
-          display: 'flex',
-          alignItems: 'center',
-          marginBottom: 20,
-        }}
-      >
-        Вернуться на предыдущую страницу
-      </Button>
-
       <img
         src={Bird}
         alt="Bird"
