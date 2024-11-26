@@ -9,6 +9,7 @@ import AddIcon from '@mui/icons-material/Add'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import { ROUTES } from '@/router/constants.ts'
 
 export const NAVIGATION: Navigation = [
@@ -81,5 +82,10 @@ export const ADMIN_NAVIGATION: Navigation = [
     segment: ROUTES.admin('admin/users'),
     title: 'Пользователи',
     icon: <ManageAccountsIcon />,
+  },
+  {
+    segment: ROUTES.admin('admin/deleted-users'),
+    title: 'Удаленные',
+    icon: <PersonRemoveIcon />,
   },
 ]
