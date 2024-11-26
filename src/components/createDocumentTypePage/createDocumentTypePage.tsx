@@ -57,7 +57,7 @@ const CreateDocumentTypePage: React.FC = observer(() => {
   }, [])
 
   const onSubmit: SubmitHandler<NewDocumentType> = async (data) => {
-    await documentTypeListStore.fetchDocumentTypes()
+    await documentTypeListStore.createDocumentType(data)
     console.log(data)
     setCheckedIds([])
     reset()
