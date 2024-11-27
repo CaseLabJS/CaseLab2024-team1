@@ -1,8 +1,8 @@
 import { DocumentWithSignature } from '@/stores/DocumentsSignService'
-import { Document, User } from '@/types/sharedTypes'
+import { User } from '@/types/sharedTypes'
 
-export type SignatureViewProps = {
-  documentId: Document['id']
+export type SignatureBlockProps = {
+  document: DocumentWithSignature
 }
 
 export type SignByReviewerProps = {

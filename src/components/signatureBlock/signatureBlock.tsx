@@ -1,29 +1,16 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useNotifications } from '@toolpad/core/useNotifications'
 import documentsSignService from '@/stores/DocumentsSignService/DocumentsSignService'
-import { DocumentWithSignature } from '@/stores/DocumentsSignService/types'
-import { SignatureViewProps } from './types'
+import { SignatureBlockProps } from './types'
 import { SignByReviewer } from './signByReviewer'
 import { SignByAuthor } from './signByAuthor'
 import { Loader } from '@/components/loader/loader'
 
-export const SignatureBlock: FC<SignatureViewProps> = observer(
-  ({ documentId }) => {
-    const [document, setDocument] = useState<DocumentWithSignature | null>(null)
-    const { loading, error, getDocumentById } = documentsSignService
+export const SignatureBlock: FC<SignatureBlockProps> = observer(
+  ({ document }) => {
+    const { loading, error } = documentsSignService
     const notifications = useNotifications()
-
-    useEffect(() => {
-      const loadDocument = async () => {
-        if (documentId) {
-          const fetchedDocument = await getDocumentById(documentId)
-          setDocument(fetchedDocument)
-        }
-      }
-
-      void loadDocument()
-    }, [documentId, getDocumentById])
 
     useEffect(() => {
       if (error) {

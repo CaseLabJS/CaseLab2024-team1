@@ -20,6 +20,7 @@ class DocumentSignService {
   }
 
   groupSignatureRequests = () => {
+    /** Возможно необходима фильтрация по пользователю */
     const requests = signatureListStore.signatureRequests
     runInAction(() => {
       this.signatureRequests = groupSignatureRequests(requests)
@@ -45,26 +46,24 @@ class DocumentSignService {
       document,
       this.signatureRequests[document.documentData.id]
     )
-    this.documents[document.documentData.id] = documentWithSignature
+    //this.documents[document.documentData.id] = documentWithSignature
     return documentWithSignature
   }
-  getDocumentById = async (
-    documentId: number
-  ): Promise<DocumentWithSignature | null> => {
+  fetchDocumentById = async (documentId: number): Promise<void> => {
     try {
       if (!this.documents[documentId]) {
         const document = await documentsListStore.getDocumentById(documentId)
 
         if (!document) {
-          return null
+          throw new Error(`Document with ID ${documentId} not found.`)
         }
-
-        await this.wrapWithSignature(document)
+        const documentWithSignature = await this.wrapWithSignature(document)
+        runInAction(() => {
+          this.documents[documentId] = documentWithSignature
+        })
       }
-      return this.documents[documentId]
     } catch (error) {
       console.error(`Error fetching document with ID ${documentId}:`, error)
-      return null
     }
   }
 

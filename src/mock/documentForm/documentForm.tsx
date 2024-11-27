@@ -71,7 +71,7 @@ export const DocumentForm: FC<DocumentFormProps> = observer(({ document }) => {
           <DocumentValues />
           <FileInput />
         </FormProvider>
-        <SignatureBlock documentId={document.documentData.id} />
+        <SignatureBlock document={document} />
       </Box>
     </Paper>
   )

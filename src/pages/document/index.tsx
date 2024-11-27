@@ -1,27 +1,21 @@
 import { Loader } from '@/components/loader'
 import { DocumentForm } from '@/mock/documentForm/documentForm'
-import { DocumentWithSignature } from '@/stores/DocumentsSignService'
 import { useNotifications } from '@toolpad/core'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import documentsSignService from '@/stores/DocumentsSignService'
+import { observer } from 'mobx-react-lite'
 
-export const DocumentPage = () => {
+export const DocumentPage = observer(() => {
   const { id: documentId } = useParams()
-  const [document, setDocument] = useState<DocumentWithSignature | null>(null)
-  const { loading, error, getDocumentById } = documentsSignService
+  const { documents, loading, error, fetchDocumentById } = documentsSignService
   const notifications = useNotifications()
 
-  useEffect(() => {
-    const loadDocument = async () => {
-      if (documentId) {
-        const fetchedDocument = await getDocumentById(Number(documentId))
-        setDocument(fetchedDocument)
-      }
-    }
+  const document = documentId ? documents[documentId] : null
 
-    void loadDocument()
-  }, [documentId, getDocumentById])
+  useEffect(() => {
+    if (documentId) void fetchDocumentById(Number(documentId))
+  }, [documentId, fetchDocumentById])
 
   useEffect(() => {
     if (error) {
@@ -36,4 +30,4 @@ export const DocumentPage = () => {
   if (!document) return null
 
   return <DocumentForm document={document} />
-}
+})
