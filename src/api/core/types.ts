@@ -9,6 +9,7 @@ export type BaseApiRequest<T> = {
 
 export type QueryParams = Partial<{
   showOnlyAlive: boolean
+  isAlive: boolean
   page: number
   size: number
   ascending: boolean

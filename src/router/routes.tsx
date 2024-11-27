@@ -1,6 +1,7 @@
 import AdminPage from '@/components/adminPage/AdminPage'
 import UserTable from '@/components/userTable/UserTable'
 import CreateUser from '@/components/createUser/CreateUser'
+import DeletedUsers from '@/components/deletedUsers/DeletedUsers'
 
 import { AppDashboardLayout } from '@/components/appDashboardLayout/appDashboardLayout.tsx'
 import { AppProvider } from '@/components/appProvider/appProvider.tsx'
@@ -88,6 +89,10 @@ export const adminRoutes = [
           {
             path: ROUTES.admin('users/create'),
             element: <CreateUser />,
+          },
+          {
+            path: ROUTES.admin('deleted-users'),
+            element: <DeletedUsers />,
           },
           {
             path: ROUTES.admin('document-type'),

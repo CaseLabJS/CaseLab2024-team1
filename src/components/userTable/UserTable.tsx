@@ -80,7 +80,7 @@ const UserTable: React.FC = observer(() => {
     })
   }
   useEffect(() => {
-    void usersListStore.fetchUsers()
+    void usersListStore.fetchUsers({ isAlive: true })
   }, [])
   useEffect(() => {
     if (error) {
@@ -151,12 +151,7 @@ const UserTable: React.FC = observer(() => {
           >
             <DeleteIcon />
           </IconButton>
-          <IconButton
-            aria-label="edit"
-            onClick={() => {
-              handleEdit(params.row)
-            }}
-          >
+          <IconButton aria-label="edit" onClick={() => handleEdit(params.row)}>
             <EditIcon />
           </IconButton>
         </Box>
@@ -170,13 +165,11 @@ const UserTable: React.FC = observer(() => {
         <Box textAlign="left" mb={1}>
           <Typography variant="h5">Пользователи</Typography>
         </Box>
-
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Button variant="outlined" onClick={handleAddUser}>
             Добавить пользователя
           </Button>
         </Box>
-
         <DataGrid
           rows={rows}
           columns={columns}

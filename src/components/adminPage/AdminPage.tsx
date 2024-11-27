@@ -10,15 +10,6 @@ const AdminPage = observer(() => {
           width: '100%',
           height: '7vh',
           borderRadius: '15px',
-        }}
-      >
-        Header
-      </Box>
-      <Box
-        sx={{
-          width: '100%',
-          height: '7vh',
-          borderRadius: '15px',
           my: '3vh',
         }}
       >
