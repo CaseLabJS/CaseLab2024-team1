@@ -56,6 +56,7 @@ const columns: GridColDef<RowData>[] = [
   {
     field: 'file',
     headerName: 'Файл',
+    valueGetter: (base64: string | null) => base64?.split(',')[1],
     editable: false,
     type: 'boolean',
     flex: 1,
