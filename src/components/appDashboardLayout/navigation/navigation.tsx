@@ -10,10 +10,11 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import { ROUTES } from '@/router/constants.ts'
+import { getNavigationPath } from '@/components/appDashboardLayout/navigation/getNavigationPath.ts'
 
 export const NAVIGATION: Navigation = [
   {
-    segment: `.${ROUTES.app('new-document')}`,
+    segment: getNavigationPath(ROUTES.app('new-document')),
     title: 'Добавить документ',
     icon: <AddIcon />,
   },
@@ -25,22 +26,22 @@ export const NAVIGATION: Navigation = [
     title: 'Документооборот',
   },
   {
-    segment: `.${ROUTES.app('inbox')}`,
+    segment: getNavigationPath(ROUTES.app('inbox')),
     title: 'Входящие',
     icon: <InboxIcon />,
   },
   {
-    segment: `.${ROUTES.app('forward')}`,
+    segment: getNavigationPath(ROUTES.app('forward')),
     title: 'Исходящие',
     icon: <ForwardToInboxIcon />,
   },
   {
-    segment: `.${ROUTES.app('draft')}`,
+    segment: getNavigationPath(ROUTES.app('draft')),
     title: 'Черновики',
     icon: <DraftsIcon />,
   },
   {
-    segment: `.${ROUTES.app('deleted')}`,
+    segment: getNavigationPath(ROUTES.app('deleted')),
     title: 'Удаленные',
     icon: <DeleteSweepIcon />,
   },
@@ -52,12 +53,12 @@ export const NAVIGATION: Navigation = [
     title: 'Согласование',
   },
   {
-    segment: `.${ROUTES.app('reports')}`,
+    segment: getNavigationPath(ROUTES.app('processing')),
     title: 'Требуют обработки',
     icon: <DocumentScannerIcon />,
   },
   {
-    segment: `.${ROUTES.app('integrations')}`,
+    segment: getNavigationPath(ROUTES.app('processed')),
     title: 'Обработанные',
     icon: <GradingIcon />,
   },

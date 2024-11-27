@@ -11,6 +11,8 @@ import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
 import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
+import { ForwardPage } from '@/pages/forwardPage'
+import { Navigate } from 'react-router-dom'
 
 export const publicRoutes = [
   {
@@ -49,8 +51,16 @@ export const appRoutes = [
         Component: AppDashboardLayout,
         children: [
           {
+            index: true,
+            element: <Navigate to="forward" replace />,
+          },
+          {
             path: ROUTES.app('new-document'),
             Component: CreateDocumentPage,
+          },
+          {
+            path: ROUTES.app('forward'),
+            Component: ForwardPage,
           },
         ],
       },
