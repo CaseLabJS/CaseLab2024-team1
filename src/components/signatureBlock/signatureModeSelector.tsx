@@ -21,7 +21,7 @@ export const SignatureModeSelector: FC<SignatureModeSelectorProps> = ({
     selectMode(mode)
     handleClose()
   }
-  console.log('modesMap', modesMap)
+
   return (
     <>
       <Button onClick={handleClick} variant="contained">
