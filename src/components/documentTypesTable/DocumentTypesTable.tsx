@@ -7,6 +7,8 @@ import {
   TableRow,
   TableCell,
   Paper,
+  Typography,
+  Button,
 } from '@mui/material'
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
@@ -18,27 +20,29 @@ const DocumentTypesTable = observer(() => {
   }, [])
   return (
     <Paper sx={{ p: '1.5rem' }}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Наименование</TableCell>
-            <TableCell sx={{ textAlign: 'center' }}>Атрибуты</TableCell>
-            <TableCell>Действия</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {types.length > 0 ? (
-            types.map((type) => {
-              return <DocumentType key={type.data.name} type={type.data} />
-            })
-          ) : (
+      <Typography variant="h5">Типы документов</Typography>
+      <Button variant="outlined" sx={{ my: '8px' }}>
+        Добавить тип документа
+      </Button>
+      {types.length > 0 ? (
+        <Table>
+          <TableHead>
             <TableRow>
-              <TableCell>Типы документов отсутствуют</TableCell>
+              <TableCell>ID</TableCell>
+              <TableCell>Наименование</TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>Атрибуты</TableCell>
+              <TableCell>Действия</TableCell>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {types.map((type) => {
+              return <DocumentType key={type.data.name} type={type.data} />
+            })}
+          </TableBody>
+        </Table>
+      ) : (
+        <Typography variant="subtitle1">Типы документов отсутствуют</Typography>
+      )}
     </Paper>
   )
 })
