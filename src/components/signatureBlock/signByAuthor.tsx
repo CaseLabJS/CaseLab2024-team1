@@ -7,11 +7,12 @@ import { Modes } from './types'
 import { modesMap } from './constants'
 import { User } from '@/types/sharedTypes'
 import { ManageCensorsList } from './manageCensorsList'
-export const SignByAuthor: FC<SignByAuthorProps> = ({ document }) => {
+import { observer } from 'mobx-react-lite'
+export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
   const { loading } = documentSignService
 
   const [mode, setMode] = useState<Modes>(Modes.Signature)
-  const [censors, setCensors] = useState<User[]>([])
+  const [newCensors, setNewCensors] = useState<User[]>([])
 
   if (!document.isSignedByAuthor) {
     return (
@@ -36,10 +37,10 @@ export const SignByAuthor: FC<SignByAuthorProps> = ({ document }) => {
         <SignatureModeSelector selectMode={setMode} />
       </ButtonGroup>
       <ManageCensorsList
-        censors={censors}
-        setCensors={setCensors}
+        censors={newCensors}
+        setCensors={setNewCensors}
         mode={mode}
       />
     </Stack>
   )
-}
+})
