@@ -45,7 +45,7 @@ const documentMockData: Document = {
           value: '52',
         },
       ],
-      base64Content: null,
+      base64Content: 'null',
       signatures: [
         {
           hash: 1322131231,
@@ -73,7 +73,7 @@ const documentMockData: Document = {
         'УПД НФ-0000178332 от 23.11.2024 содержит информацию о выполнении сделки, включая данные о товарах/услугах, их количестве и стоимости. Документ подтверждает факт поставки и служит основанием для бухгалтерского учета и налоговой отчетности',
       createdAt: '2024-11-23T12:04:20.659318',
       values: [],
-      base64Content: null,
+      base64Content: 'null',
       signatures: [],
     },
     {

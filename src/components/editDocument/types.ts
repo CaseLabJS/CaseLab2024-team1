@@ -1,5 +1,4 @@
 import { Value } from '@/types/sharedTypes'
-import { Base64Content } from '@/types/sharedTypes'
 import { Document } from '@/types/sharedTypes'
 import { FieldArrayWithId } from 'react-hook-form'
 import { DocumentVersion } from '@/types/sharedTypes'
@@ -23,5 +22,5 @@ export interface FormData {
   title: string
   description: string
   values: Value[]
-  base64Content: Base64Content
+  base64Content: string
 }
