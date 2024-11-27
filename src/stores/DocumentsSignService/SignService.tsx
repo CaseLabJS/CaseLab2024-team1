@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction, toJS } from 'mobx'
 import DocumentStore from '../DocumentStore/DocumentStore'
 import { User } from '@/types/sharedTypes'
 import { SignatureRequestVersionMap as SRVersionMap } from './types'
@@ -18,7 +18,8 @@ export class SignService {
   document
   SRVersionMap
   status: string = 'created'
-
+  isSignedByAuthor: boolean = false
+  isSignedByUser: boolean = false
   constructor(document: DocumentStore, SRVersionMap: SRVersionMap) {
     if (typeof document !== 'object' || document === null) {
       throw new Error('The argument must be a non-null object.')
@@ -28,6 +29,15 @@ export class SignService {
 
     this.document = document
     this.SRVersionMap = SRVersionMap ?? {}
+    this.checkIsSigned()
+  }
+
+  protected checkIsSigned() {
+    runInAction(() => {
+      this.isSignedByAuthor = this.isSignedBy(authorStore.user)
+      this.isSignedByUser = this.isSignedBy(this.author)
+    })
+    console.log(toJS(this.isSignedByAuthor))
   }
 
   protected signByAuthor = async (signatureModel: SignatureModel) => {
@@ -35,9 +45,31 @@ export class SignService {
       this.document.documentData.id,
       signatureModel
     )
+
     if (signature) {
-      this.lastVersion!.signatures.push(signature)
+      runInAction(() => {
+        this.document.documentData.documentVersions
+          .at(-1)!
+          .signatures.push(signature)
+      })
+      this.checkIsSigned()
     }
+  }
+
+  protected signByUser = async (signatureModel: SignatureModel) => {
+    const promises = this.lastVersionSR.map((sr) => sr.sign(signatureModel))
+
+    const results = await Promise.allSettled(promises)
+
+    const signatures = results
+      .filter((result) => result.status === 'fulfilled')
+      .map((result) => result.value)
+      .filter((signature) => signature !== undefined)
+
+    runInAction(() => {
+      this.lastVersion!.signatures.push(...signatures)
+      this.checkIsSigned()
+    })
   }
 
   sign = async (isApproved: boolean = true) => {
@@ -48,16 +80,7 @@ export class SignService {
 
     if (this.isUserAuthor) return await this.signByAuthor(signatureModel)
 
-    const promises = this.lastVersionSR.map((sr) => sr.sign(signatureModel))
-
-    const results = await Promise.allSettled(promises)
-
-    const signatures = results
-      .filter((result) => result.status === 'fulfilled')
-      .map((result) => result.value)
-      .filter((signature) => signature !== undefined)
-
-    this.lastVersion?.signatures.push(...signatures)
+    void (await this.signByUser(signatureModel))
   }
 
   sendSignRequest = async (censors: User[]) => {
@@ -98,8 +121,9 @@ export class SignService {
     this.censors.push(user)
   }
 
-  isSignedBy = <T extends { id: number }>(user: T) => {
-    return this.lastVersion?.signatures.some((signature) =>
+  isSignedBy = <T extends { id: number }>(user: T | null) => {
+    if (!user) return false
+    return this.lastVersion!.signatures.some((signature) =>
       isSameUser(signature.user, user)
     )
   }
@@ -116,14 +140,6 @@ export class SignService {
     return !!authorStore.user && isSameUser(this.author, authorStore.user)
   }
 
-  get isSignedByUser() {
-    return !!authorStore.user && this.isSignedBy(authorStore.user)
-  }
-
-  get isSignedByAuthor() {
-    return this.isSignedBy(this.author)
-  }
-
   protected get lastVersionSR(): SR[] {
     const lastVersionId = this.lastVersion?.id
     return lastVersionId && lastVersionId in this.SRVersionMap
@@ -137,5 +153,9 @@ export class SignService {
 
   get censors() {
     return this.lastVersionSR.map(({ userTo }) => userTo)
+  }
+
+  get SRWithStatus() {
+    return this.lastVersionSR.map(({ userTo }) => ({ userTo, status }))
   }
 }
