@@ -12,6 +12,7 @@ import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
 import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
+import DocumentTypesTable from '@/components/documentTypesTable/DocumentTypesTable'
 
 export const publicRoutes = [
   {
@@ -85,8 +86,8 @@ export const adminRoutes = [
             element: <DeletedUsers />,
           },
           {
-            path: ROUTES.admin('document-type'),
-            element: <div>Document Type</div>,
+            path: ROUTES.admin('document-types'),
+            element: <DocumentTypesTable />,
           },
           {
             path: ROUTES.admin('attribute-type'),
