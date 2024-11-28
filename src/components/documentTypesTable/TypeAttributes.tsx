@@ -15,7 +15,6 @@ import {
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { useState } from 'react'
-import React from 'react'
 
 interface TypeAttributeProps {
   attributes: Attribute[]
@@ -55,7 +54,7 @@ const TypeAttributes = (props: TypeAttributeProps) => {
                   <Typography key={attribute.id} variant="subtitle2">
                     {attribute.name}
                     {index === 0 && attributes.length > 1 ? ',' : ''}
-                    {index === 1 && attributes.length > 1 ? '...' : ''}
+                    {index === 1 && attributes.length > 2 ? '...' : ''}
                   </Typography>
                 )
             })}
