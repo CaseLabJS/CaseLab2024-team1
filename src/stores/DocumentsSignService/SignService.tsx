@@ -1,13 +1,17 @@
 import { makeAutoObservable, runInAction, toJS } from 'mobx'
 import DocumentStore from '../DocumentStore/DocumentStore'
 import { User } from '@/types/sharedTypes'
-import { SignatureRequestVersionMap as SRVersionMap } from './types'
+import {
+  SignatureRequestVersionMap as SRVersionMap,
+  StartVoteProps,
+} from './types'
 import { isCurrentUser, isSameUser } from '@/lib'
 import SR from '@/stores/SignatureRequestStore'
 import SL from '@/stores/SignatureListStore'
 import authorStore from '@/stores/AuthStore'
 //import { signatureModel } from './constants'
 import { SignatureModel } from '@/api/signatureController'
+import { Censor } from '@/components/signatureBlock/types'
 
 /** SR : SignatureRequest
  * SL : SignatureListStore
@@ -83,12 +87,12 @@ export class SignService {
     void (await this.signByUser(signatureModel))
   }
 
-  sendSignRequest = async (censors: User[]) => {
+  sendSignRequest = async (censors: Censor[]) => {
     const promises = censors.map((censor) =>
       SL.createSignatureRequest({
         documentId: this.document.documentData.id,
         documentVersionId: this.lastVersion!.id,
-        userIdTo: censor.id,
+        userIdTo: censor.userData.id,
       })
     )
     return await Promise.allSettled(promises)
@@ -98,13 +102,9 @@ export class SignService {
     censors,
     approvalThreshold,
     deadline,
-  }: {
-    censors: User[]
-    approvalThreshold: number
-    deadline: Date | string
-  }) => {
+  }: StartVoteProps) => {
     return await SL.createVote({
-      participantIds: censors.map((censor) => censor.id),
+      participantIds: censors.map((censor) => censor.userData.id),
       documentId: this.document.documentData.id,
       documentVersionId: this.lastVersion!.id,
       approvalThreshold,
