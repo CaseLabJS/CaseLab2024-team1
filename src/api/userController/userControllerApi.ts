@@ -66,10 +66,7 @@ class UserControllerApi extends BaseApi {
   getUsers = (params?: QueryParams) =>
     this.createRequest<User[]>({
       request: () => privateApi.get(`${SERVICE_URL}`, params && { params }),
-      mock: async () => {
-        const user = await this.getUserById(2)
-        return () => [user]
-      },
+      mock: () => import('./mock/users'),
     })
 
   recover = (id: number) =>

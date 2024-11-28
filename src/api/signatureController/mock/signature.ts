@@ -1,8 +1,7 @@
-import { Roles } from '@/types/sharedTypes'
-import { SignatureRequest } from '../types'
+import { Roles, Signature } from '@/types/sharedTypes'
 
 const user = {
-  id: 1,
+  id: 2,
   name: 'admin',
   surname: 'admin',
   email: 'admin',
@@ -14,11 +13,10 @@ const user = {
   ],
 }
 
-const signature: SignatureRequest = {
-  id: 1,
-  userTo: user,
-  documentId: 1,
-  documentVersionId: 2,
+const signature: Signature = {
+  hash: 0,
+  user: user,
+  placeholderTitle: 'test',
 }
 
 export default Promise.resolve(() => signature)

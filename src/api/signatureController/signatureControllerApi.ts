@@ -16,13 +16,13 @@ class SignatureControllerApi extends BaseApi {
   createSignatureRequest = (signatureRequest: SignatureRequestModel) =>
     this.createRequest<SignatureRequest>({
       request: () => privateApi.post(`${SERVICE_URL}/send`, signatureRequest),
-      mock: () => import('./mock/signature'),
+      mock: () => import('./mock/signatureRequest'),
     })
 
   getSignatureRequestById = (id: number) =>
     this.createRequest<SignatureRequest>({
       request: () => privateApi.get(`${SERVICE_URL}/${id}`),
-      mock: () => import('./mock/signature'),
+      mock: () => import('./mock/signatureRequest'),
     })
 
   getSignatureRequests = () =>
@@ -46,6 +46,7 @@ class SignatureControllerApi extends BaseApi {
           signature,
           params && { params }
         ),
+      mock: () => import('./mock/signature'),
     })
 
   getVotes = () =>

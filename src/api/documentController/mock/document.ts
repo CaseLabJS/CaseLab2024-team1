@@ -1,7 +1,7 @@
 import { Document, Roles } from '@/types/sharedTypes'
 
 const user = {
-  id: 1,
+  id: 2,
   name: 'admin',
   surname: 'admin',
   email: 'admin',
@@ -46,13 +46,7 @@ const document: Document = {
         },
       ],
       base64Content: 'SGVsbG8sIFdvcmxkIQ==',
-      signatures: [
-        {
-          hash: 1322131231,
-          placeholderTitle: 'testPlaceholder',
-          user,
-        },
-      ],
+      signatures: [],
     },
   ],
   comments: [
