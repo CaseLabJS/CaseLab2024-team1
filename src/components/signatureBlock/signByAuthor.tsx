@@ -1,22 +1,22 @@
 import { FC, useState } from 'react'
+import { observer } from 'mobx-react-lite'
 import { Stack, Button, ButtonGroup, Box } from '@mui/material'
-import { SignByAuthorProps } from './types'
 import documentSignService from '@/stores/DocumentsSignService'
 import { SignatureModeSelector } from './signatureModeSelector'
-import { Modes } from './types'
+import { CensorsListMenu } from './censorsListMenu'
+import { VoteForm } from './voteForm'
 import { modesMap } from './constants'
-import { User } from '@/types/sharedTypes'
-import { ManageCensorsList } from './manageCensorsList'
-import { observer } from 'mobx-react-lite'
+import { Modes, SignByAuthorProps, VoteFormValues } from './types'
+
 export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
   const { loading } = documentSignService
 
   const [mode, setMode] = useState<Modes>(Modes.Signature)
-  const [newCensors, setNewCensors] = useState<User[]>([])
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   if (!document.isSignedByAuthor) {
     return (
-      <Box>
+      <Box mt={2}>
         <Button
           size="medium"
           color="primary"
@@ -30,16 +30,39 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
     )
   }
 
+  const showCensorsList = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
   return (
     <Stack spacing={2} direction="row" mt={2}>
-      <ButtonGroup variant="contained" aria-label="Basic button group">
-        <Button sx={{ minWidth: '14rem!important' }}>{modesMap[mode]}</Button>
+      <ButtonGroup variant="contained" aria-label="manage censors">
+        <Button sx={{ minWidth: '14rem!important' }} onClick={showCensorsList}>
+          {modesMap[mode]}
+        </Button>
         <SignatureModeSelector selectMode={setMode} />
       </ButtonGroup>
-      <ManageCensorsList
-        censors={newCensors}
-        setCensors={setNewCensors}
-        mode={mode}
+      <CensorsListMenu
+        anchorEl={anchorEl}
+        setAnchorEl={setAnchorEl}
+        render={(censors) => {
+          return mode === Modes.Signature ? (
+            <Button
+              variant="contained"
+              disabled={loading || !censors.length}
+              onClick={() => void document.sendSignRequest(censors)}
+            >
+              {modesMap[mode]}
+            </Button>
+          ) : (
+            <VoteForm
+              disabled={loading || !censors.length}
+              startVote={(formValues: VoteFormValues) =>
+                void document.startVote({ ...formValues, censors })
+              }
+            />
+          )
+        }}
       />
     </Stack>
   )
