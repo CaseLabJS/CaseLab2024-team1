@@ -47,3 +47,8 @@ export type VoteFormProps = {
   startVote: (formValues: VoteFormValues) => void
   disabled: boolean
 }
+
+export type SearchableSubheaderProps = {
+  sx?: SxProps<Theme>
+  onSearch?: (value: string) => void
+}
