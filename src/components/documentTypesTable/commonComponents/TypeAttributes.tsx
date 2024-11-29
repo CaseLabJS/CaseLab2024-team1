@@ -27,7 +27,6 @@ const TypeAttributes = (props: TypeAttributeProps) => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
             }}
           >
             <IconButton

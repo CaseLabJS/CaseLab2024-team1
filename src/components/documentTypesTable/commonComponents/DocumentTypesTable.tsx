@@ -44,8 +44,10 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
               <TableRow>
                 <TableCell sx={{ width: '5%' }}>ID</TableCell>
                 <TableCell sx={{ width: '25%' }}>Наименование</TableCell>
-                <TableCell sx={{ width: '40%', textAlign: 'center' }}>
-                  Атрибуты
+                <TableCell sx={{ width: '40%' }}>
+                  <Typography variant="subtitle2" mx="1rem">
+                    Атрибуты
+                  </Typography>
                 </TableCell>
                 <TableCell sx={{ width: '30%', textAlign: 'end' }}>
                   Действия
@@ -53,20 +55,23 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {types.map((type) => {
-                return (
-                  <DocumentType
-                    key={type.data.name}
-                    type={type.data}
-                    showOnlyAlive={props.showOnlyAlive}
-                    setSnackBarOpen={setSnackbarIsOpen}
-                  />
-                )
-              })}
+              {types
+                .map((type) => type)
+                .sort((a, b) => a.data.id - b.data.id)
+                .map((type) => {
+                  return (
+                    <DocumentType
+                      key={type.data.name}
+                      type={type.data}
+                      showOnlyAlive={props.showOnlyAlive}
+                      setSnackBarOpen={setSnackbarIsOpen}
+                    />
+                  )
+                })}
             </TableBody>
           </Table>
         ) : (
-          <Typography variant="subtitle1">
+          <Typography variant="subtitle1" sx={{ my: '1rem' }}>
             Типы документов отсутствуют
           </Typography>
         )}
@@ -81,7 +86,7 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
           {error
             ? error.message
             : props.showOnlyAlive
-              ? 'Тип документа удале'
+              ? 'Тип документа удален'
               : 'Тип документа восстановлен'}
         </Alert>
       </Snackbar>

@@ -10,6 +10,10 @@ const DocumentType = (props: DocumentTypeProps) => {
     await documentTypeListStore.deleteDocumentType(typeId)
     props.setSnackBarOpen(true)
   }
+  const recoverType = async (typeId: number) => {
+    await documentTypeListStore.recoverDocumentType(typeId)
+    props.setSnackBarOpen(true)
+  }
   return (
     <>
       <TableRow
@@ -41,9 +45,7 @@ const DocumentType = (props: DocumentTypeProps) => {
           {!props.showOnlyAlive && (
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <IconButton
-                onClick={() => {
-                  return
-                }} // TODO: добавить функцию для восстановления типа документа }
+                onClick={() => void recoverType(type.id)}
                 sx={{ mr: '5px' }}
               >
                 <Replay />
