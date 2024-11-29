@@ -48,7 +48,11 @@ const TypeAttributes = (props: TypeAttributeProps) => {
                 return (
                   <Typography key={attribute.id} variant="subtitle2">
                     {attribute.name}
-                    {index === 0 && attributes.length > 1 ? ',' : ''}
+                    {index === 0 && attributes.length > 1 ? (
+                      <span>,&nbsp;</span>
+                    ) : (
+                      ''
+                    )}
                     {index === 1 && attributes.length > 2 ? '...' : ''}
                   </Typography>
                 )
