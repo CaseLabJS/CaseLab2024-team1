@@ -11,6 +11,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import AssignmentIcon from '@mui/icons-material/Assignment'
+import FolderDeleteIcon from '@mui/icons-material/FolderDelete'
 import { ROUTES } from '@/router/constants.ts'
 
 export const NAVIGATION: Navigation = [
@@ -93,5 +94,10 @@ export const ADMIN_NAVIGATION: Navigation = [
     segment: ROUTES.admin('admin/document-types'),
     title: 'Типы документов',
     icon: <AssignmentIcon />,
+  },
+  {
+    segment: ROUTES.admin('admin/document-types/deleted'),
+    title: 'Удаленные типы',
+    icon: <FolderDeleteIcon />,
   },
 ]

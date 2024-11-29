@@ -1,4 +1,5 @@
-import { Attribute } from '@/types/sharedTypes'
+import { TypeAttributeProps } from '../types'
+import { useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
 import CheckIcon from '@mui/icons-material/Check'
 import {
@@ -14,11 +15,6 @@ import {
 } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import { useState } from 'react'
-
-interface TypeAttributeProps {
-  attributes: Attribute[]
-}
 
 const TypeAttributes = (props: TypeAttributeProps) => {
   const attributes = props.attributes

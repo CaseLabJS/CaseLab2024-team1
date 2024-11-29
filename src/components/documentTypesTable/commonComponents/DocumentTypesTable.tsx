@@ -1,5 +1,8 @@
-import documentTypeListStore from '@/stores/DocumentTypeListStore'
 import DocumentType from './DocumentType'
+import { DocumentTypesTableProps } from '../types'
+import { observer } from 'mobx-react-lite'
+import { useEffect, useState } from 'react'
+import documentTypeListStore from '@/stores/DocumentTypeListStore'
 import {
   Table,
   TableHead,
@@ -12,25 +15,31 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material'
-import { observer } from 'mobx-react-lite'
-import { useEffect, useState } from 'react'
 
-const DocumentTypesTable = observer(() => {
+const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
   const { types } = documentTypeListStore
   useEffect(() => {
-    void documentTypeListStore.fetchDocumentTypes()
+    void documentTypeListStore.fetchDocumentTypes({
+      showOnlyAlive: props.showOnlyAlive,
+    })
   }, [])
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
   const { error } = documentTypeListStore
   return (
     <>
       <Paper sx={{ p: '1.5rem' }}>
-        <Typography variant="h5">Типы документов</Typography>
-        <Button variant="outlined" sx={{ my: '8px' }}>
-          Добавить тип документа
-        </Button>
+        <Typography variant="h5">
+          {props.showOnlyAlive
+            ? 'Типы документов'
+            : 'Удаленные типы документов'}
+        </Typography>
+        {props.showOnlyAlive && (
+          <Button variant="outlined" sx={{ mt: '8px' }}>
+            Добавить тип документа
+          </Button>
+        )}
         {types.length > 0 ? (
-          <Table size="small">
+          <Table sx={{ mt: '8px' }} size="small">
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: '5%' }}>ID</TableCell>
@@ -49,6 +58,7 @@ const DocumentTypesTable = observer(() => {
                   <DocumentType
                     key={type.data.name}
                     type={type.data}
+                    showOnlyAlive={props.showOnlyAlive}
                     setSnackBarOpen={setSnackbarIsOpen}
                   />
                 )
@@ -68,7 +78,11 @@ const DocumentTypesTable = observer(() => {
         onClose={() => setSnackbarIsOpen(false)}
       >
         <Alert severity={error ? 'error' : 'success'} sx={{ width: '100%' }}>
-          {error ? error.message : 'Тип документа удален'}
+          {error
+            ? error.message
+            : props.showOnlyAlive
+              ? 'Тип документа удале'
+              : 'Тип документа восстановлен'}
         </Alert>
       </Snackbar>
     </>

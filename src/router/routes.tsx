@@ -12,7 +12,8 @@ import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
 import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
-import DocumentTypesTable from '@/components/documentTypesTable/DocumentTypesTable'
+import AliveTypes from '@/components/documentTypesTable/AliveTypes'
+import DeadTypes from '@/components/documentTypesTable/DeadTypes'
 
 export const publicRoutes = [
   {
@@ -87,7 +88,11 @@ export const adminRoutes = [
           },
           {
             path: ROUTES.admin('document-types'),
-            element: <DocumentTypesTable />,
+            element: <AliveTypes />,
+          },
+          {
+            path: ROUTES.admin('document-types/deleted'),
+            element: <DeadTypes />,
           },
           {
             path: ROUTES.admin('attribute-type'),
