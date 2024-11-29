@@ -7,9 +7,7 @@ export const AppDashboardLayout = () => {
   return (
     <DashboardLayout
       slots={{
-        toolbarActions: !authStore.isAdmin
-          ? Search
-          : () => <div>Guest Menu</div>,
+        toolbarActions: !authStore.isAdmin ? Search : () => null,
       }}
       sx={{
         '& .MuiDrawer-docked': {
