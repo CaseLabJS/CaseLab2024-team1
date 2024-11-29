@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { Loader } from '@/components/loader/loader'
 import { UserCredentials } from '@/types/sharedTypes'
 import { usersListStore } from '@/stores/UsersListStore'
@@ -21,17 +20,12 @@ import {
   VisibilityOff,
   Email as EmailIcon,
 } from '@mui/icons-material'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import Bird from '@/assets/bird.svg'
 const CreateUser: React.FC = observer(() => {
   const [showPassword, setShowPassword] = useState(true)
   const [loaderIsOpen, setLoaderIsOpen] = useState(true)
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
   const { loading, error } = usersListStore
-  const navigate = useNavigate()
-  const navigateBack = () => {
-    navigate(-1)
-  }
   const {
     register,
     formState: { errors, isValid },
@@ -63,21 +57,6 @@ const CreateUser: React.FC = observer(() => {
         minHeight: 600,
       }}
     >
-      <Button
-        variant="contained"
-        size="small"
-        color="secondary"
-        onClick={navigateBack}
-        startIcon={<ChevronLeftIcon />}
-        style={{
-          fontSize: 10,
-          display: 'flex',
-          alignItems: 'center',
-          margin: 20,
-        }}
-      >
-        Вернуться на предыдущую страницу
-      </Button>
       <Box>
         <img src={Bird} alt="Logo" width={50} height={50} />
       </Box>
