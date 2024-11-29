@@ -24,6 +24,9 @@ export const AppDashboardLayout = () => {
             maxWidth: '270px',
           },
         },
+        '& >.MuiBox-root': {
+          overflow: 'auto',
+        },
       }}
     >
       <section className="main">
