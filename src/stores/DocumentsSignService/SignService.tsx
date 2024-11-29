@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction, toJS } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import DocumentStore from '../DocumentStore/DocumentStore'
 import { User } from '@/types/sharedTypes'
 import {
@@ -41,7 +41,6 @@ export class SignService {
       this.isSignedByAuthor = this.isSignedBy(authorStore.user)
       this.isSignedByUser = this.isSignedBy(this.author)
     })
-    console.log(toJS(this.isSignedByAuthor))
   }
 
   protected signByAuthor = async (signatureModel: SignatureModel) => {

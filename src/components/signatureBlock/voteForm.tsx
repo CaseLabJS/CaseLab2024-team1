@@ -8,7 +8,6 @@ import { DeadlineInput } from './deadlineInput'
 
 export const VoteForm: React.FC<VoteFormProps> = ({ startVote, disabled }) => {
   const onSubmit = (data: VoteFormValues) => {
-    console.log(data)
     startVote(data)
   }
 

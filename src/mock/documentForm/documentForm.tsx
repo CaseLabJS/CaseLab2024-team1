@@ -17,7 +17,6 @@ import { DocumentFormProps, FormValues } from './types'
 import styles from './documentForm.module.css'
 import { DocumentValues } from './documentValues/documentValues'
 import { observer } from 'mobx-react-lite'
-import { toJS } from 'mobx'
 import ModeEditIcon from '@mui/icons-material/ModeEdit'
 import { SignatureBlock } from '@/components/signatureBlock/signatureBlock'
 
@@ -25,7 +24,6 @@ export const DocumentForm: FC<DocumentFormProps> = observer(({ document }) => {
   const {
     documentData: { documentType, id, documentVersions },
   } = document
-  const lastVersion = documentVersions.at(0)
 
   const [version, setVersion] = useState<number>(documentVersions.length - 1)
 
@@ -38,7 +36,6 @@ export const DocumentForm: FC<DocumentFormProps> = observer(({ document }) => {
     },
   })
 
-  //console.log(toJS(document))
   const theme = useTheme()
 
   return (

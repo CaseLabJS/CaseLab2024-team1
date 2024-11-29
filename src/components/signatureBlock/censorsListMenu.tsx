@@ -31,6 +31,11 @@ export const CensorsListMenu: FC<CensorsListMenuProps> = observer(
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleClose}
+          sx={{
+            '& .MuiPaper-root': {
+              border: `2px solid var(--mui-palette-divider)`,
+            },
+          }}
         >
           <ListSubheader sx={{ maxWidth: '800px', minWidth: '480px' }}>
             Выбрано подписей
@@ -55,7 +60,7 @@ export const CensorsListMenu: FC<CensorsListMenuProps> = observer(
           </ListSubheader>
 
           <Divider />
-          <ListSubheader>Подписи</ListSubheader>
+          <ListSubheader>Выберите вариант подписи</ListSubheader>
 
           <CensorsList
             censors={users.filter((user) => !censors.includes(user))}

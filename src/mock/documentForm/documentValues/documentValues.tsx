@@ -12,14 +12,17 @@ export const DocumentValues = () => {
   return (
     <Box>
       {values.map((value, index) => {
-        const name: `values.${number}.attributeName` = `values.${index}.attributeName`
         return (
           <Controller
             key={value.attributeName}
-            name={name}
+            name={`values.${index}.attributeName`}
             control={control}
             render={({ field }) => (
-              <TextField {...field} label={name} fullWidth />
+              <TextField
+                {...field}
+                label={values[index].attributeName}
+                fullWidth
+              />
             )}
           />
         )
