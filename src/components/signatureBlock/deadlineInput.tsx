@@ -11,7 +11,16 @@ export const DeadlineInput = () => {
       <Controller
         name="deadline"
         control={control}
-        defaultValue=""
+        rules={{
+          required: 'Выберите дату',
+          validate: (value: string) => {
+            const selectedDate = new Date(value).setHours(0, 0, 0, 0)
+            const currentDate = new Date().setHours(0, 0, 0, 0)
+            return (
+              selectedDate > currentDate || 'Дата должна быть больше текущей'
+            )
+          },
+        }}
         render={({ field, fieldState }) => (
           <TextField
             {...field}

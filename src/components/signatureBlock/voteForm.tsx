@@ -14,6 +14,7 @@ export const VoteForm: React.FC<VoteFormProps> = ({ startVote, disabled }) => {
 
   const methods = useForm<VoteFormValues>({
     defaultValues: initialVoteFormValues,
+    mode: 'onChange',
   })
 
   return (
