@@ -1,11 +1,16 @@
 import { DashboardLayout } from '@toolpad/core/DashboardLayout'
 import { Outlet } from 'react-router-dom'
 import { Search } from '@/components/search/search.tsx'
+import authStore from '@/stores/AuthStore'
 
 export const AppDashboardLayout = () => {
   return (
     <DashboardLayout
-      slots={{ toolbarActions: Search }}
+      slots={{
+        toolbarActions: !authStore.isAdmin
+          ? Search
+          : () => <div>Guest Menu</div>,
+      }}
       sx={{
         '& .MuiDrawer-docked': {
           maxWidth: '230px',
