@@ -1,9 +1,9 @@
-import { DocumentWithSignature } from '@/stores/DocumentsSignService'
+import { DocumentWithSignature } from '@/mock/DocumentWithSignature'
 import UserStore from '@/stores/UserStore'
 import { SxProps, Theme } from '@mui/system'
 
-export type SignatureViewProps = {
-  documentId: Document['id']
+export type SignatureBlockProps = {
+  document: DocumentWithSignature
 }
 
 export type SignByReviewerProps = {

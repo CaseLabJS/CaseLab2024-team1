@@ -39,6 +39,11 @@ export const CensorsListMenu: FC<CensorsListMenuProps> = observer(
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleClose}
+          sx={{
+            '& .MuiPaper-root': {
+              border: `2px solid var(--mui-palette-divider)`,
+            },
+          }}
         >
           <ListSubheader sx={{ maxWidth: '800px', minWidth: '480px' }}>
             Выбрано подписей

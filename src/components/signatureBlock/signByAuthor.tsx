@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Stack, Button, ButtonGroup, Box } from '@mui/material'
-import documentSignService from '@/stores/DocumentsSignService'
+import { Stack, Button, ButtonGroup, Box, Alert } from '@mui/material'
+import documentSignService from '@/mock/DocumentsSignService'
 import { SignatureModeSelector } from './signatureModeSelector'
 import { CensorsListMenu } from './censorsListMenu'
 import { VoteForm } from './voteForm'
@@ -47,13 +47,20 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
         setAnchorEl={setAnchorEl}
         render={(censors) => {
           return mode === Modes.Signature ? (
-            <Button
-              variant="contained"
-              disabled={loading || !censors.length}
-              onClick={() => void document.sendSignRequest(censors)}
-            >
-              {modesMap[mode]}
-            </Button>
+            <>
+              {censors.length > 1 && (
+                <Alert severity="error">
+                  Можно выбрать только одну подпись
+                </Alert>
+              )}
+              <Button
+                variant="contained"
+                disabled={loading || !censors.length || censors.length > 1}
+                onClick={() => void document.sendSignRequest(censors)}
+              >
+                {modesMap[mode]}
+              </Button>
+            </>
           ) : (
             <VoteForm
               disabled={loading || !censors.length}

@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Stack, Button } from '@mui/material'
 import { SignByReviewerProps } from './types'
-import documentSignService from '@/stores/DocumentsSignService'
+import documentSignService from '@/mock/DocumentsSignService'
 import { DocumentIsSigned } from './documentIsSigned'
 import { observer } from 'mobx-react-lite'
 
