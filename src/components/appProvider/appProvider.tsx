@@ -1,14 +1,23 @@
 import { AppProvider as ToolpadProvider } from '@toolpad/core/react-router-dom'
-import { NAVIGATION } from '@/components/appDashboardLayout/navigation/navigation.tsx'
+import {
+  NAVIGATION,
+  ADMIN_NAVIGATION,
+} from '@/components/appDashboardLayout/navigation/navigation.tsx'
 import logo from '@/assets/bird.svg'
 import { theme } from '@/theme/theme.ts'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
+import authStore from '@/stores/AuthStore'
 
 export const AppProvider = () => {
+  const { isAdmin } = authStore
+  const location = useLocation()
+  const isAppRoute = location.pathname.startsWith('/app')
+
   return (
     <ToolpadProvider
-      //TODO здесь может быть отдельная навигация для admin
-      navigation={NAVIGATION}
+      navigation={
+        isAdmin ? (isAppRoute ? NAVIGATION : ADMIN_NAVIGATION) : NAVIGATION
+      }
       branding={{
         logo: (
           <img
