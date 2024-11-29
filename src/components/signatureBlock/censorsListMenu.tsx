@@ -6,9 +6,11 @@ import { observer } from 'mobx-react-lite'
 import UserStore from '@/stores/UserStore'
 import { menuPositionConfig } from './constants'
 import { CensorsList } from './censorsList'
+import { SearchableSubheader } from './searchableSubheader'
 
 export const CensorsListMenu: FC<CensorsListMenuProps> = observer(
   ({ render, anchorEl, setAnchorEl }) => {
+    const [searchValue, setSearchValue] = useState('')
     const [censors, setCensors] = useState<InstanceType<typeof UserStore>[]>([])
     const { users } = usersListStore
 
@@ -23,6 +25,12 @@ export const CensorsListMenu: FC<CensorsListMenuProps> = observer(
     const handleClose = () => {
       setAnchorEl(null)
     }
+
+    const foundUsers = users.filter(
+      (user) =>
+        user.userData.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+        user.userData.surname.toLowerCase().includes(searchValue.toLowerCase())
+    )
 
     return (
       <>
@@ -60,10 +68,13 @@ export const CensorsListMenu: FC<CensorsListMenuProps> = observer(
           </ListSubheader>
 
           <Divider />
-          <ListSubheader>Выберите вариант подписи</ListSubheader>
+          <SearchableSubheader
+            onSearch={(value) => setSearchValue(value)}
+            sx={{ marginBottom: '0.5rem' }}
+          />
 
           <CensorsList
-            censors={users.filter((user) => !censors.includes(user))}
+            censors={foundUsers.filter((user) => !censors.includes(user))}
             onCensorSelect={(censor: Censor) => {
               setCensors([...censors, censor])
             }}
