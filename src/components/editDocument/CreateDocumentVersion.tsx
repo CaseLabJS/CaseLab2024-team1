@@ -1,6 +1,6 @@
 import { DocumentVersion } from '@/types/sharedTypes'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
-import { Box, Typography, TextField, Button } from '@mui/material'
+import { Box, Typography, TextField, Button, Paper } from '@mui/material'
 import ClearIcon from '@mui/icons-material/Clear'
 import { useEffect, useState } from 'react'
 import AttributeInputs from './AttributeInputs'
@@ -50,23 +50,23 @@ const CreateDocumentVersion = (props: CreateDocumentVersionProps) => {
     //setSnackbarIsOpen(true)
   }
   return (
-    <Box
+    <Paper
       sx={{
         width: '100%',
-        height: '100vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        p: '20px',
       }}
     >
-      <Typography variant="subtitle1">
+      <Typography variant="subtitle1" sx={{ textAlign: 'center' }}>
         Редактируемый документ: {document.title}
       </Typography>
-      <Typography variant="subtitle1">
+      <Typography variant="subtitle1" sx={{ textAlign: 'center' }}>
         Тип докуменнта: {props.document.documentType.name}
       </Typography>
-      <Typography variant="subtitle1">
+      <Typography variant="subtitle1" sx={{ textAlign: 'center' }}>
         Редактируемая (последняя) версия документа: {document.versionId}
       </Typography>
       <Box
@@ -157,7 +157,7 @@ const CreateDocumentVersion = (props: CreateDocumentVersionProps) => {
           </Button>
         </Box>
       </Box>
-    </Box>
+    </Paper>
   )
 }
 export default CreateDocumentVersion

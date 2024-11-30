@@ -277,9 +277,7 @@ const MockDocumentData = () => {
     <Box
       sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     >
-      <Box sx={{ width: '30%' }}>
-        <CreateDocumentVersion document={documentMockData} />
-      </Box>
+      <CreateDocumentVersion document={documentMockData} />
     </Box>
   )
 }
