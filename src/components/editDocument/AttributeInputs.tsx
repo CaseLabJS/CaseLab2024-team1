@@ -36,6 +36,9 @@ const AttributeInputs = (props: AttributeInputsProps) => {
                 },
               }}
               variant="outlined"
+              multiline
+              rows={3}
+              maxLength={100}
               fullWidth
               color={
                 defaultDocumentValues.values[index].value !==
