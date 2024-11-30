@@ -12,6 +12,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import FolderDeleteIcon from '@mui/icons-material/FolderDelete'
+import PostAddIcon from '@mui/icons-material/PostAdd'
 import { ROUTES } from '@/router/constants.ts'
 import { getNavigationPath } from '@/components/appDashboardLayout/navigation/getNavigationPath.ts'
 
@@ -72,6 +73,11 @@ export const ADMIN_NAVIGATION: Navigation = [
     segment: ROUTES.admin('admin/users/create'),
     title: 'Добавить пользователя',
     icon: <PersonAddIcon />,
+  },
+  {
+    segment: ROUTES.admin('admin/document-types/create'),
+    title: 'Создать тип документа',
+    icon: <PostAddIcon />,
   },
   {
     kind: 'divider',

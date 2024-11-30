@@ -48,7 +48,7 @@ const TypeAttributes = (props: TypeAttributeProps) => {
               if (index < 2)
                 return (
                   <Typography
-                    sx={{ fontSize: { xs: '12px' } }}
+                    sx={{ fontSize: { xs: '12px', md: '14px', lg: '14px' } }}
                     key={attribute.id}
                     variant="subtitle2"
                   >

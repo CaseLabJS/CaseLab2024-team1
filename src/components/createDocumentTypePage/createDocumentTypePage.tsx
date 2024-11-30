@@ -74,18 +74,16 @@ const CreateDocumentTypePage: React.FC = observer(() => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
         alignItems: 'center',
         padding: 2,
-        maxWidth: 400,
+        maxWidth: '400px',
         margin: 'auto',
-        minHeight: 600,
       }}
     >
       <img
         src={Bird}
         alt="Bird"
-        style={{ width: '100px', marginBottom: '20px' }}
+        style={{ width: '50px', marginBottom: '20px' }}
       />
 
       <Typography component="h1" variant="h5" gutterBottom textAlign="center">
@@ -118,7 +116,7 @@ const CreateDocumentTypePage: React.FC = observer(() => {
         <Typography component="h2" variant="h6" gutterBottom>
           Выберите атрибуты нового типа документа
         </Typography>
-        <Box sx={{ height: 400, overflowY: 'auto', mb: 4, maxWidth: 330 }}>
+        <Box sx={{ height: 400, overflowY: 'auto', mb: 4, maxWidth: '360px' }}>
           <Table size="small">
             <TableHead>
               <TableRow>

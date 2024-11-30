@@ -3,6 +3,8 @@ import { DocumentTypesTableProps } from '../types'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import documentTypeListStore from '@/stores/DocumentTypeListStore'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/router/constants'
 import {
   Table,
   TableHead,
@@ -18,6 +20,7 @@ import {
 
 const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
   const { types } = documentTypeListStore
+  const navigate = useNavigate()
   useEffect(() => {
     void documentTypeListStore.fetchDocumentTypes({
       showOnlyAlive: props.showOnlyAlive,
@@ -36,7 +39,11 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
             : 'Удаленные типы документов'}
         </Typography>
         {props.showOnlyAlive && (
-          <Button variant="outlined" sx={{ mt: '8px' }}>
+          <Button
+            onClick={() => navigate(ROUTES.admin('document-types/create'))}
+            variant="outlined"
+            sx={{ mt: '8px' }}
+          >
             Добавить тип документа
           </Button>
         )}
@@ -45,7 +52,7 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
             sx={{
               mt: '8px',
               '.MuiTableCell-root': {
-                fontSize: { xs: '12px' },
+                fontSize: { xs: '12px', md: '14px', lg: '14px' },
                 padding: { xs: '2px' },
               },
             }}
@@ -59,7 +66,7 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
                   <Typography
                     variant="subtitle2"
                     mx=".4rem"
-                    sx={{ fontSize: { xs: '12px' } }}
+                    sx={{ fontSize: { xs: '12px', md: '14px', lg: '14px' } }}
                   >
                     Атрибуты
                   </Typography>
