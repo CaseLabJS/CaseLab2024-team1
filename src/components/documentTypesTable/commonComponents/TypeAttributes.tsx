@@ -32,6 +32,7 @@ const TypeAttributes = (props: TypeAttributeProps) => {
             <IconButton
               aria-label="expand row"
               size="small"
+              sx={{ p: 0 }}
               onClick={() => setCollapseOpen(!collapseOpen)}
             >
               {collapseOpen ? (
@@ -46,7 +47,11 @@ const TypeAttributes = (props: TypeAttributeProps) => {
             {attributes.map((attribute, index) => {
               if (index < 2)
                 return (
-                  <Typography key={attribute.id} variant="subtitle2">
+                  <Typography
+                    sx={{ fontSize: { xs: '12px' } }}
+                    key={attribute.id}
+                    variant="subtitle2"
+                  >
                     {attribute.name}
                     {index === 0 && attributes.length > 1 ? (
                       <span>,&nbsp;</span>

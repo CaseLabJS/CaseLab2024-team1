@@ -27,7 +27,9 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
   const { error } = documentTypeListStore
   return (
     <>
-      <Paper sx={{ p: '1.5rem' }}>
+      <Paper
+        sx={{ p: { xs: '.5rem', md: '1rem', lg: '1.5rem' }, overflow: 'auto' }}
+      >
         <Typography variant="h5">
           {props.showOnlyAlive
             ? 'Типы документов'
@@ -39,13 +41,26 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
           </Button>
         )}
         {types.length > 0 ? (
-          <Table sx={{ mt: '8px' }} size="small">
+          <Table
+            sx={{
+              mt: '8px',
+              '.MuiTableCell-root': {
+                fontSize: { xs: '12px' },
+                padding: { xs: '2px' },
+              },
+            }}
+            size="small"
+          >
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: '5%' }}>ID</TableCell>
-                <TableCell sx={{ width: '25%' }}>Наименование</TableCell>
-                <TableCell sx={{ width: '40%' }}>
-                  <Typography variant="subtitle2" mx="1rem">
+                <TableCell sx={{ width: '20%' }}>Имя</TableCell>
+                <TableCell sx={{ width: '45%' }}>
+                  <Typography
+                    variant="subtitle2"
+                    mx=".4rem"
+                    sx={{ fontSize: { xs: '12px' } }}
+                  >
                     Атрибуты
                   </Typography>
                 </TableCell>

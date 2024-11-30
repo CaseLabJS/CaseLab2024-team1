@@ -31,14 +31,21 @@ const DocumentType = (props: DocumentTypeProps) => {
         <TableCell>
           {props.showOnlyAlive && (
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <IconButton
-                onClick={() => void deleteType(type.id)}
-                sx={{ mr: '5px' }}
-              >
-                <Delete />
+              <IconButton onClick={() => void deleteType(type.id)}>
+                <Delete
+                  sx={{
+                    width: { xs: '20px', md: '24px', lg: '24px' },
+                    height: { xs: '20px', md: '24px', lg: '24px' },
+                  }}
+                />
               </IconButton>
               <IconButton>
-                <Edit />
+                <Edit
+                  sx={{
+                    width: { xs: '20px', md: '24px', lg: '24px' },
+                    height: { xs: '20px', md: '24px', lg: '24px' },
+                  }}
+                />
               </IconButton>
             </Box>
           )}
@@ -46,9 +53,14 @@ const DocumentType = (props: DocumentTypeProps) => {
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <IconButton
                 onClick={() => void recoverType(type.id)}
-                sx={{ mr: '5px' }}
+                sx={{ mr: { xs: '0px', md: '5px', lg: '5px' }, p: 0 }}
               >
-                <Replay />
+                <Replay
+                  sx={{
+                    width: { xs: '20px', md: '24px', lg: '24px' },
+                    height: { xs: '20px', md: '24px', lg: '24px' },
+                  }}
+                />
               </IconButton>
             </Box>
           )}
