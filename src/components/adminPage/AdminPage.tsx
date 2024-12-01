@@ -7,16 +7,7 @@ const AdminPage = observer(() => {
     <Paper>
       <Box
         sx={{
-          width: '90vw',
-          height: '7vh',
-          borderRadius: '15px',
-        }}
-      >
-        Header
-      </Box>
-      <Box
-        sx={{
-          width: '90vw',
+          width: '100%',
           height: '7vh',
           borderRadius: '15px',
           my: '3vh',
@@ -26,7 +17,7 @@ const AdminPage = observer(() => {
       </Box>
       <Box
         sx={{
-          width: '100vw',
+          width: '100%',
           height: '7vh',
           backgroundColor: 'background.default',
         }}

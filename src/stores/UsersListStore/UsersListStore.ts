@@ -23,7 +23,7 @@ class UsersListStore {
   }
 
   async fetchUsers(params?: {
-    showOnlyAlive?: boolean
+    isAlive?: boolean
     page?: number
     size?: number
     ascending?: boolean
@@ -59,6 +59,16 @@ class UsersListStore {
 
   async deleteUser(userId: number) {
     await executeWithLoading(this, () => userControllerApi.deleteUser(userId))
+
+    runInAction(() => {
+      this.users = this.users.filter(
+        (currentUser) => currentUser.userData.id !== userId
+      )
+    })
+  }
+
+  async recoverUser(userId: number) {
+    await executeWithLoading(this, () => userControllerApi.recover(userId))
 
     runInAction(() => {
       this.users = this.users.filter(

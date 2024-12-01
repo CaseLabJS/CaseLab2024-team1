@@ -1,5 +1,6 @@
 import { Card as CardType } from './types'
 import { Paper, Typography, List, ListItem } from '@mui/material'
+import CircleIcon from '@mui/icons-material/Circle'
 
 const Card = (props: CardType) => {
   const { cardHeader, headerImportant, cardContent, cardListItems } = props
@@ -35,7 +36,15 @@ const Card = (props: CardType) => {
       {cardListItems && (
         <List dense={true} sx={{ fontSize: 20 }}>
           {cardListItems.map((item, index) => (
-            <ListItem key={index}>{item}</ListItem>
+            <ListItem
+              key={index}
+              sx={{ display: 'grid', gridTemplateColumns: '1fr 10fr' }}
+            >
+              <CircleIcon
+                sx={{ width: 10, alignSelf: 'flex-start', mt: '5px' }}
+              ></CircleIcon>
+              {item}
+            </ListItem>
           ))}
         </List>
       )}

@@ -115,13 +115,17 @@ export const CreateDocumentForm = observer(() => {
 
       const results = await Promise.all(promises)
 
-      results.map((result, index) => {
+      const removedIndexes = results.reduce<number[]>((acc, result, index) => {
         if (result) {
-          remove(index)
+          acc.push(index)
         }
-      })
+        return acc
+      }, [])
 
-      const items = form.getValues('items')
+      const items = form.getValues('items').filter((_item, index) => {
+        return !removedIndexes.includes(index)
+      })
+      form.setValue('items', items)
 
       if (!items.length) {
         notifications.show('Успешно сохранено', {
@@ -142,7 +146,6 @@ export const CreateDocumentForm = observer(() => {
       createDocument,
       user,
       convertAttributesToValues,
-      remove,
       notifications,
       navigate,
     ]
