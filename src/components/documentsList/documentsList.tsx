@@ -14,7 +14,7 @@ import { GridToolbar } from '@/components/documentsList/gridToolbar.tsx'
 import { useTheme } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
-import { ToolbarButton } from '@/components/documentsList/types.ts'
+import { ToolbarButton } from '@/types/types'
 
 export const DEFAULT_PAGE_SIZE = 15
 export const DEFAULT_PAGE = 0

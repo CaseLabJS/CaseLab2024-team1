@@ -1,21 +1,16 @@
-import {
-  DEFAULT_PAGE,
-  DEFAULT_PAGE_SIZE,
-  DocumentsList,
-} from '@/components/documentsList/documentsList.tsx'
-import { Document, Signature, User } from '@/types/sharedTypes.ts'
+import { DeletedDocs } from '@/components/deletedDocs/deletedDocs'
+import { Signature, User } from '@/types/sharedTypes.ts'
 import { GridColDef } from '@mui/x-data-grid'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import documentsListStore from '@/stores/DocumentsListStore'
 import { ToolbarButton } from '@/types/types'
-import DeleteIcon from '@mui/icons-material/Delete'
+import { Unarchive as UnarchiveIcon } from '@mui/icons-material'
 import { useNotifications } from '@toolpad/core'
 import { GridRowId } from '@mui/x-data-grid/models/gridRows'
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel'
 import { observer } from 'mobx-react-lite'
-import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
-import { PageContainer } from '@toolpad/core/PageContainer'
 import { options } from '@/utils/dateOptions'
+import { PageContainer } from '@toolpad/core'
 
 export interface RowData {
   id: number
@@ -70,21 +65,16 @@ const columns: GridColDef<RowData>[] = [
     minWidth: 150,
   },
 ]
-
-export const ForwardPage = observer(() => {
+export const DeletedPage = observer(() => {
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
-  const { deleteDocument, documents, countTotalDocuments, documentsSize } =
-    documentsListStore
+  const { recoverDocument, documents, countTotalDocuments } = documentsListStore
 
   const notifications = useNotifications()
 
   useEffect(() => {
-    void countTotalDocuments()
+    void countTotalDocuments(false)
 
-    void documentsListStore.fetchDocuments({
-      page: DEFAULT_PAGE,
-      size: DEFAULT_PAGE_SIZE,
-    })
+    void documentsListStore.fetchDocuments({ isAlive: false })
   }, [countTotalDocuments])
 
   const rows = useMemo(() => {
@@ -113,42 +103,32 @@ export const ForwardPage = observer(() => {
     []
   )
 
-  const handlePaginationModelChange = useCallback(
-    (paginationModel: GridPaginationModel) => {
-      void documentsListStore.fetchDocuments({
-        page: paginationModel.page,
-        size: paginationModel.pageSize,
-      })
-    },
-    []
-  )
-
-  const handleDelete = useCallback(async () => {
+  const handleRecover = useCallback(async () => {
     const promises: Promise<void | Document>[] = []
 
     selectionModel.map((selectedId) => {
-      promises.push(deleteDocument(+selectedId))
+      promises.push(recoverDocument(+selectedId))
     })
     const results = await Promise.all(promises)
     await countTotalDocuments()
 
     if (selectionModel.some((_, index) => results[index])) {
-      notifications.show('Ошибка при удалении', {
+      notifications.show('Ошибка при восстановлении', {
         severity: 'error',
         autoHideDuration: 5000,
       })
     } else {
-      notifications.show('Успешно удалено', {
+      notifications.show('Восстановлено', {
         severity: 'success',
         autoHideDuration: 2000,
       })
     }
-  }, [countTotalDocuments, selectionModel, deleteDocument, notifications])
+  }, [countTotalDocuments, selectionModel, recoverDocument, notifications])
 
   const buttons: ToolbarButton[] = [
     {
-      content: <DeleteIcon />,
-      onClick: handleDelete,
+      content: <UnarchiveIcon />,
+      onClick: handleRecover,
       disabled: selectionModel.length === 0,
     },
   ]
@@ -162,13 +142,11 @@ export const ForwardPage = observer(() => {
         },
       }}
     >
-      <DocumentsList
+      <DeletedDocs
         columns={columns}
         rows={rows}
         buttons={buttons}
         onSelectionChange={handleChange}
-        onPaginationModelChange={handlePaginationModelChange}
-        totalDocuments={documentsSize}
       />
     </PageContainer>
   )

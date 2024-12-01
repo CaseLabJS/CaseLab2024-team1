@@ -13,6 +13,8 @@ import { SignOutPage } from '@/pages/signOut'
 import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
 import { ForwardPage } from '@/pages/forwardPage'
+// import { InboxPage } from '@/pages/inboxPage'
+import { DeletedPage } from '@/pages/deletedPage'
 import { Navigate } from 'react-router-dom'
 
 export const publicRoutes = [
@@ -59,9 +61,17 @@ export const appRoutes = [
             path: ROUTES.app('new-document'),
             Component: CreateDocumentPage,
           },
+          // {
+          //   path: ROUTES.app('inbox'),
+          //   Component: InboxPage,
+          // },
           {
             path: ROUTES.app('forward'),
             Component: ForwardPage,
+          },
+          {
+            path: ROUTES.app('deleted'),
+            Component: DeletedPage,
           },
         ],
       },
