@@ -11,6 +11,7 @@ import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
 import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
+import AttributesPage from '@/pages/AttributesPage'
 
 export const publicRoutes = [
   {
@@ -81,7 +82,7 @@ export const adminRoutes = [
       },
       {
         path: ROUTES.admin('attribute-type'),
-        element: <div>Attribute Type</div>,
+        element: <AttributesPage />,
       },
     ],
   },

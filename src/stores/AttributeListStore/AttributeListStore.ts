@@ -15,9 +15,13 @@ class AttributeListStore {
     makeAutoObservable(this)
   }
 
-  async fetchAttributes() {
+  async fetchAttributes(params?: {
+    page?: number
+    size?: number
+    showOnlyAlive?: boolean
+  }) {
     const fetchedAttributes = await executeWithLoading(this, async () =>
-      attributeControllerApi.getAttributes()
+      attributeControllerApi.getAttributes(params)
     )
 
     if (fetchedAttributes) {
@@ -65,6 +69,13 @@ class AttributeListStore {
         ...this.attributes.filter((attr) => attr.data.id !== attributeId),
       ]
     })
+  }
+
+  async recoverAttribute(attributeId: number) {
+    await executeWithLoading(this, () =>
+      attributeControllerApi.recover(attributeId)
+    )
+    void this.fetchAttributes()
   }
 }
 

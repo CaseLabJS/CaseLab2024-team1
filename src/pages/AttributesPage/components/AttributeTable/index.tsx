@@ -1,39 +1,38 @@
 import { Grid2 } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { useEffect, useState } from 'react'
-import attributeListStore from '@/stores/AttributeListStore'
-import { Attribute } from '@/types/sharedTypes.ts'
+import {
+  AttributesWithDocumentTypes,
+  FunctionActionCell,
+  FunctionDocumentTypesNamesCell,
+} from '@/pages/AttributesPage/attributesPageTypes.ts'
 
-const AttributeTable = () => {
-  const [rows, setRows] = useState<Attribute[]>([])
+interface Props {
+  documentTypesNamesCell: FunctionDocumentTypesNamesCell
+  actionCell: FunctionActionCell
+  rows: AttributesWithDocumentTypes[]
+}
+const AttributeTable = (props: Props) => {
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID' },
     { field: 'name', headerName: 'Name' },
     { field: 'required', headerName: 'Required' },
+    {
+      field: 'documentTypes',
+      headerName: 'DocumentTypesName',
+      renderCell: props.documentTypesNamesCell,
+    },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      renderCell: props.actionCell,
+    },
   ]
-  useEffect(() => {
-    void attributeListStore.fetchAttributes().then(() => {
-      setRows(getAttributesRows())
-    })
-  }, [])
-  const getAttributesRows = () => {
-    const array: Attribute[] = []
-    attributeListStore.attributes.forEach((attribute) => {
-      array.push({
-        id: attribute.data.id,
-        name: attribute.data.name,
-        required: attribute.data.required,
-      })
-    })
-    return array
-  }
   return (
     <Grid2>
       <DataGrid
         columns={columns}
-        rows={rows}
-        pageSizeOptions={[5]}
-        checkboxSelection
+        rows={props.rows}
+        pageSizeOptions={[10]}
         disableRowSelectionOnClick
       />
     </Grid2>
