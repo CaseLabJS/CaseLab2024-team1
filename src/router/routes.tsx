@@ -2,6 +2,7 @@ import AdminPage from '@/components/adminPage/AdminPage'
 import UserTable from '@/components/userTable/UserTable'
 import CreateUser from '@/components/createUser/CreateUser'
 import DeletedUsers from '@/components/deletedUsers/DeletedUsers'
+import CreateDocumentTypePage from '@/components/createDocumentTypePage/createDocumentTypePage'
 
 import { AppDashboardLayout } from '@/components/appDashboardLayout/appDashboardLayout.tsx'
 import { AppProvider } from '@/components/appProvider/appProvider.tsx'
@@ -12,6 +13,9 @@ import { SignInPage } from '@/pages/signIn'
 import { SignOutPage } from '@/pages/signOut'
 import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
+import { ForwardPage } from '@/pages/forwardPage'
+import { Navigate } from 'react-router-dom'
+import { DocumentPage } from '@/pages/document'
 
 export const publicRoutes = [
   {
@@ -50,8 +54,20 @@ export const appRoutes = [
         Component: AppDashboardLayout,
         children: [
           {
+            index: true,
+            element: <Navigate to="forward" replace />,
+          },
+          {
             path: ROUTES.app('new-document'),
             Component: CreateDocumentPage,
+          },
+          {
+            path: ROUTES.app('forward'),
+            Component: ForwardPage,
+          },
+          {
+            path: ROUTES.app('documents/:id'),
+            element: <DocumentPage />,
           },
         ],
       },
@@ -85,8 +101,12 @@ export const adminRoutes = [
             element: <DeletedUsers />,
           },
           {
-            path: ROUTES.admin('document-type'),
+            path: ROUTES.admin('document-types'),
             element: <div>Document Type</div>,
+          },
+          {
+            path: ROUTES.admin('document-types/create'),
+            element: <CreateDocumentTypePage />,
           },
           {
             path: ROUTES.admin('attribute-type'),
