@@ -15,6 +15,7 @@ import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
 import { ForwardPage } from '@/pages/forwardPage'
 import { Navigate } from 'react-router-dom'
+import { DocumentPage } from '@/pages/document'
 import AliveTypes from '@/components/documentTypesTable/AliveTypes'
 import DeadTypes from '@/components/documentTypesTable/DeadTypes'
 
@@ -65,6 +66,10 @@ export const appRoutes = [
           {
             path: ROUTES.app('forward'),
             Component: ForwardPage,
+          },
+          {
+            path: ROUTES.app('documents/:id'),
+            element: <DocumentPage />,
           },
         ],
       },

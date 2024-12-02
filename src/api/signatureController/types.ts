@@ -12,6 +12,8 @@ export type SignatureRequest = {
   userTo: User
   documentId: number
   documentVersionId: number
+  status: 'APPROVED' | 'REJECTED' | 'PENDING'
+  votingId: number | null
 }
 
 export type SignatureModel = {
