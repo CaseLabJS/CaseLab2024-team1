@@ -1,4 +1,4 @@
-import { DocumentWithSignature } from '@/mock/DocumentWithSignature'
+import { DocumentWithSignature } from '@/stores/DocumentsSignService'
 import UserStore from '@/stores/UserStore'
 import { SxProps, Theme } from '@mui/system'
 

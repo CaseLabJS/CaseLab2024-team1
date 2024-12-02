@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { observer } from 'mobx-react-lite'
-import documentsSignService from '@/mock/DocumentsSignService'
+import documentsSignService from '@/stores/DocumentsSignService'
 import { SignatureBlockProps } from './types'
 import { SignByReviewer } from './signByReviewer'
 import { SignByAuthor } from './signByAuthor'
@@ -11,7 +11,6 @@ export const SignatureBlock: FC<SignatureBlockProps> = observer(
     const { loading } = documentsSignService
 
     if (loading) return <Loader />
-
     if (!document) return null
 
     return (

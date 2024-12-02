@@ -17,6 +17,7 @@ import styles from './documentForm.module.css'
 import { DocumentValues } from './documentValues/documentValues'
 import { observer } from 'mobx-react-lite'
 import ModeEditIcon from '@mui/icons-material/ModeEdit'
+import { SignatureBlock } from '@/components/signatureBlock'
 
 export const DocumentForm: FC<DocumentFormProps> = observer(({ document }) => {
   const {
@@ -35,7 +36,6 @@ export const DocumentForm: FC<DocumentFormProps> = observer(({ document }) => {
   })
 
   const theme = useTheme()
-
   return (
     <Paper
       square
@@ -66,6 +66,7 @@ export const DocumentForm: FC<DocumentFormProps> = observer(({ document }) => {
           <DocumentValues />
           <FileInput />
         </FormProvider>
+        <SignatureBlock document={document} />
       </Box>
     </Paper>
   )

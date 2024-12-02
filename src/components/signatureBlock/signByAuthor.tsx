@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Stack, Button, ButtonGroup, Box, Alert } from '@mui/material'
-import documentSignService from '@/mock/DocumentsSignService'
+import documentSignService from '@/stores/DocumentsSignService'
 import { SignatureModeSelector } from './signatureModeSelector'
 import { CensorsListMenu } from './censorsListMenu'
 import { VoteForm } from './voteForm'
