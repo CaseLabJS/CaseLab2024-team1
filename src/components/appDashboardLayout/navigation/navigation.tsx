@@ -12,6 +12,9 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
 import { ROUTES } from '@/router/constants.ts'
 import { getNavigationPath } from '@/components/appDashboardLayout/navigation/getNavigationPath.ts'
+import CodeIcon from '@mui/icons-material/Code'
+import CodeOffIcon from '@mui/icons-material/CodeOff'
+import { TextIncrease } from '@mui/icons-material'
 
 export const NAVIGATION: Navigation = [
   {
@@ -72,6 +75,11 @@ export const ADMIN_NAVIGATION: Navigation = [
     icon: <PersonAddIcon />,
   },
   {
+    segment: ROUTES.admin('admin/attribute-type/create'),
+    title: 'Добавить аттрибут',
+    icon: <TextIncrease />,
+  },
+  {
     kind: 'divider',
   },
   {
@@ -88,5 +96,15 @@ export const ADMIN_NAVIGATION: Navigation = [
     segment: ROUTES.admin('admin/deleted-users'),
     title: 'Удаленные',
     icon: <PersonRemoveIcon />,
+  },
+  {
+    segment: ROUTES.admin('admin/attribute-type'),
+    title: 'Аттрибуты',
+    icon: <CodeIcon />,
+  },
+  {
+    segment: ROUTES.admin('admin/attribute-type/delete'),
+    title: 'Удаленные аттрибуты',
+    icon: <CodeOffIcon />,
   },
 ]

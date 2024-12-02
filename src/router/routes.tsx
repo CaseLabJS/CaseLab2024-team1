@@ -15,6 +15,7 @@ import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
 import { ForwardPage } from '@/pages/forwardPage'
 import { Navigate } from 'react-router-dom'
+import AttributesPage from '@/pages/AttributesPage'
 
 export const publicRoutes = [
   {
@@ -105,7 +106,11 @@ export const adminRoutes = [
           },
           {
             path: ROUTES.admin('attribute-type'),
-            element: <div>Attribute Type</div>,
+            element: <AttributesPage aliveTable={true} />,
+          },
+          {
+            path: ROUTES.admin('attribute-type/delete'),
+            element: <AttributesPage aliveTable={false} />,
           },
         ],
       },

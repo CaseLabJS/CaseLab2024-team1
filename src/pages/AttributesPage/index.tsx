@@ -15,7 +15,10 @@ import {
   DocumentTypeWithoutAttributesArray,
 } from '@/pages/AttributesPage/attributesPageTypes.ts'
 
-const AttributesPage = () => {
+interface Props {
+  aliveTable: boolean
+}
+const AttributesPage = (props: Props) => {
   const [aliveRows, setAliveRows] = useState<AttributesWithDocumentTypes[]>([])
   const [deadRows, setDeadRows] = useState<AttributesWithDocumentTypes[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -43,7 +46,7 @@ const AttributesPage = () => {
         }
       }
     }
-    void fetchData()
+    if (props.aliveTable) void fetchData()
   }, [aliveRows])
   useEffect(() => {
     const fetchData = async () => {
@@ -67,7 +70,7 @@ const AttributesPage = () => {
         }
       }
     }
-    void fetchData()
+    if (!props.aliveTable) void fetchData()
   }, [deadRows])
   useEffect(() => {
     setSuccess(null)
@@ -226,40 +229,47 @@ const AttributesPage = () => {
   const getDeadCell = () => deadCell
   return (
     <>
-      <h1 style={{ textAlign: 'center' }}>Аттрибуты</h1>
-      <AttributeTable
-        documentTypesNamesCell={getDocumentTypesNamesCell()}
-        actionCell={getAliveCell()}
-        rows={aliveRows}
-      />
-      <h1 style={{ textAlign: 'center' }}>Удаленные атрибуты</h1>
-      <AttributeTable
-        documentTypesNamesCell={getDocumentTypesNamesCell()}
-        actionCell={getDeadCell()}
-        rows={deadRows}
-      />
-      <Modal
-        open={modalEditIsOpen}
-        onClose={() => {
-          setModalEditIsOpen(false)
-        }}
-      >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <h2 style={{ textAlign: 'center' }}>Изменить аттрибут</h2>
-        </Box>
-      </Modal>
+      {props.aliveTable ? (
+        <>
+          <h1 style={{ textAlign: 'center' }}>Аттрибуты</h1>
+          <AttributeTable
+            documentTypesNamesCell={getDocumentTypesNamesCell()}
+            actionCell={getAliveCell()}
+            rows={aliveRows}
+          />
+          <Modal
+            open={modalEditIsOpen}
+            onClose={() => {
+              setModalEditIsOpen(false)
+            }}
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 400,
+                bgcolor: 'background.paper',
+                border: '2px solid #000',
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              <h2 style={{ textAlign: 'center' }}>Изменить аттрибут</h2>
+            </Box>
+          </Modal>
+        </>
+      ) : (
+        <>
+          <h1 style={{ textAlign: 'center' }}>Удаленные атрибуты</h1>
+          <AttributeTable
+            documentTypesNamesCell={getDocumentTypesNamesCell()}
+            actionCell={getDeadCell()}
+            rows={deadRows}
+          />
+        </>
+      )}
       <Snackbar
         open={snackBarIsOpen}
         autoHideDuration={3000}
