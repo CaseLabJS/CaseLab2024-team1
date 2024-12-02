@@ -1,5 +1,6 @@
 import DocumentType from './DocumentType'
 import { DocumentTypesTableProps } from '../types'
+import { DocumentType as DocumentTypeType } from '@/types/sharedTypes'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import documentTypeListStore from '@/stores/DocumentTypeListStore'
@@ -16,10 +17,24 @@ import {
   Button,
   Snackbar,
   Alert,
+  Modal,
 } from '@mui/material'
+import EditDocumentType from '@/components/editDocumentType/editDocumentType'
 
 const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
   const { types } = documentTypeListStore
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const handleModalClose = () => {
+    setEditModalOpen(false)
+  }
+  const handleModalOpen = () => {
+    setEditModalOpen(true)
+  }
+  const [typeToEdit, setTypeToEdit] = useState<DocumentTypeType>({
+    id: 0,
+    name: '',
+    attributes: [],
+  })
   const navigate = useNavigate()
   useEffect(() => {
     void documentTypeListStore.fetchDocumentTypes({
@@ -31,7 +46,7 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
   return (
     <>
       <Paper
-        sx={{ p: { xs: '.5rem', md: '1rem', lg: '1.5rem' }, overflow: 'auto' }}
+        sx={{ p: { xs: '.3rem', md: '1rem', lg: '1.5rem' }, overflow: 'auto' }}
       >
         <Typography variant="h5">
           {props.showOnlyAlive
@@ -52,7 +67,7 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
             sx={{
               mt: '8px',
               '.MuiTableCell-root': {
-                fontSize: { xs: '12px', md: '14px', lg: '14px' },
+                fontSize: { xs: '11px', md: '14px', lg: '14px' },
                 padding: { xs: '2px' },
               },
             }}
@@ -66,7 +81,7 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
                   <Typography
                     variant="subtitle2"
                     mx=".4rem"
-                    sx={{ fontSize: { xs: '12px', md: '14px', lg: '14px' } }}
+                    sx={{ fontSize: { xs: '11px', md: '14px', lg: '14px' } }}
                   >
                     Атрибуты
                   </Typography>
@@ -85,6 +100,8 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
                     <DocumentType
                       key={type.data.name}
                       type={type.data}
+                      setTypeToEdit={setTypeToEdit}
+                      handleModalOpen={handleModalOpen}
                       showOnlyAlive={props.showOnlyAlive}
                       setSnackBarOpen={setSnackbarIsOpen}
                     />
@@ -112,6 +129,9 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
               : 'Тип документа восстановлен'}
         </Alert>
       </Snackbar>
+      <Modal open={editModalOpen} onClose={handleModalClose}>
+        <EditDocumentType type={typeToEdit} />
+      </Modal>
     </>
   )
 })

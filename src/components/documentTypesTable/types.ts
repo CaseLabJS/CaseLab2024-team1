@@ -9,6 +9,8 @@ export interface DocumentTypeProps {
   type: DocumentType
   showOnlyAlive: boolean
   setSnackBarOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setTypeToEdit: React.Dispatch<React.SetStateAction<DocumentType>>
+  handleModalOpen: () => void
 }
 
 export interface TypeAttributeProps {

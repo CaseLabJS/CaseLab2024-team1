@@ -32,7 +32,7 @@ const TypeAttributes = (props: TypeAttributeProps) => {
             <IconButton
               aria-label="expand row"
               size="small"
-              sx={{ p: 0 }}
+              sx={{ p: 0, height: '13px', width: '13px' }}
               onClick={() => setCollapseOpen(!collapseOpen)}
             >
               {collapseOpen ? (
@@ -41,14 +41,20 @@ const TypeAttributes = (props: TypeAttributeProps) => {
                 <KeyboardArrowDownIcon />
               )}
             </IconButton>
-            <Typography variant="subtitle2" sx={{ mx: '10px' }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                mx: '10px',
+                fontSize: { xs: '11px', md: '14px', lg: '14px' },
+              }}
+            >
               {attributes.length}:
             </Typography>
             {attributes.map((attribute, index) => {
               if (index < 2)
                 return (
                   <Typography
-                    sx={{ fontSize: { xs: '12px', md: '14px', lg: '14px' } }}
+                    sx={{ fontSize: { xs: '11px', md: '14px', lg: '14px' } }}
                     key={attribute.id}
                     variant="subtitle2"
                   >
@@ -85,7 +91,15 @@ const TypeAttributes = (props: TypeAttributeProps) => {
                     <TableCell>{attribute.id}</TableCell>
                     <TableCell>{attribute.name}</TableCell>
                     <TableCell>
-                      {attribute.required ? <CheckIcon /> : <CloseIcon />}
+                      {attribute.required ? (
+                        <CheckIcon
+                          sx={{ width: { xs: '16px', md: '24px', lg: '24px' } }}
+                        />
+                      ) : (
+                        <CloseIcon
+                          sx={{ width: { xs: '16px', md: '24px', lg: '24px' } }}
+                        />
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

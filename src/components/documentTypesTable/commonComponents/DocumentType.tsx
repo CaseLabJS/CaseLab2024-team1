@@ -39,7 +39,12 @@ const DocumentType = (props: DocumentTypeProps) => {
                   }}
                 />
               </IconButton>
-              <IconButton>
+              <IconButton
+                onClick={() => {
+                  props.handleModalOpen()
+                  props.setTypeToEdit(type)
+                }}
+              >
                 <Edit
                   sx={{
                     width: { xs: '20px', md: '24px', lg: '24px' },
@@ -53,7 +58,10 @@ const DocumentType = (props: DocumentTypeProps) => {
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
               <IconButton
                 onClick={() => void recoverType(type.id)}
-                sx={{ mr: { xs: '0px', md: '5px', lg: '5px' }, p: 0 }}
+                sx={{
+                  mr: { xs: '0px', md: '5px', lg: '5px' },
+                  p: { xs: '2px', md: '7px', lg: '7px' },
+                }}
               >
                 <Replay
                   sx={{
