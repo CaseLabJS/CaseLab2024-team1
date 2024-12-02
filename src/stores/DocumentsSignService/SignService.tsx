@@ -11,7 +11,7 @@ import SL from '@/stores/SignatureListStore'
 import authorStore from '@/stores/AuthStore'
 //import { signatureModel } from './constants'
 import { SignatureModel } from '@/api/signatureController'
-import { Censor } from '@/components/signatureBlock/types'
+import { Censor } from './types'
 
 /** SR : SignatureRequest
  * SL : SignatureListStore
@@ -90,7 +90,7 @@ export class SignService {
     const promises = censors.map((censor) =>
       SL.createSignatureRequest({
         documentId: this.document.documentData.id,
-        documentVersionId: this.lastVersion!.id,
+        documentVersionId: this.lastVersion!.versionId,
         userIdTo: censor.userData.id,
       })
     )
@@ -105,7 +105,7 @@ export class SignService {
     return await SL.createVote({
       participantIds: censors.map((censor) => censor.userData.id),
       documentId: this.document.documentData.id,
-      documentVersionId: this.lastVersion!.id,
+      documentVersionId: this.lastVersion!.versionId,
       approvalThreshold,
       deadline:
         typeof deadline === 'string' ? deadline : deadline.toISOString(),
