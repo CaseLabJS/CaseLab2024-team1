@@ -39,7 +39,7 @@ class SignatureListStore {
 
   getSignatureRequestById = async (
     id: number
-  ): Promise<void | SignatureRequest> => {
+  ): Promise<void | SignatureRequestStore> => {
     const signatureRequestJson = await executeWithLoading(this, async () =>
       signatureControllerApi.getSignatureRequestById(id)
     )
