@@ -84,13 +84,13 @@ class DocumentStore {
     }
   }
 
-  getDocumentVersion = async (versionId: number, showOnlyAlive?: boolean) => {
+  getDocumentVersion = async (versionId: number, isAlive?: boolean) => {
     return await executeWithLoading(this, () =>
       documentControllerApi.getDocumentVersion(
         this.documentData.id,
         versionId,
         {
-          showOnlyAlive,
+          isAlive,
         }
       )
     )
