@@ -46,7 +46,7 @@ export const DocumentPage = observer(() => {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           minWidth: { lg: 1050, md: 850, sm: 550, xs: 380 },
-          maxHeight: { md: 1000, sm: 850, xs: 650 },
+          maxHeight: { md: 750, sm: 650, xs: 550 },
           overflow: 'auto',
           border: 'none',
           padding: { lg: '3rem', md: '2.5rem', xs: '2rem' },

@@ -9,11 +9,13 @@ import { base64ToFile } from '@/utils/base64ToFile.ts'
 import documentsListStore from '@/stores/DocumentsListStore'
 import { useNavigate } from 'react-router-dom'
 import { useNotifications } from '@toolpad/core'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 
 export const useActionButtons = (
   navigationType: NavigationType | null,
   document: Document,
-  selectedVersionIndex: number
+  selectedVersionIndex: number,
+  onPreview: (file: File) => void
 ): ToolbarButton[] => {
   const { deleteDocument, countTotalDocuments, error } = documentsListStore
 
@@ -22,7 +24,13 @@ export const useActionButtons = (
 
   const documentContent = document.documentVersions[selectedVersionIndex]
   const base64Content = documentContent.base64Content
-  const file = base64ToFile(base64Content)
+  const file = base64ToFile(base64Content, documentContent.title)
+
+  const fileTypeCheck = useMemo(() => {
+    const isImage = file?.type.startsWith('image/')
+    const isPdf = file?.type === 'application/pdf'
+    return !(isImage || isPdf)
+  }, [file])
 
   const handleDownload = useCallback(() => {
     if (file) {
@@ -60,6 +68,12 @@ export const useActionButtons = (
     notifications,
   ])
 
+  const handlePreview = useCallback(() => {
+    if (file) {
+      onPreview(file)
+    }
+  }, [file, onPreview])
+
   const actionButtons = useMemo(() => {
     switch (navigationType) {
       case NavigationType.NEW_DOCUMENT:
@@ -68,8 +82,8 @@ export const useActionButtons = (
       case NavigationType.INBOX:
         return []
 
-      case NavigationType.FORWARD:
-        return [
+      case NavigationType.FORWARD: {
+        const buttons = [
           {
             content: <SaveAltIcon />,
             text: 'Скачать',
@@ -87,6 +101,17 @@ export const useActionButtons = (
             onClick: () => void handleDeleted(),
           },
         ]
+
+        if (!fileTypeCheck) {
+          buttons.unshift({
+            content: <VisibilityIcon />,
+            text: 'Файл',
+            onClick: handlePreview,
+          })
+        }
+
+        return buttons
+      }
 
       case NavigationType.DRAFT:
         return []
@@ -107,7 +132,9 @@ export const useActionButtons = (
     navigationType,
     handleDownload,
     documentContent.base64Content,
+    fileTypeCheck,
     handleDeleted,
+    handlePreview,
   ])
 
   return actionButtons

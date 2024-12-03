@@ -9,6 +9,7 @@ import { useCallback, useState } from 'react'
 import DocumentStore from '@/stores/DocumentStore'
 import { getNavigationType } from '@/components/appDashboardLayout/navigation/getNavigationType.ts'
 import { useActionButtons } from '@/components/documentDetails/useActionButtons.tsx'
+import { FilePreviewModal } from '@/components/documentDetails/filePreview/filePreviewModal.tsx'
 
 interface DocumentDetailsProps {
   documentStore: DocumentStore
@@ -22,6 +23,15 @@ export const DocumentDetails = (props: DocumentDetailsProps) => {
   const theme = useTheme()
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'))
 
+  const [modalOpen, setModalOpen] = useState(false)
+  const [previewFile, setPreviewFile] = useState<File | null>(null)
+
+  const handlePreview = useCallback((file: File) => {
+    if (!file) return
+    setPreviewFile(file)
+    setModalOpen(true)
+  }, [])
+
   const [selectedVersionIndex, setSelectedVersionIndex] = useState(
     document.documentVersions.length - 1
   )
@@ -33,7 +43,8 @@ export const DocumentDetails = (props: DocumentDetailsProps) => {
   const actionButtons = useActionButtons(
     navigationType,
     document,
-    selectedVersionIndex
+    selectedVersionIndex,
+    handlePreview
   )
 
   return (
@@ -70,6 +81,14 @@ export const DocumentDetails = (props: DocumentDetailsProps) => {
       {isLargeScreen && <Divider orientation="vertical" flexItem />}
 
       <DocumentComments documentStore={documentStore} />
+
+      {modalOpen && (
+        <FilePreviewModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          file={previewFile}
+        />
+      )}
     </Box>
   )
 }

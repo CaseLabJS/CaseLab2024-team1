@@ -48,25 +48,38 @@ export const DocumentInfo = (props: DocumentInfoProps) => {
         </Typography>
 
         <Typography variant="body2" gutterBottom>
-          Отправитель: {userName} {userSurname}
+          Отправитель:{' '}
+          <Typography variant="body2" component="span" fontWeight={700}>
+            {userName} {userSurname}
+          </Typography>
         </Typography>
 
         <Box sx={{ display: 'flex', gap: '0.2rem' }}>
           <Typography variant="body2" gutterBottom>
             Подписан:
           </Typography>
-          {documentSignatures.length ? (
-            documentSignatures.map((signature) => (
-              <Typography key={signature.hash} variant="body2" gutterBottom>
-                {signature.user.name} {signature.user.surname} (title:{' '}
-                {signature.placeholderTitle} - email: {signature.user.email}),
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            {documentSignatures.length ? (
+              documentSignatures.map((signature, index) => (
+                <Box key={`signature ${index}`}>
+                  <Typography key={signature.hash} variant="body2" gutterBottom>
+                    <Typography
+                      variant="body2"
+                      component="span"
+                      fontWeight={700}
+                    >
+                      {signature.user.name} {signature.user.surname}
+                    </Typography>{' '}
+                    ({signature.placeholderTitle}, {signature.user.email});
+                  </Typography>
+                </Box>
+              ))
+            ) : (
+              <Typography variant="body2" gutterBottom>
+                Нет подписей
               </Typography>
-            ))
-          ) : (
-            <Typography variant="body2" gutterBottom>
-              Нет подписей
-            </Typography>
-          )}
+            )}
+          </Box>
         </Box>
 
         {!!documentDescription && (

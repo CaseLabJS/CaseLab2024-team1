@@ -29,8 +29,26 @@ export const DocumentVersionList = (props: DocumentVersionListProps) => {
   }, [])
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+    <Box
+      sx={{
+        maxHeight: '10rem',
+        overflow: 'auto',
+        '&::-webkit-scrollbar': {
+          width: '0.5rem',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: 'grey',
+          borderRadius: '0.5rem',
+        },
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+        }}
+      >
         <IconButton onClick={handleToggle}>
           {openDocumentVersions ? (
             <KeyboardArrowDownIcon />

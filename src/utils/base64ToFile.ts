@@ -1,9 +1,7 @@
-export const base64ToFile = (base64: string | null) => {
+export const base64ToFile = (base64: string | null, title: string) => {
   if (!base64) return
   const [header, content] = base64.split(',')
 
-  //TODO дополнится в будущем исходным названием файла
-  //const filenameMatch = header.match(/filename:([^;]+)/)
   const mimeTypeMatch = header.match(/data:([^;]+)/)
 
   const byteCharacters = atob(content)
@@ -16,7 +14,7 @@ export const base64ToFile = (base64: string | null) => {
   const byteArray = new Uint8Array(byteNumbers)
 
   if (mimeTypeMatch) {
-    return new File([byteArray], 'new file', {
+    return new File([byteArray], title, {
       type: mimeTypeMatch[1],
     })
   }
