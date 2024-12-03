@@ -16,6 +16,8 @@ import { CreateDocumentPage } from '@/pages/createDocumentPage'
 import { ForwardPage } from '@/pages/forwardPage'
 import { Navigate } from 'react-router-dom'
 import { DocumentPage } from '@/pages/documentPage'
+import AliveTypes from '@/components/documentTypesTable/AliveTypes'
+import DeadTypes from '@/components/documentTypesTable/DeadTypes'
 
 export const publicRoutes = [
   {
@@ -104,7 +106,11 @@ export const adminRoutes = [
           },
           {
             path: ROUTES.admin('document-types'),
-            element: <div>Document Type</div>,
+            element: <AliveTypes />,
+          },
+          {
+            path: ROUTES.admin('document-types/deleted'),
+            element: <DeadTypes />,
           },
           {
             path: ROUTES.admin('document-types/create'),
