@@ -15,7 +15,7 @@ import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
 import { ForwardPage } from '@/pages/forwardPage'
 import { Navigate } from 'react-router-dom'
-import { DocumentPage } from '@/pages/document'
+import { DocumentPage } from '@/pages/documentPage'
 
 export const publicRoutes = [
   {
@@ -64,10 +64,12 @@ export const appRoutes = [
           {
             path: ROUTES.app('forward'),
             Component: ForwardPage,
-          },
-          {
-            path: ROUTES.app('documents/:id'),
-            element: <DocumentPage />,
+            children: [
+              {
+                path: ':id',
+                Component: DocumentPage,
+              },
+            ],
           },
         ],
       },
