@@ -14,8 +14,8 @@ import { GridRowId } from '@mui/x-data-grid/models/gridRows'
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel'
 import { observer } from 'mobx-react-lite'
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
-import { PageContainer } from '@toolpad/core/PageContainer'
 import { options } from '@/pages/forwardPage/dateOptions.ts'
+import Typography from '@mui/material/Typography'
 
 export interface RowData {
   id: number
@@ -154,14 +154,10 @@ export const ForwardPage = observer(() => {
   ]
 
   return (
-    <PageContainer
-      breadcrumbs={[]}
-      sx={{
-        '&.MuiContainer-root': {
-          maxWidth: 'none',
-        },
-      }}
-    >
+    <>
+      <Typography variant="h4" sx={{ pb: 2 }}>
+        Исходящие
+      </Typography>
       <DocumentsList
         columns={columns}
         rows={rows}
@@ -170,6 +166,6 @@ export const ForwardPage = observer(() => {
         onPaginationModelChange={handlePaginationModelChange}
         totalDocuments={documentsSize}
       />
-    </PageContainer>
+    </>
   )
 })

@@ -6,11 +6,11 @@ import {
 import { executeWithLoading } from '@/utils/executeWithLoading.ts'
 import { Document } from '@/types/sharedTypes.ts'
 import { SerializedError } from '@/api/core/serializedError.ts'
-import { DocumentStatus } from '@/api/documentController/types.ts'
+import { DocumentTransitions } from '@/api/documentController/types.ts'
 
 class DocumentStore {
   documentData: Document
-  status: DocumentStatus[] = []
+  transitions: DocumentTransitions[] = []
   loading: boolean = false
   error: SerializedError | null = null
 
@@ -70,27 +70,27 @@ class DocumentStore {
     return addedComment
   }
 
-  getDocumentTransitions = async (showOnlyAlive?: boolean) => {
-    const documentStatus = await executeWithLoading(this, () =>
+  getDocumentTransitions = async (isAlive?: boolean) => {
+    const documentTransitions = await executeWithLoading(this, () =>
       documentControllerApi.getTransitions(this.documentData.id, {
-        showOnlyAlive,
+        isAlive,
       })
     )
 
-    if (documentStatus) {
+    if (documentTransitions) {
       runInAction(() => {
-        this.status = documentStatus
+        this.transitions = documentTransitions
       })
     }
   }
 
-  getDocumentVersion = async (versionId: number, showOnlyAlive?: boolean) => {
+  getDocumentVersion = async (versionId: number, isAlive?: boolean) => {
     return await executeWithLoading(this, () =>
       documentControllerApi.getDocumentVersion(
         this.documentData.id,
         versionId,
         {
-          showOnlyAlive,
+          isAlive,
         }
       )
     )
