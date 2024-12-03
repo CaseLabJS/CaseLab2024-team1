@@ -16,7 +16,6 @@ import { CreateDocumentPage } from '@/pages/createDocumentPage'
 import { ForwardPage } from '@/pages/forwardPage'
 import { Navigate } from 'react-router-dom'
 import { DocumentPage } from '@/pages/documentPage'
-import { DocumentPage } from '@/pages/document'
 
 export const publicRoutes = [
   {
@@ -71,10 +70,6 @@ export const appRoutes = [
                 Component: DocumentPage,
               },
             ],
-          },
-          {
-            path: ROUTES.app('documents/:id'),
-            element: <DocumentPage />,
           },
         ],
       },
