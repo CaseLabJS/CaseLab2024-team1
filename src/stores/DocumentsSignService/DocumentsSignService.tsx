@@ -5,7 +5,10 @@ import type { DocumentWithSignature, GroupedSignatureRequests } from './types'
 import { combineDocumentWithSignature, groupSignatureRequests } from './helpers'
 import DocumentStore from '../DocumentStore'
 
+//* SRs - SignatureRequests
+
 class DocumentSignService {
+  isSRsFetched: boolean = false
   documents: { [key: string]: DocumentWithSignature } = {}
   signatureRequests: GroupedSignatureRequests = {}
   constructor() {
@@ -20,7 +23,6 @@ class DocumentSignService {
   }
 
   groupSignatureRequests = () => {
-    /** Возможно необходима фильтрация по пользователю */
     const requests = signatureListStore.signatureRequests
     runInAction(() => {
       this.signatureRequests = groupSignatureRequests(requests)
@@ -35,8 +37,9 @@ class DocumentSignService {
     }
   }
   initialFetch = async () => {
-    if (Object.keys(this.signatureRequests).length === 0) {
+    if (!this.isSRsFetched) {
       await this.fetchSignatureRequests()
+      this.isSRsFetched = true
     }
   }
   wrapWithSignature = async (document: DocumentStore) => {
