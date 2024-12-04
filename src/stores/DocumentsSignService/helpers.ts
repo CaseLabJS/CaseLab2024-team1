@@ -47,3 +47,11 @@ export const groupSignatureRequests = (
     return acc
   }, {})
 }
+
+export const filterFulfilled = <T>(
+  results: PromiseSettledResult<T>[]
+): NonNullable<T>[] =>
+  results
+    .filter((result) => result.status === 'fulfilled')
+    .map((result) => result.value)
+    .filter((value) => value !== undefined && value !== null)
