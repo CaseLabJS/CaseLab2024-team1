@@ -1,4 +1,8 @@
-import { DeletedDocs } from '@/components/deletedDocs/deletedDocs'
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  DeletedDocs,
+} from '@/components/deletedDocs/deletedDocs'
 import { Signature, User } from '@/types/sharedTypes.ts'
 import { GridColDef } from '@mui/x-data-grid'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -9,6 +13,7 @@ import { useNotifications } from '@toolpad/core'
 import { GridRowId } from '@mui/x-data-grid/models/gridRows'
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel'
 import { observer } from 'mobx-react-lite'
+import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
 import { options } from '@/utils/dateOptions'
 import { PageContainer } from '@toolpad/core'
 
@@ -67,14 +72,19 @@ const columns: GridColDef<RowData>[] = [
 ]
 export const DeletedPage = observer(() => {
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
-  const { recoverDocument, documents, countTotalDocuments } = documentsListStore
+  const { recoverDocument, documents, countTotalDocuments, documentsSize } =
+    documentsListStore
 
   const notifications = useNotifications()
 
   useEffect(() => {
     void countTotalDocuments(false)
 
-    void documentsListStore.fetchDocuments({ isAlive: false })
+    void documentsListStore.fetchDocuments({
+      isAlive: false,
+      page: DEFAULT_PAGE,
+      size: DEFAULT_PAGE_SIZE,
+    })
   }, [countTotalDocuments])
 
   const rows = useMemo(() => {
@@ -99,6 +109,17 @@ export const DeletedPage = observer(() => {
   const handleChange = useCallback(
     (newSelectionModel: GridRowSelectionModel) => {
       setSelectionModel([...newSelectionModel])
+    },
+    []
+  )
+
+  const handlePaginationModelChange = useCallback(
+    (paginationModel: GridPaginationModel) => {
+      void documentsListStore.fetchDocuments({
+        isAlive: false,
+        page: paginationModel.page,
+        size: paginationModel.pageSize,
+      })
     },
     []
   )
@@ -147,6 +168,8 @@ export const DeletedPage = observer(() => {
         rows={rows}
         buttons={buttons}
         onSelectionChange={handleChange}
+        onPaginationModelChange={handlePaginationModelChange}
+        totalDocuments={documentsSize}
       />
     </PageContainer>
   )
