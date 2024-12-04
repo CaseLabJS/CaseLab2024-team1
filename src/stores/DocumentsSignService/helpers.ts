@@ -1,7 +1,6 @@
 import DocumentStore from '../DocumentStore'
 import { SignService } from './SignService'
-import { DocumentWithSignature, GroupedSignatureRequests } from './types'
-import SignatureRequestStore from '../SignatureRequestStore'
+import { DocumentWithSignature, VersionGroup } from './types'
 
 export const combineDocumentWithSignature = (
   document: DocumentStore
@@ -37,13 +36,21 @@ export const proxyHandler = <T extends { document: DocumentStore }>() => ({
   },
 })
 
-export const groupSignatureRequests = (
-  signatureRequests: SignatureRequestStore[]
+export const groupByVersions = <
+  T extends {
+    documentId: number
+    documentVersionId?: number
+    documentVersion?: { id: number }
+  },
+>(
+  values: T[]
 ) => {
-  return signatureRequests.reduce<GroupedSignatureRequests>((acc, request) => {
-    acc[request.documentId] ??= {}
-    acc[request.documentId][request.documentVersionId] ??= []
-    acc[request.documentId][request.documentVersionId].push(request)
+  return values.reduce<VersionGroup<T[]>>((acc, value) => {
+    const versionId = value.documentVersionId ?? value.documentVersion?.id ?? 0
+
+    acc[value.documentId] ??= {}
+    acc[value.documentId][versionId] ??= []
+    acc[value.documentId][versionId].push(value)
     return acc
   }, {})
 }

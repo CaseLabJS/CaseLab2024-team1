@@ -68,11 +68,22 @@ class SignatureListStore {
     return signatureRequestStore
   }
 
-  createVote = async (voteModel: VoteModel): Promise<void | Vote> => {
-    return await executeWithLoading(this, () =>
-      signatureControllerApi.createVote(voteModel)
+  fetchVotes = async (): Promise<void> => {
+    const fetchedVotes = await executeWithLoading(this, async () =>
+      signatureControllerApi.getVotes()
     )
+
+    if (fetchedVotes) {
+      runInAction(() => {
+        this.votes = fetchedVotes
+      })
+    }
   }
+
+  createVote = async (voteModel: VoteModel): Promise<Vote | null> =>
+    (await executeWithLoading(this, () =>
+      signatureControllerApi.createVote(voteModel)
+    )) || null
 
   cancelVote = async (voteId: number): Promise<void | VoteCanceled> => {
     return await executeWithLoading(this, () =>

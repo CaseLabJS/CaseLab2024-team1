@@ -33,6 +33,7 @@ export type VoteModel = {
 
 export type Vote = {
   participants: User[]
+  documentId: number
   documentVersion: DocumentVersion
   approvalThreshold: number
   deadline: string //YYYY-MM-DD

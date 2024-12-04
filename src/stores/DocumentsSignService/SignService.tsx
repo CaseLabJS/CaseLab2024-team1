@@ -2,12 +2,12 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import DocumentStore from '../DocumentStore/DocumentStore'
 import documentSignService from './DocumentsSignService'
 import { Signature, User } from '@/types/sharedTypes'
-import { SignatureRequestVersionMap, StartVoteProps, Censor } from './types'
+import { StartVoteProps, Censor } from './types'
 import { isCurrentUser, isSameUser } from '@/lib'
 import SR from '@/stores/SignatureRequestStore'
 import SL from '@/stores/SignatureListStore'
 import authorStore from '@/stores/AuthStore'
-import { SignatureModel } from '@/api/signatureController'
+import { SignatureModel, Vote } from '@/api/signatureController'
 import { filterFulfilled } from './helpers'
 
 /** SR : SignatureRequest
@@ -18,8 +18,8 @@ import { filterFulfilled } from './helpers'
 
 export class SignService {
   document
-  SRVersionMap: SignatureRequestVersionMap
-
+  SRVersionMap: Record<string, SR[]> = {}
+  votesMap: Record<string, Vote[]> = {}
   constructor(document: DocumentStore) {
     if (typeof document !== 'object' || document === null) {
       throw new Error('The argument must be a non-null object.')
@@ -28,9 +28,9 @@ export class SignService {
     makeAutoObservable(this)
 
     this.document = document
-    //! загрузить голосование если voteID не пустой
-    this.SRVersionMap =
-      documentSignService.signatureRequests[document.documentData.id] ?? {}
+    const { id: documentId } = document.documentData
+    this.SRVersionMap = documentSignService.signatureRequests[documentId] ?? {}
+    this.votesMap = documentSignService.votes[documentId] ?? {}
   }
 
   protected signByAuthor = async (signatureModel: SignatureModel) => {
@@ -46,6 +46,22 @@ export class SignService {
           .signatures.push(signature)
       })
     }
+  }
+
+  protected fetchVotes = () => {
+    const hasVote = this.lastVersionSR.some(({ votingId }) => votingId)
+    if (hasVote) {
+      void SL.fetchVotes()
+    }
+  }
+
+  protected updateSRs = async () => {
+    await SL.fetchSignatureRequests()
+
+    runInAction(() => {
+      this.SRVersionMap =
+        documentSignService.signatureRequests[this.document.documentData.id]
+    })
   }
 
   protected signByUser = async (signatureModel: SignatureModel) => {
@@ -101,6 +117,9 @@ export class SignService {
       approvalThreshold,
       deadline:
         typeof deadline === 'string' ? deadline : deadline.toISOString(),
+    })
+    runInAction(() => {
+      this.vote = vote
     })
     return vote
   }
