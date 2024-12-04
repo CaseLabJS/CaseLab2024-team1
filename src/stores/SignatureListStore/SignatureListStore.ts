@@ -7,7 +7,6 @@ import {
   SignatureRequestModel,
   VoteModel,
   Signature,
-  SignatureRequest,
   Vote,
   VoteCanceled,
   SignatureModel,
@@ -55,16 +54,18 @@ class SignatureListStore {
 
   createSignatureRequest = async (
     signatureRequestModel: SignatureRequestModel
-  ): Promise<void | SignatureRequest> => {
+  ): Promise<SignatureRequestStore | null> => {
     const signatureRequest = await executeWithLoading(this, () =>
       signatureControllerApi.createSignatureRequest(signatureRequestModel)
     )
 
-    if (signatureRequest) {
-      runInAction(() => {
-        this.signatureRequests.push(new SignatureRequestStore(signatureRequest))
-      })
-    }
+    if (!signatureRequest) return null
+
+    const signatureRequestStore = new SignatureRequestStore(signatureRequest)
+    runInAction(() => {
+      this.signatureRequests.push(signatureRequestStore)
+    })
+    return signatureRequestStore
   }
 
   createVote = async (voteModel: VoteModel): Promise<void | Vote> => {

@@ -28,11 +28,10 @@ class SignatureRequestStore {
   sign = async (
     signatureModel: SignatureModel,
     params?: SignatureQueryParams
-  ): Promise<void | Signature> => {
-    return await executeWithLoading(this, () =>
+  ): Promise<Signature | null> =>
+    (await executeWithLoading(this, () =>
       signatureControllerApi.sign(this.id, signatureModel, params)
-    )
-  }
+    )) || null
 }
 
 export default SignatureRequestStore
