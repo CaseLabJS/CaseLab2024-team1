@@ -7,21 +7,21 @@ import {
   SignatureModel,
   SignatureRequest,
   SignatureQueryParams,
+  SignatureRequestStatus,
 } from '@/api/signatureController'
 
 class SignatureRequestStore {
-  id: number
-  userTo: User
-  documentId: number
-  documentVersionId: number
+  id!: number
+  userTo!: User
+  documentId!: number
+  documentVersionId!: number
+  status!: SignatureRequestStatus
+  votingId!: number | null
   loading: boolean = false
   error: SerializedError | null = null
 
-  constructor({ id, userTo, documentId, documentVersionId }: SignatureRequest) {
-    this.id = id
-    this.userTo = userTo
-    this.documentId = documentId
-    this.documentVersionId = documentVersionId
+  constructor(signatureRequest: SignatureRequest) {
+    Object.assign(this, signatureRequest)
     makeAutoObservable(this)
   }
 

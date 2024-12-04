@@ -8,4 +8,5 @@ export type {
   Vote,
   VoteCanceled,
   SignatureQueryParams,
+  SignatureRequestStatus,
 } from './types'
