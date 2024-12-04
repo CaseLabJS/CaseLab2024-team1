@@ -45,11 +45,7 @@ class DocumentSignService {
   wrapWithSignature = async (document: DocumentStore) => {
     await this.initialFetch()
 
-    const documentWithSignature = combineDocumentWithSignature(
-      document,
-      this.signatureRequests[document.documentData.id]
-    )
-    //this.documents[document.documentData.id] = documentWithSignature
+    const documentWithSignature = combineDocumentWithSignature(document)
     return documentWithSignature
   }
   fetchDocumentById = async (documentId: number): Promise<void> => {

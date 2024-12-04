@@ -1,10 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import DocumentStore from '../DocumentStore/DocumentStore'
+import documentSignService from './DocumentsSignService'
 import { User } from '@/types/sharedTypes'
-import {
-  SignatureRequestVersionMap as SRVersionMap,
-  StartVoteProps,
-} from './types'
+import { SignatureRequestVersionMap, StartVoteProps } from './types'
 import { isCurrentUser, isSameUser } from '@/lib'
 import SR from '@/stores/SignatureRequestStore'
 import SL from '@/stores/SignatureListStore'
@@ -21,9 +19,9 @@ import { Censor } from './types'
 
 export class SignService {
   document
-  SRVersionMap
-  status: string = 'created'
-  constructor(document: DocumentStore, SRVersionMap: SRVersionMap) {
+  SRVersionMap: SignatureRequestVersionMap
+
+  constructor(document: DocumentStore) {
     if (typeof document !== 'object' || document === null) {
       throw new Error('The argument must be a non-null object.')
     }
@@ -31,7 +29,8 @@ export class SignService {
     makeAutoObservable(this)
 
     this.document = document
-    this.SRVersionMap = SRVersionMap ?? {}
+    this.SRVersionMap =
+      documentSignService.signatureRequests[document.documentData.id] ?? {}
   }
 
   protected signByAuthor = async (signatureModel: SignatureModel) => {
@@ -148,9 +147,5 @@ export class SignService {
 
   get censors() {
     return this.lastVersionSR.map(({ userTo }) => userTo)
-  }
-
-  get SRWithStatus() {
-    return this.lastVersionSR.map(({ userTo }) => ({ userTo, status }))
   }
 }

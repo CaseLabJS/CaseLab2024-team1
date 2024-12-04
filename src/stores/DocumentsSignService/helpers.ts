@@ -1,18 +1,13 @@
 import DocumentStore from '../DocumentStore'
 import { SignService } from './SignService'
-import {
-  DocumentWithSignature,
-  SignatureRequestVersionMap,
-  GroupedSignatureRequests,
-} from './types'
+import { DocumentWithSignature, GroupedSignatureRequests } from './types'
 import SignatureRequestStore from '../SignatureRequestStore'
 
 export const combineDocumentWithSignature = (
-  document: DocumentStore,
-  signatureRequests: SignatureRequestVersionMap
+  document: DocumentStore
 ): DocumentWithSignature => {
   return new Proxy(
-    new SignService(document, signatureRequests),
+    new SignService(document),
     proxyHandler<SignService>()
   ) as DocumentWithSignature
 }
