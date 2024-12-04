@@ -14,6 +14,7 @@ import { SignatureModel } from '@/api/signatureController'
 import { Censor } from './types'
 
 /** SR : SignatureRequest
+ * SRs : SignatureRequests
  * SL : SignatureListStore
  * SRVersionMap : SignatureRequestVersionMap
  */
@@ -22,8 +23,6 @@ export class SignService {
   document
   SRVersionMap
   status: string = 'created'
-  isSignedByAuthor: boolean = false
-  isSignedByUser: boolean = false
   constructor(document: DocumentStore, SRVersionMap: SRVersionMap) {
     if (typeof document !== 'object' || document === null) {
       throw new Error('The argument must be a non-null object.')
@@ -33,14 +32,6 @@ export class SignService {
 
     this.document = document
     this.SRVersionMap = SRVersionMap ?? {}
-    this.checkIsSigned()
-  }
-
-  protected checkIsSigned() {
-    runInAction(() => {
-      this.isSignedByAuthor = this.isSignedBy(authorStore.user)
-      this.isSignedByUser = this.isSignedBy(this.author)
-    })
   }
 
   protected signByAuthor = async (signatureModel: SignatureModel) => {
@@ -55,7 +46,6 @@ export class SignService {
           .at(-1)!
           .signatures.push(signature)
       })
-      this.checkIsSigned()
     }
   }
 
@@ -71,7 +61,6 @@ export class SignService {
 
     runInAction(() => {
       this.lastVersion!.signatures.push(...signatures)
-      this.checkIsSigned()
     })
   }
 
@@ -137,6 +126,13 @@ export class SignService {
 
   get isUserAuthor() {
     return !!authorStore.user && isSameUser(this.author, authorStore.user)
+  }
+
+  get isSignedByAuthor() {
+    return this.isSignedBy(authorStore.user)
+  }
+  get isSignedByUser() {
+    return this.isSignedBy(this.author)
   }
 
   protected get lastVersionSR(): SR[] {
