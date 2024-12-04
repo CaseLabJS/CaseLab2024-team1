@@ -1,6 +1,6 @@
 import IconButton from '@mui/material/IconButton'
 import Box from '@mui/material/Box'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Autocomplete } from '@/components/autocomplete/autocomplete.tsx'
 import { observer } from 'mobx-react-lite'
 import Tooltip from '@mui/material/Tooltip'
@@ -22,12 +22,14 @@ export const Search = observer(() => {
 
   const [openModal, setOpenModal] = useState(false)
 
-  const fetchAndCountDocuments = useCallback(async () => {
-    if (!documentsSize) {
-      await countTotalDocuments()
-    }
-
-    await fetchAllDocuments()
+  useEffect(() => {
+    void (async () => {
+      if (!documentsSize) {
+        await countTotalDocuments()
+      } else {
+        await fetchAllDocuments()
+      }
+    })()
   }, [countTotalDocuments, documentsSize, fetchAllDocuments])
 
   const addToSearchHistory = useCallback(
@@ -51,8 +53,7 @@ export const Search = observer(() => {
 
   const openSearchModal = useCallback(() => {
     setOpenModal(true)
-    void fetchAndCountDocuments()
-  }, [fetchAndCountDocuments])
+  }, [])
 
   const closeSearchModal = useCallback(() => {
     setOpenModal(false)
@@ -83,7 +84,6 @@ export const Search = observer(() => {
         noOptionsText="Нет доступных документов"
         sx={{ minWidth: '18rem', display: { xs: 'none', md: 'inline-block' } }}
         isLoading={loading}
-        onClick={() => void fetchAndCountDocuments()}
         onValueAdd={addToSearchHistory}
       />
 

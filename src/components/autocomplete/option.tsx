@@ -58,7 +58,7 @@ export const CustomOption = <T,>(props: CustomOptionProps<T>) => {
           </Typography>
         </Box>
       </Box>
-      <Box>
+      <Box sx={{ display: 'flex' }}>
         <KeyboardReturnIcon sx={{ opacity: 0 }} className="main-icon" />
       </Box>
     </Box>
