@@ -3,7 +3,7 @@ import { BaseApi } from '../core/baseApi'
 import { privateApi } from '../core/private.api'
 import {
   DocumentModel,
-  DocumentStatus,
+  DocumentTransitions,
   DocumentVersionFields,
   DocumentVersionModel,
 } from './types'
@@ -101,7 +101,7 @@ class DocumentControllerApi extends BaseApi {
     })
 
   getTransitions = (id: number, params?: QueryParams) =>
-    this.createRequest<DocumentStatus[]>({
+    this.createRequest<DocumentTransitions[]>({
       request: () =>
         privateApi.get(
           `${SERVICE_URL}/${id}/transitions`,

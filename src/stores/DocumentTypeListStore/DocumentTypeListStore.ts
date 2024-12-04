@@ -14,9 +14,15 @@ class DocumentTypeListStore {
     makeAutoObservable(this)
   }
 
-  async fetchDocumentTypes() {
+  async fetchDocumentTypes(params?: {
+    showOnlyAlive?: boolean
+    isAlive?: boolean
+    page?: number
+    size?: number
+    ascending?: boolean
+  }) {
     const fetchedTypes = await executeWithLoading(this, async () =>
-      documentTypesControllerApi.getDocumentTypes()
+      documentTypesControllerApi.getDocumentTypes(params)
     )
 
     if (fetchedTypes) {

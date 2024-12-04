@@ -2,6 +2,7 @@ import AdminPage from '@/components/adminPage/AdminPage'
 import UserTable from '@/components/userTable/UserTable'
 import CreateUser from '@/components/createUser/CreateUser'
 import DeletedUsers from '@/components/deletedUsers/DeletedUsers'
+import CreateDocumentTypePage from '@/components/createDocumentTypePage/createDocumentTypePage'
 
 import { AppDashboardLayout } from '@/components/appDashboardLayout/appDashboardLayout.tsx'
 import { AppProvider } from '@/components/appProvider/appProvider.tsx'
@@ -16,6 +17,9 @@ import { ForwardPage } from '@/pages/forwardPage'
 // import { InboxPage } from '@/pages/inboxPage'
 import { DeletedPage } from '@/pages/deletedPage'
 import { Navigate } from 'react-router-dom'
+import { DocumentPage } from '@/pages/documentPage'
+import AliveTypes from '@/components/documentTypesTable/AliveTypes'
+import DeadTypes from '@/components/documentTypesTable/DeadTypes'
 
 export const publicRoutes = [
   {
@@ -68,6 +72,12 @@ export const appRoutes = [
           {
             path: ROUTES.app('forward'),
             Component: ForwardPage,
+            children: [
+              {
+                path: ':id',
+                Component: DocumentPage,
+              },
+            ],
           },
           {
             path: ROUTES.app('deleted'),
@@ -105,8 +115,16 @@ export const adminRoutes = [
             element: <DeletedUsers />,
           },
           {
-            path: ROUTES.admin('document-type'),
-            element: <div>Document Type</div>,
+            path: ROUTES.admin('document-types'),
+            element: <AliveTypes />,
+          },
+          {
+            path: ROUTES.admin('document-types/deleted'),
+            element: <DeadTypes />,
+          },
+          {
+            path: ROUTES.admin('document-types/create'),
+            element: <CreateDocumentTypePage />,
           },
           {
             path: ROUTES.admin('attribute-type'),
