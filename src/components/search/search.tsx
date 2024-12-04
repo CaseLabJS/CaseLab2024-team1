@@ -18,15 +18,17 @@ export const Search = observer(() => {
     allDocuments,
     loading,
   } = searchStore
-  const { documentsSize } = documentsListStore
+  const { documentsSize, countTotalDocuments } = documentsListStore
 
   const [openModal, setOpenModal] = useState(false)
 
   const fetchAndCountDocuments = useCallback(async () => {
-    if (documentsSize !== allDocuments.length) {
-      await fetchAllDocuments()
+    if (!documentsSize) {
+      await countTotalDocuments()
     }
-  }, [allDocuments.length, documentsSize, fetchAllDocuments])
+
+    await fetchAllDocuments()
+  }, [countTotalDocuments, documentsSize, fetchAllDocuments])
 
   const addToSearchHistory = useCallback(
     (value: DocumentVersion) => {

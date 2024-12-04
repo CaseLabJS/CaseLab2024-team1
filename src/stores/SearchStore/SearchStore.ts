@@ -16,11 +16,7 @@ class SearchStore {
   }
 
   fetchAllDocuments = async () => {
-    const { documentsSize, countTotalDocuments } = documentsListStore
-
-    if (!documentsSize) {
-      await countTotalDocuments()
-    }
+    const { documentsSize } = documentsListStore
 
     await this.loadDocuments(documentsSize)
   }
