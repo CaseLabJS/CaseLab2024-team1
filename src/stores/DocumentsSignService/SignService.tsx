@@ -36,7 +36,7 @@ export class SignService {
   protected signByAuthor = async (signatureModel: SignatureModel) => {
     const signature = await SL.signDocumentByAuthor(
       this.document.documentData.id,
-      signatureModel
+      { ...signatureModel, placeholderTitle: 'sign by author' }
     )
 
     if (signature) {
