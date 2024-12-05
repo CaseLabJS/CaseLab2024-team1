@@ -24,7 +24,7 @@ export const useActionButtons = (
 
   const documentContent = document.documentVersions[selectedVersionIndex]
   const base64Content = documentContent.base64Content
-  const file = base64ToFile(base64Content, documentContent.title)
+  const file = base64ToFile(base64Content)
 
   const fileTypeCheck = useMemo(() => {
     const isImage = file?.type.startsWith('image/')
@@ -76,9 +76,6 @@ export const useActionButtons = (
 
   const actionButtons = useMemo(() => {
     switch (navigationType) {
-      case NavigationType.NEW_DOCUMENT:
-        return []
-
       case NavigationType.INBOX:
         return []
 
@@ -112,18 +109,6 @@ export const useActionButtons = (
 
         return buttons
       }
-
-      case NavigationType.DRAFT:
-        return []
-
-      case NavigationType.DELETED:
-        return []
-
-      case NavigationType.PROCESSING:
-        return []
-
-      case NavigationType.PROCESSED:
-        return []
 
       default:
         return []

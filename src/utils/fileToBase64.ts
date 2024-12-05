@@ -1,6 +1,4 @@
-export const fileToBase64 = async (file: File | null): Promise<string> => {
-  if (!file) return ''
-
+export const fileToBase64 = async (file: File): Promise<string> => {
   return new Promise((resolve) => {
     const reader = new FileReader()
 
@@ -8,7 +6,7 @@ export const fileToBase64 = async (file: File | null): Promise<string> => {
       const base64String = reader.result as string
       const [header, content] = base64String.split(',')
       const mimeType = header.split(':')[1].split(';')[0]
-      const result = `data:${mimeType};base64,${content}`
+      const result = `filename:${file.name};data:${mimeType};base64,${content}`
       resolve(result)
     }
 

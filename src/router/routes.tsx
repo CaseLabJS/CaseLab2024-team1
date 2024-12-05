@@ -18,6 +18,7 @@ import { Navigate } from 'react-router-dom'
 import { DocumentPage } from '@/pages/documentPage'
 import AliveTypes from '@/components/documentTypesTable/AliveTypes'
 import DeadTypes from '@/components/documentTypesTable/DeadTypes'
+import { DraftPage } from '@/pages/draftPage'
 
 export const publicRoutes = [
   {
@@ -72,6 +73,10 @@ export const appRoutes = [
                 Component: DocumentPage,
               },
             ],
+          },
+          {
+            path: ROUTES.app('draft'),
+            Component: DraftPage,
           },
         ],
       },
