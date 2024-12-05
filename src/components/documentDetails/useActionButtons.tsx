@@ -1,5 +1,4 @@
 import { NavigationType } from '@/components/appDashboardLayout/navigation/types.ts'
-import { ToolbarButton } from '@/components/documentsList/types.ts'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -10,6 +9,7 @@ import documentsListStore from '@/stores/DocumentsListStore'
 import { useNavigate } from 'react-router-dom'
 import { useNotifications } from '@toolpad/core'
 import VisibilityIcon from '@mui/icons-material/Visibility'
+import { ToolbarButton } from '@/types/types.ts'
 
 export const useActionButtons = (
   navigationType: NavigationType | null,
