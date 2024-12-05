@@ -2,15 +2,14 @@ import {
   DataGrid,
   GridColDef,
   GridPagination,
-  GridRowParams,
   GridValidRowModel,
 } from '@mui/x-data-grid'
 import { useCallback, useState } from 'react'
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel'
 import { GridRowId } from '@mui/x-data-grid/models/gridRows'
 import Paper from '@mui/material/Paper'
-import { Outlet, useNavigate } from 'react-router-dom'
-import { GridToolbar } from '@/components/documentsList/gridToolbar.tsx'
+import { Outlet } from 'react-router-dom'
+import { GridToolbar } from '@/components/deletedDocs/gridToolbar.tsx'
 import { useTheme } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
@@ -20,7 +19,7 @@ export const DEFAULT_PAGE_SIZE = 15
 export const DEFAULT_PAGE = 0
 const DEFAULT_PAGINATION_OPTIONS = [15, 30, 40]
 
-interface DocumentsListProps<T extends GridValidRowModel> {
+interface DeletedDocsProps<T extends GridValidRowModel> {
   rows: T[]
   columns: GridColDef<T>[]
   totalDocuments: number
@@ -33,8 +32,8 @@ interface DocumentsListProps<T extends GridValidRowModel> {
   onPaginationModelChange?: (paginationModel: GridPaginationModel) => void
 }
 
-export const DocumentsList = <T extends GridValidRowModel>(
-  props: DocumentsListProps<T>
+export const DeletedDocs = <T extends GridValidRowModel>(
+  props: DeletedDocsProps<T>
 ) => {
   const {
     rows,
@@ -54,15 +53,7 @@ export const DocumentsList = <T extends GridValidRowModel>(
     pageSize: initialPageSize,
   })
 
-  const navigate = useNavigate()
   const theme = useTheme()
-
-  const handleRowClick = useCallback(
-    (params: GridRowParams) => {
-      navigate(`${params.id}`)
-    },
-    [navigate]
-  )
 
   const handleRowSelectionModelChange = useCallback(
     (newSelectionModel: GridRowSelectionModel) => {
@@ -99,7 +90,6 @@ export const DocumentsList = <T extends GridValidRowModel>(
           disableRowSelectionOnClick
           onRowSelectionModelChange={handleRowSelectionModelChange}
           rowSelectionModel={selectionModel}
-          onRowClick={handleRowClick}
           localeText={{
             footerRowSelected: (count) => `${count} выбрано`,
             noResultsOverlayLabel: 'Нет результатов',
