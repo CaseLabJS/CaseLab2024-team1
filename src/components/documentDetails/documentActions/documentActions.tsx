@@ -1,6 +1,6 @@
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
-import { ToolbarButton } from '@/components/documentsList/types.ts'
+import { ToolbarButton } from '@/types/types.ts'
 
 interface DocumentActionsProps {
   buttons: ToolbarButton[]

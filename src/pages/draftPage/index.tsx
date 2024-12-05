@@ -10,14 +10,14 @@ import { observer } from 'mobx-react-lite'
 import { useNotifications } from '@toolpad/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import documentsListStore from '@/stores/DocumentsListStore'
-import { options } from '@/pages/forwardPage/dateOptions.ts'
-import { ToolbarButton } from '@/components/documentsList/types.ts'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { GridRowId } from '@mui/x-data-grid/models/gridRows'
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel'
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/router/constants.ts'
+import { options } from '@/utils/dateOptions.ts'
+import { ToolbarButton } from '@/types/types.ts'
 
 interface RowData {
   id: number
