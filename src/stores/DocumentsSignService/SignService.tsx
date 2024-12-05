@@ -1,30 +1,26 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import DocumentStore from '../DocumentStore/DocumentStore'
-import { User } from '@/types/sharedTypes'
-import {
-  SignatureRequestVersionMap as SRVersionMap,
-  StartVoteProps,
-} from './types'
+import documentSignService from './DocumentsSignService'
+import { Signature, User } from '@/types/sharedTypes'
+import { StartVoteProps, Censor } from './types'
 import { isCurrentUser, isSameUser } from '@/lib'
 import SR from '@/stores/SignatureRequestStore'
 import SL from '@/stores/SignatureListStore'
 import authorStore from '@/stores/AuthStore'
-//import { signatureModel } from './constants'
-import { SignatureModel } from '@/api/signatureController'
-import { Censor } from './types'
+import { SignatureModel, Vote } from '@/api/signatureController'
+import { filterFulfilled } from './helpers'
 
 /** SR : SignatureRequest
+ * SRs : SignatureRequests
  * SL : SignatureListStore
  * SRVersionMap : SignatureRequestVersionMap
  */
 
 export class SignService {
   document
-  SRVersionMap
-  status: string = 'created'
-  isSignedByAuthor: boolean = false
-  isSignedByUser: boolean = false
-  constructor(document: DocumentStore, SRVersionMap: SRVersionMap) {
+  SRVersionMap: Record<string, SR[]> = {}
+  votesMap: Record<string, Vote[]> = {}
+  constructor(document: DocumentStore) {
     if (typeof document !== 'object' || document === null) {
       throw new Error('The argument must be a non-null object.')
     }
@@ -32,21 +28,15 @@ export class SignService {
     makeAutoObservable(this)
 
     this.document = document
-    this.SRVersionMap = SRVersionMap ?? {}
-    this.checkIsSigned()
-  }
-
-  protected checkIsSigned() {
-    runInAction(() => {
-      this.isSignedByAuthor = this.isSignedBy(authorStore.user)
-      this.isSignedByUser = this.isSignedBy(this.author)
-    })
+    const { id: documentId } = document.documentData
+    this.SRVersionMap = documentSignService.signatureRequests[documentId] ?? {}
+    this.votesMap = documentSignService.votes[documentId] ?? {}
   }
 
   protected signByAuthor = async (signatureModel: SignatureModel) => {
     const signature = await SL.signDocumentByAuthor(
       this.document.documentData.id,
-      signatureModel
+      { ...signatureModel, placeholderTitle: 'sign by author' }
     )
 
     if (signature) {
@@ -55,23 +45,34 @@ export class SignService {
           .at(-1)!
           .signatures.push(signature)
       })
-      this.checkIsSigned()
     }
   }
 
+  protected fetchVotes = () => {
+    const hasVote = this.lastVersionSR.some(({ votingId }) => votingId)
+    if (hasVote) {
+      void SL.fetchVotes()
+    }
+  }
+
+  protected updateSRs = async () => {
+    await SL.fetchSignatureRequests()
+
+    runInAction(() => {
+      this.SRVersionMap =
+        documentSignService.signatureRequests[this.document.documentData.id]
+    })
+  }
+
   protected signByUser = async (signatureModel: SignatureModel) => {
-    const promises = this.lastVersionSR.map((sr) => sr.sign(signatureModel))
+    const promises = this.ownSR.map((sr) => sr.sign(signatureModel))
 
     const results = await Promise.allSettled(promises)
 
-    const signatures = results
-      .filter((result) => result.status === 'fulfilled')
-      .map((result) => result.value)
-      .filter((signature) => signature !== undefined)
+    const signatures = filterFulfilled<Signature | null>(results)
 
     runInAction(() => {
-      this.lastVersion!.signatures.push(...signatures)
-      this.checkIsSigned()
+      this.lastVersion?.signatures.push(...signatures)
     })
   }
 
@@ -94,15 +95,22 @@ export class SignService {
         userIdTo: censor.userData.id,
       })
     )
-    return await Promise.allSettled(promises)
+    const results = await Promise.allSettled(promises)
+
+    const signatureRequestsStore = filterFulfilled<SR | null>(results)
+
+    runInAction(() => {
+      this.lastVersionSR.push(...signatureRequestsStore)
+    })
   }
 
+  //! нужно обновить SR
   startVote = async ({
     censors,
     approvalThreshold,
     deadline,
   }: StartVoteProps) => {
-    return await SL.createVote({
+    const vote = await SL.createVote({
       participantIds: censors.map((censor) => censor.userData.id),
       documentId: this.document.documentData.id,
       documentVersionId: this.lastVersion!.versionId,
@@ -110,6 +118,10 @@ export class SignService {
       deadline:
         typeof deadline === 'string' ? deadline : deadline.toISOString(),
     })
+    runInAction(() => {
+      this.vote = vote
+    })
+    return vote
   }
 
   cancelVote = (censors: User[]) => {
@@ -122,7 +134,7 @@ export class SignService {
 
   isSignedBy = <T extends { id: number }>(user: T | null) => {
     if (!user) return false
-    return this.lastVersion!.signatures.some((signature) =>
+    return this.lastVersion?.signatures.some((signature) =>
       isSameUser(signature.user, user)
     )
   }
@@ -139,6 +151,13 @@ export class SignService {
     return !!authorStore.user && isSameUser(this.author, authorStore.user)
   }
 
+  get isSignedByAuthor() {
+    return this.isSignedBy(authorStore.user)
+  }
+  get isSignedByUser() {
+    return this.isSignedBy(this.author)
+  }
+
   protected get lastVersionSR(): SR[] {
     const lastVersionId = this.lastVersion?.id
     return lastVersionId && lastVersionId in this.SRVersionMap
@@ -152,9 +171,5 @@ export class SignService {
 
   get censors() {
     return this.lastVersionSR.map(({ userTo }) => userTo)
-  }
-
-  get SRWithStatus() {
-    return this.lastVersionSR.map(({ userTo }) => ({ userTo, status }))
   }
 }

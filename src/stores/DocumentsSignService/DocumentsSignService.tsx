@@ -1,29 +1,36 @@
 import { makeAutoObservable, runInAction, reaction } from 'mobx'
 import documentsListStore from '../DocumentsListStore'
 import signatureListStore from '../SignatureListStore'
-import type { DocumentWithSignature, GroupedSignatureRequests } from './types'
-import { combineDocumentWithSignature, groupSignatureRequests } from './helpers'
+import type { DocumentWithSignature, VersionGroup } from './types'
+import { combineDocumentWithSignature, groupByVersions } from './helpers'
 import DocumentStore from '../DocumentStore'
+import SignatureRequestStore from '../SignatureRequestStore'
+import { Vote } from '@/api/signatureController'
+
+//* SRs - SignatureRequests
 
 class DocumentSignService {
+  isSRsFetched: boolean = false
   documents: { [key: string]: DocumentWithSignature } = {}
-  signatureRequests: GroupedSignatureRequests = {}
+  signatureRequests: VersionGroup<SignatureRequestStore[]> = {}
+  votes: VersionGroup<Vote[]> = {}
   constructor() {
     makeAutoObservable(this)
 
     reaction(
-      () => signatureListStore.signatureRequests,
+      () => [signatureListStore.signatureRequests, signatureListStore.votes],
       () => {
-        this.groupSignatureRequests()
+        this.groupVoteAndSRs()
       }
     )
   }
 
-  groupSignatureRequests = () => {
-    /** Возможно необходима фильтрация по пользователю */
+  groupVoteAndSRs = () => {
     const requests = signatureListStore.signatureRequests
+    const votes = signatureListStore.votes
     runInAction(() => {
-      this.signatureRequests = groupSignatureRequests(requests)
+      this.signatureRequests = groupByVersions(requests)
+      this.votes = groupByVersions(votes)
     })
   }
 
@@ -34,19 +41,18 @@ class DocumentSignService {
       console.error('Error fetching all data:', error)
     }
   }
+
   initialFetch = async () => {
-    if (Object.keys(this.signatureRequests).length === 0) {
+    if (!this.isSRsFetched) {
       await this.fetchSignatureRequests()
+      await signatureListStore.fetchVotes()
+      this.isSRsFetched = true
     }
   }
   wrapWithSignature = async (document: DocumentStore) => {
     await this.initialFetch()
 
-    const documentWithSignature = combineDocumentWithSignature(
-      document,
-      this.signatureRequests[document.documentData.id]
-    )
-    //this.documents[document.documentData.id] = documentWithSignature
+    const documentWithSignature = combineDocumentWithSignature(document)
     return documentWithSignature
   }
   fetchDocumentById = async (documentId: number): Promise<void> => {

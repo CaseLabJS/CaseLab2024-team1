@@ -38,7 +38,7 @@ export const GridToolbar = (props: GridToolbarProps) => {
             onClick={() => void button.onClick()}
             disabled={button.disabled}
           >
-            {button.content} {button.text}
+            {button.content} {button.text && button.text}
           </Button>
         ))}
       </Box>
