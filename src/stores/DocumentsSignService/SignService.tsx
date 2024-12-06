@@ -172,4 +172,12 @@ export class SignService {
   get censors() {
     return this.lastVersionSR.map(({ userTo }) => userTo)
   }
+
+  get id() {
+    return this.document.documentData.id
+  }
+
+  get hasSignatureRequest() {
+    return this.ownSR.length > 0
+  }
 }
