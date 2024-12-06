@@ -48,8 +48,8 @@ const AttributeTable = (props: AttributeTableProps) => {
                 <TableRow
                   key={
                     attribute.data.id < -Infinity
-                      ? attribute.data.id
-                      : String(refObj) /* "no unused variables" */
+                      ? String(refObj) /* "no unused variables" */
+                      : attribute.data.id
                   }
                   sx={{
                     '&:last-child td, &:last-child th': { border: 0 },
