@@ -14,13 +14,13 @@ import {
   InputAdornment,
   Alert,
   Snackbar,
+  Paper,
 } from '@mui/material'
 import {
   Visibility,
   VisibilityOff,
   Email as EmailIcon,
 } from '@mui/icons-material'
-import Bird from '@/assets/bird.svg'
 const CreateUser: React.FC = observer(() => {
   const [showPassword, setShowPassword] = useState(true)
   const [loaderIsOpen, setLoaderIsOpen] = useState(true)
@@ -45,21 +45,17 @@ const CreateUser: React.FC = observer(() => {
     }
   }, [error])
   return (
-    <Box
+    <Paper
       sx={{
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         padding: 2,
-        maxWidth: 400,
         margin: 'auto',
-        minHeight: 600,
+        maxWidth: '370px',
       }}
     >
-      <Box>
-        <img src={Bird} alt="Logo" width={50} height={50} />
-      </Box>
       <Box
         sx={{
           display: 'flex',
@@ -156,7 +152,7 @@ const CreateUser: React.FC = observer(() => {
         </Box>
         <Snackbar
           open={snackbarIsOpen}
-          autoHideDuration={6000}
+          autoHideDuration={2000}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           onClose={() => setSnackbarIsOpen(false)}
         >
@@ -181,7 +177,7 @@ const CreateUser: React.FC = observer(() => {
           <Loader />
         </Box>
       </Modal>
-    </Box>
+    </Paper>
   )
 })
 

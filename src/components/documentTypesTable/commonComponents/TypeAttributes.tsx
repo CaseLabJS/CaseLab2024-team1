@@ -32,7 +32,7 @@ const TypeAttributes = (props: TypeAttributeProps) => {
             <IconButton
               aria-label="expand row"
               size="small"
-              sx={{ p: 0, height: '13px', width: '13px' }}
+              sx={{ p: 0, height: '20px', width: '20px' }}
               onClick={() => setCollapseOpen(!collapseOpen)}
             >
               {collapseOpen ? (
@@ -54,7 +54,7 @@ const TypeAttributes = (props: TypeAttributeProps) => {
               if (index < 2)
                 return (
                   <Typography
-                    sx={{ fontSize: { xs: '11px', md: '14px', lg: '14px' } }}
+                    sx={{ fontSize: { xs: '10px', md: '14px', lg: '14px' } }}
                     key={attribute.id}
                     variant="subtitle2"
                   >
@@ -70,7 +70,16 @@ const TypeAttributes = (props: TypeAttributeProps) => {
             })}
           </Box>
           <Collapse in={collapseOpen} timeout="auto" unmountOnExit>
-            <Table size="small">
+            <Table
+              size="small"
+              sx={{
+                mt: '8px',
+                '.MuiTableCell-root': {
+                  fontSize: { xs: '10px', md: '14px', lg: '14px' },
+                  padding: { xs: '2px' },
+                },
+              }}
+            >
               <TableHead>
                 <TableRow>
                   <TableCell>ID</TableCell>
@@ -108,7 +117,11 @@ const TypeAttributes = (props: TypeAttributeProps) => {
           </Collapse>
         </>
       ) : (
-        <Typography variant="subtitle2" textAlign="center">
+        <Typography
+          variant="subtitle2"
+          textAlign="center"
+          sx={{ fontSize: { xs: '11px', md: '14px', lg: '14px' } }}
+        >
           Атрибуты отсутствуют
         </Typography>
       )}
