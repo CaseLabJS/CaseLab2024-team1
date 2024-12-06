@@ -273,7 +273,10 @@ export const DocumentForm = (props: DocumentFormProps) => {
         {attributes.map((_field, index) => {
           const documentType = getDocumentType(documentTypeId)
           if (!documentType) return null
-          const attr = documentType.data.attributes[index]
+          const attr = documentType.data.attributes
+            .slice()
+            .sort((a, b) => a.name.localeCompare(b.name))[index]
+          if (!attr) return
 
           return (
             <Controller
