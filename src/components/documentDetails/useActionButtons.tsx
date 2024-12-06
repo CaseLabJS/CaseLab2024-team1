@@ -1,5 +1,4 @@
 import { NavigationType } from '@/components/appDashboardLayout/navigation/types.ts'
-import { ToolbarButton } from '@/components/documentsList/types.ts'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -10,6 +9,7 @@ import documentsListStore from '@/stores/DocumentsListStore'
 import { useNavigate } from 'react-router-dom'
 import { useNotifications } from '@toolpad/core'
 import VisibilityIcon from '@mui/icons-material/Visibility'
+import { ToolbarButton } from '@/types/types.ts'
 
 export const useActionButtons = (
   navigationType: NavigationType | null,
@@ -24,7 +24,7 @@ export const useActionButtons = (
 
   const documentContent = document.documentVersions[selectedVersionIndex]
   const base64Content = documentContent.base64Content
-  const file = base64ToFile(base64Content, documentContent.title)
+  const file = base64ToFile(base64Content)
 
   const fileTypeCheck = useMemo(() => {
     const isImage = file?.type.startsWith('image/')
@@ -76,9 +76,6 @@ export const useActionButtons = (
 
   const actionButtons = useMemo(() => {
     switch (navigationType) {
-      case NavigationType.NEW_DOCUMENT:
-        return []
-
       case NavigationType.INBOX:
         return []
 
@@ -112,18 +109,6 @@ export const useActionButtons = (
 
         return buttons
       }
-
-      case NavigationType.DRAFT:
-        return []
-
-      case NavigationType.DELETED:
-        return []
-
-      case NavigationType.PROCESSING:
-        return []
-
-      case NavigationType.PROCESSED:
-        return []
 
       default:
         return []

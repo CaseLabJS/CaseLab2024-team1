@@ -3,26 +3,26 @@ import {
   DEFAULT_PAGE_SIZE,
   DocumentsList,
 } from '@/components/documentsList/documentsList.tsx'
-import { Document, Signature, User } from '@/types/sharedTypes.ts'
+import { Document, User } from '@/types/sharedTypes.ts'
 import { GridColDef, GridRowParams } from '@mui/x-data-grid'
+import { observer } from 'mobx-react-lite'
+import { useNotifications } from '@toolpad/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import documentsListStore from '@/stores/DocumentsListStore'
-import { ToolbarButton } from '@/types/types'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { useNotifications } from '@toolpad/core'
 import { GridRowId } from '@mui/x-data-grid/models/gridRows'
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel'
-import { observer } from 'mobx-react-lite'
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
-import { options } from '@/utils/dateOptions'
-import Typography from '@mui/material/Typography'
 import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/router/constants.ts'
+import { options } from '@/utils/dateOptions.ts'
+import { ToolbarButton } from '@/types/types.ts'
+import { PageContainer } from '@toolpad/core/PageContainer'
 
 interface RowData {
   id: number
   documentName: string
-  sender: User
-  signatures: Signature[]
+  author: User
   file: string | null
   date: string
 }
@@ -30,29 +30,20 @@ interface RowData {
 const columns: GridColDef<RowData>[] = [
   {
     field: 'documentName',
-    headerName: 'Документы',
+    headerName: 'Черновики',
     editable: false,
     type: 'string',
     flex: 2,
     minWidth: 150,
   },
   {
-    field: 'sender',
-    headerName: 'Отправитель',
+    field: 'author',
+    headerName: 'Автор',
     valueGetter: (user: User) => `${user.name} ${user.surname}`,
     editable: false,
     type: 'string',
     flex: 2,
     minWidth: 150,
-  },
-  {
-    field: 'signatures',
-    headerName: 'Подпись',
-    valueGetter: (signatures: Signature[]) => signatures.length,
-    editable: false,
-    type: 'boolean',
-    flex: 1,
-    minWidth: 100,
   },
   {
     field: 'file',
@@ -72,27 +63,28 @@ const columns: GridColDef<RowData>[] = [
   },
 ]
 
-export const ForwardPage = observer(() => {
-  const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
+export const DraftPage = observer(() => {
   const {
-    fetchDocuments,
     deleteDocument,
+    fetchDocuments,
     documents,
     countTotalDocuments,
     documentsSize,
   } = documentsListStore
-
-  const notifications = useNotifications()
-  const navigate = useNavigate()
+  const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
 
   useEffect(() => {
-    void countTotalDocuments()
+    void countTotalDocuments(true, true)
 
     void fetchDocuments({
       page: DEFAULT_PAGE,
       size: DEFAULT_PAGE_SIZE,
+      showDraft: true,
     })
-  }, [countTotalDocuments, fetchDocuments])
+  }, [countTotalDocuments, documentsSize, fetchDocuments])
+
+  const notifications = useNotifications()
+  const navigate = useNavigate()
 
   const rows = useMemo(() => {
     return documents.map(({ documentData }): RowData => {
@@ -102,8 +94,7 @@ export const ForwardPage = observer(() => {
       return {
         id: documentData.id,
         documentName: lastDocumentVersions.title,
-        sender: documentData.user,
-        signatures: lastDocumentVersions.signatures,
+        author: documentData.user,
         file: lastDocumentVersions.base64Content,
         date: new Date(lastDocumentVersions.createdAt).toLocaleDateString(
           'ru-RU',
@@ -125,6 +116,7 @@ export const ForwardPage = observer(() => {
       void fetchDocuments({
         page: paginationModel.page,
         size: paginationModel.pageSize,
+        showDraft: true,
       })
     },
     [fetchDocuments]
@@ -132,7 +124,7 @@ export const ForwardPage = observer(() => {
 
   const handleRowClick = useCallback(
     (params: GridRowParams) => {
-      navigate(`${params.id}`)
+      navigate(ROUTES.app(`new-document?draftId=${params.id}`))
     },
     [navigate]
   )
@@ -168,10 +160,16 @@ export const ForwardPage = observer(() => {
   ]
 
   return (
-    <>
-      <Typography variant="h4" sx={{ pb: 2 }}>
-        Исходящие
-      </Typography>
+    <PageContainer
+      breadcrumbs={[]}
+      sx={{
+        '& .MuiStack-root': { margin: 0 },
+        '&.MuiContainer-root': {
+          maxWidth: 'none',
+          padding: 0,
+        },
+      }}
+    >
       <DocumentsList
         columns={columns}
         rows={rows}
@@ -181,6 +179,6 @@ export const ForwardPage = observer(() => {
         totalDocuments={documentsSize}
         onRowClick={handleRowClick}
       />
-    </>
+    </PageContainer>
   )
 })

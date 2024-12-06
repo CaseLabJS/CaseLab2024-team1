@@ -39,9 +39,9 @@ class DocumentsListStore {
     }
   }
 
-  createDocument = async (document: DocumentModel) => {
+  createDocument = async (document: DocumentModel, isDraft?: boolean) => {
     const createdDocument = await executeWithLoading(this, () =>
-      documentControllerApi.createDocument(document)
+      documentControllerApi.createDocument(document, { isDraft })
     )
 
     if (createdDocument) {
@@ -97,9 +97,9 @@ class DocumentsListStore {
     }
   }
 
-  countTotalDocuments = async (isAlive?: boolean) => {
+  countTotalDocuments = async (isAlive?: boolean, showDraft?: boolean) => {
     const countDocuments = await executeWithLoading(this, () =>
-      documentControllerApi.getDocumentsCount({ isAlive })
+      documentControllerApi.getDocumentsCount({ isAlive, showDraft })
     )
 
     if (countDocuments) {
