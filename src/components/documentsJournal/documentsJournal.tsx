@@ -9,7 +9,12 @@ import { DocumentsList } from '@/components/documentsList/documentsList'
 import documentSignService, {
   DocumentWithSignature,
 } from '@/stores/DocumentsSignService'
-import { columns, default_pagination_model, filtersMap } from './constants'
+import {
+  columns,
+  default_pagination_model,
+  filtersMap,
+  JournalTypeLabelMap,
+} from './constants'
 import { DocumentsJournalProps } from './types'
 import { useToolbarButtons } from './hooks'
 import { observer } from 'mobx-react-lite'
@@ -75,7 +80,7 @@ export const DocumentsJournal: FC<DocumentsJournalProps> = observer(
     return (
       <>
         <Typography variant="h4" sx={{ pb: 2 }}>
-          Исходящие
+          {JournalTypeLabelMap[type as keyof typeof JournalTypeLabelMap]}
         </Typography>
         <DocumentsList
           columns={columns}

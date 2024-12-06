@@ -98,3 +98,9 @@ export const default_pagination_model = {
   page: DEFAULT_PAGE,
   pageSize: DEFAULT_PAGE_SIZE,
 }
+
+export const JournalTypeLabelMap = {
+  signing: 'Требующие подписания',
+  processing: 'Требующие согласования',
+  processed: 'Обработанные',
+}
