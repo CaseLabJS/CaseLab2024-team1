@@ -1,4 +1,3 @@
-import Typography from '@mui/material/Typography'
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
@@ -18,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/router/constants.ts'
 import { options } from '@/utils/dateOptions.ts'
 import { ToolbarButton } from '@/types/types.ts'
+import { PageContainer } from '@toolpad/core/PageContainer'
 
 interface RowData {
   id: number
@@ -160,10 +160,16 @@ export const DraftPage = observer(() => {
   ]
 
   return (
-    <>
-      <Typography variant="h4" sx={{ pb: 2 }}>
-        Черновики
-      </Typography>
+    <PageContainer
+      breadcrumbs={[]}
+      sx={{
+        '& .MuiStack-root': { margin: 0 },
+        '&.MuiContainer-root': {
+          maxWidth: 'none',
+          padding: 0,
+        },
+      }}
+    >
       <DocumentsList
         columns={columns}
         rows={rows}
@@ -173,6 +179,6 @@ export const DraftPage = observer(() => {
         totalDocuments={documentsSize}
         onRowClick={handleRowClick}
       />
-    </>
+    </PageContainer>
   )
 })
