@@ -1,12 +1,20 @@
 import { FC, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Stack, Button, ButtonGroup, Box, Alert } from '@mui/material'
+import {
+  Stack,
+  Button,
+  ButtonGroup,
+  Box,
+  Alert,
+  Typography,
+} from '@mui/material'
 import documentSignService from '@/stores/DocumentsSignService'
 import { SignatureModeSelector } from './signatureModeSelector'
 import { CensorsListMenu } from './censorsListMenu'
 import { VoteForm } from './voteForm'
 import { modesMap } from './constants'
 import { Modes, SignByAuthorProps, VoteFormValues } from './types'
+import { DocumentTransitions } from '@/api/documentController/types'
 
 export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
   const { loading } = documentSignService
@@ -28,6 +36,17 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
         </Button>
       </Box>
     )
+  }
+
+  if (
+    document.documentData.state === DocumentTransitions.SENT_ON_SIGNING ||
+    document.documentData.state === DocumentTransitions.SENT_ON_VOTING
+  ) {
+    return <Typography> Документ на согласовании или голосовании</Typography>
+  }
+
+  if (document.documentData.state === DocumentTransitions.SIGNED) {
+    return <Typography> Документ согласован</Typography>
   }
 
   const showCensorsList = (event: React.MouseEvent<HTMLButtonElement>) => {

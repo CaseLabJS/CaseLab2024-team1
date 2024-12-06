@@ -4,6 +4,7 @@ export enum NavigationType {
   FORWARD = 'forward',
   DRAFT = 'draft',
   DELETED = 'deleted',
+  SIGNING = 'signing',
   PROCESSING = 'processing',
   PROCESSED = 'processed',
 }
@@ -14,6 +15,7 @@ export const navigationLabels: Record<NavigationType, string> = {
   [NavigationType.FORWARD]: 'Исходящий',
   [NavigationType.DRAFT]: 'Черновик',
   [NavigationType.DELETED]: 'Удаленный',
-  [NavigationType.PROCESSING]: 'Требующий обработки',
+  [NavigationType.SIGNING]: 'Требующий подписания',
+  [NavigationType.PROCESSING]: 'Требующий согласования',
   [NavigationType.PROCESSED]: 'Обработанный',
 }

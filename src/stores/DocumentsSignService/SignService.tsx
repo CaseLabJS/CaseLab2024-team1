@@ -119,7 +119,7 @@ export class SignService {
         typeof deadline === 'string' ? deadline : deadline.toISOString(),
     })
     runInAction(() => {
-      this.vote = vote
+      //this.vote = vote
     })
     return vote
   }
@@ -152,10 +152,14 @@ export class SignService {
   }
 
   get isSignedByAuthor() {
-    return this.isSignedBy(authorStore.user)
+    return this.isSignedBy(this.author)
   }
   get isSignedByUser() {
-    return this.isSignedBy(this.author)
+    return this.isSignedBy(authorStore.user)
+  }
+
+  get isSignedByCensors() {
+    return this.censors.every((censor) => this.isSignedBy(censor))
   }
 
   protected get lastVersionSR(): SR[] {

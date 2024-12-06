@@ -20,6 +20,8 @@ import { Navigate } from 'react-router-dom'
 import { DocumentPage } from '@/pages/documentPage'
 import AliveTypes from '@/components/documentTypesTable/AliveTypes'
 import DeadTypes from '@/components/documentTypesTable/DeadTypes'
+import { JournalPage } from '@/pages/journalPage'
+import { DocumentPage as MockPage } from '@/mock/documentPage'
 
 export const publicRoutes = [
   {
@@ -82,6 +84,16 @@ export const appRoutes = [
           {
             path: ROUTES.app('deleted'),
             Component: DeletedPage,
+          },
+          {
+            path: ROUTES.app(':journal'),
+            Component: JournalPage,
+            children: [
+              {
+                path: ':id',
+                Component: MockPage,
+              },
+            ],
           },
         ],
       },

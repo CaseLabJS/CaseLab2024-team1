@@ -1,3 +1,5 @@
+import { DocumentTransitions } from '@/api/documentController/types'
+
 // user-controller
 export interface User {
   id: number
@@ -40,6 +42,7 @@ export interface Document {
   documentType: DocumentType
   documentVersions: DocumentVersion[]
   comments: Comment[]
+  state: DocumentTransitions
 }
 
 // document-types / attributes
