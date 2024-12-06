@@ -19,9 +19,11 @@ import {
   Alert,
   Modal,
 } from '@mui/material'
-import EditDocumentType from '@/components/editDocumentType/editDocumentType'
+import EditDocumentObserver from '@/components/editDocumentType/EditDocType'
+import React from 'react'
 
 const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
+  const ref = React.createRef()
   const { types } = documentTypeListStore
   const [editModalOpen, setEditModalOpen] = useState(false)
   const handleModalClose = () => {
@@ -40,7 +42,7 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
     void documentTypeListStore.fetchDocumentTypes({
       showOnlyAlive: props.showOnlyAlive,
     })
-  }, [])
+  }, [props.showOnlyAlive])
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
   const { error } = documentTypeListStore
   return (
@@ -67,7 +69,7 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
             sx={{
               mt: '8px',
               '.MuiTableCell-root': {
-                fontSize: { xs: '11px', md: '14px', lg: '14px' },
+                fontSize: { xs: '10px', md: '14px', lg: '14px' },
                 padding: { xs: '2px' },
               },
             }}
@@ -129,8 +131,12 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
               : 'Тип документа восстановлен'}
         </Alert>
       </Snackbar>
-      <Modal open={editModalOpen} onClose={handleModalClose}>
-        <EditDocumentType type={typeToEdit} />
+      <Modal
+        open={editModalOpen}
+        onClose={handleModalClose}
+        sx={{ overflow: 'auto', maxWidth: '100%', maxHeight: '100%' }}
+      >
+        <EditDocumentObserver type={typeToEdit} ref={ref} />
       </Modal>
     </>
   )

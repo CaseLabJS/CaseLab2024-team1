@@ -19,8 +19,8 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Paper,
 } from '@mui/material'
-import Bird from '@/assets/bird.svg'
 
 const CreateDocumentTypePage: React.FC = observer(() => {
   const { error, loading } = documentTypeListStore
@@ -58,7 +58,6 @@ const CreateDocumentTypePage: React.FC = observer(() => {
 
   const onSubmit: SubmitHandler<NewDocumentType> = async (data) => {
     await documentTypeListStore.createDocumentType(data)
-    console.log(data)
     setCheckedIds([])
     reset()
     setSnackbarIsOpen(true)
@@ -70,22 +69,23 @@ const CreateDocumentTypePage: React.FC = observer(() => {
   }, [error])
 
   return (
-    <Box
+    <Paper
       sx={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
         padding: 2,
-        maxWidth: '400px',
+        width: {
+          xs: '350px',
+          md: '500px',
+          lg: '500px',
+        },
+
+        borderRadius: 2,
         margin: 'auto',
       }}
     >
-      <img
-        src={Bird}
-        alt="Bird"
-        style={{ width: '50px', marginBottom: '20px' }}
-      />
-
       <Typography component="h1" variant="h5" gutterBottom textAlign="center">
         Создание нового типа документа
       </Typography>
@@ -116,8 +116,23 @@ const CreateDocumentTypePage: React.FC = observer(() => {
         <Typography component="h2" variant="h6" gutterBottom>
           Выберите атрибуты нового типа документа
         </Typography>
-        <Box sx={{ height: 400, overflowY: 'auto', mb: 4, maxWidth: '360px' }}>
-          <Table size="small">
+        <Box
+          sx={{
+            maxHeight: { xs: '350px', md: '100%', lg: '100%' },
+            overflowY: 'auto',
+            mb: 4,
+            width: '100%',
+          }}
+        >
+          <Table
+            size="small"
+            sx={{
+              '.MuiTableCell-root': {
+                fontSize: { xs: '12px', md: '14px', lg: '14px' },
+                padding: { xs: '2px' },
+              },
+            }}
+          >
             <TableHead>
               <TableRow>
                 <TableCell align="center">ID</TableCell>
@@ -188,7 +203,7 @@ const CreateDocumentTypePage: React.FC = observer(() => {
           <Loader />
         </Box>
       </Modal>
-    </Box>
+    </Paper>
   )
 })
 

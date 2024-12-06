@@ -31,7 +31,10 @@ const DocumentType = (props: DocumentTypeProps) => {
         <TableCell>
           {props.showOnlyAlive && (
             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <IconButton onClick={() => void deleteType(type.id)}>
+              <IconButton
+                onClick={() => void deleteType(type.id)}
+                sx={{ p: { xs: '5px' } }}
+              >
                 <Delete
                   sx={{
                     width: { xs: '20px', md: '24px', lg: '24px' },
@@ -44,6 +47,7 @@ const DocumentType = (props: DocumentTypeProps) => {
                   props.handleModalOpen()
                   props.setTypeToEdit(type)
                 }}
+                sx={{ p: { xs: '5px' } }}
               >
                 <Edit
                   sx={{

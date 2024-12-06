@@ -13,6 +13,9 @@ class DocumentTypeStore {
     this.data = documentData
     makeAutoObservable(this)
   }
+  setData(data: DocumentType) {
+    this.data = data
+  }
 
   async updateDocumentType(type: NewDocumentType) {
     const newType = await executeWithLoading(this, () =>
@@ -24,7 +27,7 @@ class DocumentTypeStore {
     }
   }
 
-  async pathDocumentType(type: Partial<NewDocumentType>) {
+  async patchDocumentType(type: Partial<NewDocumentType>) {
     const newType = await executeWithLoading(this, () =>
       documentTypesControllerApi.patchDocumentTypes(this.data.id, type)
     )
