@@ -65,8 +65,7 @@ const EditDocumentType = React.forwardRef(function EditDocType(
       attributeIds: checkedIds,
     })
     await documentTypeStore.updateDocumentType(data)
-    if (error) console.log(error)
-    else {
+    if (!error) {
       void documentTypeListStore.fetchDocumentTypes({
         showOnlyAlive: true,
       })
