@@ -13,9 +13,6 @@ class DocumentTypeStore {
     this.data = documentData
     makeAutoObservable(this)
   }
-  setData(data: DocumentType) {
-    this.data = data
-  }
 
   async updateDocumentType(type: NewDocumentType) {
     const newType = await executeWithLoading(this, () =>
