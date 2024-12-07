@@ -1,4 +1,3 @@
-import { DocumentWithSignature } from '@/stores/DocumentsSignService'
 import { GridPaginationModel, GridRowId } from '@mui/x-data-grid'
 
 export type DocumentsJournalProps = {
@@ -8,6 +7,4 @@ export type DocumentsJournalProps = {
 export type JournalState = {
   paginationModel: GridPaginationModel
   selectionModel: GridRowId[]
-  filteredDocuments: DocumentWithSignature[]
-  rows: DocumentWithSignature[]
 }

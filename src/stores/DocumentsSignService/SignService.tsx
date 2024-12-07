@@ -9,6 +9,8 @@ import SL from '@/stores/SignatureListStore'
 import authorStore from '@/stores/AuthStore'
 import { SignatureModel, Vote } from '@/api/signatureController'
 import { filterFulfilled } from './helpers'
+import { DocumentTransitions } from '@/api/documentController/types'
+import { stateLabelMap } from '@/components/documentsJournal/constants'
 
 /** SR : SignatureRequest
  * SRs : SignatureRequests
@@ -20,6 +22,7 @@ export class SignService {
   document
   SRVersionMap: Record<string, SR[]> = {}
   votesMap: Record<string, Vote[]> = {}
+
   constructor(document: DocumentStore) {
     if (typeof document !== 'object' || document === null) {
       throw new Error('The argument must be a non-null object.')
@@ -70,9 +73,12 @@ export class SignService {
     const results = await Promise.allSettled(promises)
 
     const signatures = filterFulfilled<Signature | null>(results)
+    const successSignatures = signatures.filter(
+      (signature) => signature.hash !== null
+    )
 
     runInAction(() => {
-      this.lastVersion?.signatures.push(...signatures)
+      this.lastVersion?.signatures.push(...successSignatures)
     })
   }
 
@@ -152,7 +158,10 @@ export class SignService {
   }
 
   get isSignedByAuthor() {
-    return this.isSignedBy(this.author)
+    return (
+      this.document.documentData.state ===
+        DocumentTransitions.SIGNED_BY_AUTHOR || this.isSignedBy(this.author)
+    )
   }
   get isSignedByUser() {
     return this.isSignedBy(authorStore.user)
@@ -163,7 +172,7 @@ export class SignService {
   }
 
   protected get lastVersionSR(): SR[] {
-    const lastVersionId = this.lastVersion?.id
+    const lastVersionId = this.lastVersion?.versionId
     return lastVersionId && lastVersionId in this.SRVersionMap
       ? this.SRVersionMap[lastVersionId]
       : []
@@ -181,7 +190,15 @@ export class SignService {
     return this.document.documentData.id
   }
 
-  get hasSignatureRequest() {
-    return this.ownSR.length > 0
+  get signState() {
+    const { state } = this.document.documentData
+
+    if (!this.isSignedByUser) return 'Не подписан'
+    if (state === DocumentTransitions.SIGNED) return 'Подписан'
+    if (this.isSignedByAuthor) {
+      return stateLabelMap[state] || 'Ждет отправки на согласование'
+    }
+
+    return '?'
   }
 }

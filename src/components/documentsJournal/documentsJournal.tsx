@@ -1,8 +1,4 @@
 import { FC, useState, useEffect } from 'react'
-import {
-  GridPaginationModel,
-  GridRowSelectionModel,
-} from '@mui/x-data-grid/models'
 import { Typography } from '@mui/material'
 import { DocumentsList } from '@/components/documentsList/documentsList'
 import documentSignService from '@/stores/DocumentsSignService'
@@ -13,53 +9,45 @@ import {
   JournalTypeLabelMap,
 } from './constants'
 import { DocumentsJournalProps, JournalState } from './types'
-import { useToolbarButtons } from './hooks'
+import { useToolbarButtons } from './useToolbarButtons'
 import { observer } from 'mobx-react-lite'
+import { useHandleFunctions } from './useHandleFunctions'
 
 export const DocumentsJournal: FC<DocumentsJournalProps> = observer(
   ({ type }) => {
     if (!(type in filtersMap)) return null
-    const { documents, documentsSize, fetchMoreDocuments } = documentSignService
+
+    const { documents, fetchMoreDocuments } = documentSignService
     const [state, setState] = useState<JournalState>(initialState)
-    const { selectionModel, paginationModel, filteredDocuments, rows } = state
+    const {
+      paginationModel: { page, pageSize },
+    } = state
+
+    const startIndex = page * pageSize
+    const endIndex = (page + 1) * pageSize
 
     const buttons = useToolbarButtons({
-      selectionModel,
+      selectionModel: state.selectionModel,
       buttonTypes: ['delete', 'sign'],
     })
 
-    useEffect(() => {
-      const filterFn = filtersMap[type as keyof typeof filtersMap]
-      const filteredDocuments = Object.values(documents).filter(filterFn)
-      setState((prevState) => ({ ...prevState, filteredDocuments }))
-    }, [documents, documentsSize, type])
+    const rows = Object.values(documents)
+    const filteredRows = rows.filter(
+      filtersMap[type as keyof typeof filtersMap]
+    )
+    const pagedRows = filteredRows.slice(startIndex, endIndex)
 
     useEffect(() => {
-      const { page, pageSize } = paginationModel
-      const startIndex = page * pageSize
-      const endIndex = (page + 1) * pageSize
-
-      if (endIndex >= filteredDocuments.length) {
-        void fetchMoreDocuments(paginationModel.pageSize)
+      if (endIndex >= rows.length) {
+        void fetchMoreDocuments(pageSize)
       }
-      const docs = filteredDocuments.slice(startIndex, endIndex)
+    }, [endIndex, fetchMoreDocuments, pageSize, rows.length, type])
 
-      setState((prevState) => ({ ...prevState, rows: docs }))
-    }, [fetchMoreDocuments, filteredDocuments, paginationModel])
-
-    const handleChange = (newSelectionModel: GridRowSelectionModel) => {
-      console.log('newSelectionModel', newSelectionModel)
-      setState((prevState) => ({
-        ...prevState,
-        selectionModel: [...newSelectionModel],
-      }))
-    }
-
-    const handlePaginationModelChange = (
-      paginationModel: GridPaginationModel
-    ) => {
-      setState((prevState) => ({ ...prevState, paginationModel }))
-    }
+    const {
+      handleSelectionModelChange,
+      handlePaginationModelChange,
+      handleRowClick,
+    } = useHandleFunctions(setState)
 
     return (
       <>
@@ -68,11 +56,12 @@ export const DocumentsJournal: FC<DocumentsJournalProps> = observer(
         </Typography>
         <DocumentsList
           columns={columns}
-          rows={rows}
+          rows={pagedRows}
           buttons={buttons}
-          onSelectionChange={handleChange}
+          onSelectionChange={handleSelectionModelChange}
           onPaginationModelChange={handlePaginationModelChange}
-          totalDocuments={filteredDocuments.length + paginationModel.pageSize} //точное количество отфильтрованных документов не известно
+          onRowClick={handleRowClick}
+          totalDocuments={filteredRows.length + pageSize} //точное количество отфильтрованных документов не известно
         />
       </>
     )

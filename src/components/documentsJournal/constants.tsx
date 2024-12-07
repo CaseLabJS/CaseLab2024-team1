@@ -4,23 +4,10 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '../documentsList/documentsList'
 import { DocumentTransitions } from '@/api/documentController/types'
 import { JournalState } from './types'
 
-const stateLabelMap: Record<string, string> = {
+export const stateLabelMap: Record<string, string> = {
   [DocumentTransitions.SENT_ON_REWORK]: 'Отправлен на доработку',
   [DocumentTransitions.SENT_ON_SIGNING]: 'На согласовании',
   [DocumentTransitions.SENT_ON_VOTING]: 'На согласовании',
-}
-
-const getState = (document: DocumentWithSignature) => {
-  const { state } = document.documentData
-  const { isSignedByAuthor, isSignedByUser } = document
-
-  if (!isSignedByUser) return 'Не подписан'
-  if (state === DocumentTransitions.SIGNED) return 'Подписан'
-  if (isSignedByAuthor) {
-    return stateLabelMap[state] || 'Ждет отправки на согласование'
-  }
-
-  return '?'
 }
 
 export const columns: GridColDef[] = [
@@ -55,9 +42,8 @@ export const columns: GridColDef[] = [
     minWidth: 100,
   },
   {
-    field: 'state',
+    field: 'signState',
     headerName: 'Согласование',
-    valueGetter: (_, document: DocumentWithSignature) => getState(document),
     editable: false,
     type: 'string',
     flex: 1,
@@ -87,7 +73,9 @@ export const filtersMap = {
     document.documentData.state !== DocumentTransitions.SIGNED,
   processed: (document: DocumentWithSignature) =>
     document.documentData.state === DocumentTransitions.SIGNED,
-  signing: (document: DocumentWithSignature) => !document.isSignedByUser,
+  signing: (document: DocumentWithSignature) =>
+    !document.isSignedByUser &&
+    document.ownSR.every((sr) => sr.status !== 'REJECTED'),
 }
 
 export const default_pagination_model = {
@@ -96,10 +84,8 @@ export const default_pagination_model = {
 }
 
 export const initialState: JournalState = {
-  filteredDocuments: [],
   selectionModel: [],
   paginationModel: default_pagination_model,
-  rows: [],
 }
 
 export const JournalTypeLabelMap = {
