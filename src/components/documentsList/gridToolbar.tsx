@@ -6,7 +6,7 @@ import {
   GridToolbarFilterButton,
 } from '@mui/x-data-grid'
 import Button from '@mui/material/Button'
-import { ToolbarButton } from '@/components/documentsList/types.ts'
+import { ToolbarButton } from '@/types/types'
 
 interface GridToolbarProps {
   buttons?: ToolbarButton[]
@@ -38,7 +38,7 @@ export const GridToolbar = (props: GridToolbarProps) => {
             onClick={() => void button.onClick()}
             disabled={button.disabled}
           >
-            {button.content} {button.text && button.text}
+            {button.content} {button.text}
           </Button>
         ))}
       </Box>

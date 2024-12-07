@@ -19,6 +19,12 @@ const MainNavigation: React.FC = observer(() => {
     { text: 'Панель администратора', path: ROUTES.admin() },
     { text: 'Управление пользователями', path: ROUTES.admin('users') },
     { text: 'Создать пользователя', path: ROUTES.admin('users/create') },
+    { text: 'Типы документов', path: ROUTES.admin('document-types') },
+    {
+      text: 'Создать тип документа',
+      path: ROUTES.admin('document-types/create'),
+    },
+    { text: 'Удаленные типы', path: ROUTES.admin('document-types/deleted') },
   ]
 
   const toggleDrawer = (open: boolean) => () => {

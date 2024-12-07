@@ -24,7 +24,7 @@ class DocumentTypeStore {
     }
   }
 
-  async pathDocumentType(type: Partial<NewDocumentType>) {
+  async patchDocumentType(type: Partial<NewDocumentType>) {
     const newType = await executeWithLoading(this, () =>
       documentTypesControllerApi.patchDocumentTypes(this.data.id, type)
     )

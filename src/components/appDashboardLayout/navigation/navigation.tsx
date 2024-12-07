@@ -15,9 +15,6 @@ import FolderDeleteIcon from '@mui/icons-material/FolderDelete'
 import PostAddIcon from '@mui/icons-material/PostAdd'
 import { ROUTES } from '@/router/constants.ts'
 import { getNavigationPath } from '@/components/appDashboardLayout/navigation/getNavigationPath.ts'
-import { TextIncrease } from '@mui/icons-material'
-import CodeIcon from '@mui/icons-material/Code'
-import CodeOffIcon from '@mui/icons-material/CodeOff'
 
 export const NAVIGATION: Navigation = [
   {
@@ -78,11 +75,6 @@ export const ADMIN_NAVIGATION: Navigation = [
     icon: <PersonAddIcon />,
   },
   {
-    segment: ROUTES.admin('admin/attribute-type/create'),
-    title: 'Добавить аттрибут',
-    icon: <TextIncrease />,
-  },
-  {
     segment: ROUTES.admin('admin/document-types/create'),
     title: 'Создать тип документа',
     icon: <PostAddIcon />,
@@ -104,16 +96,6 @@ export const ADMIN_NAVIGATION: Navigation = [
     segment: ROUTES.admin('admin/deleted-users'),
     title: 'Удаленные',
     icon: <PersonRemoveIcon />,
-  },
-  {
-    segment: ROUTES.admin('admin/attribute-type'),
-    title: 'Аттрибуты',
-    icon: <CodeIcon />,
-  },
-  {
-    segment: ROUTES.admin('admin/attribute-type/delete'),
-    title: 'Удаленные аттрибуты',
-    icon: <CodeOffIcon />,
   },
   {
     segment: ROUTES.admin('admin/document-types'),

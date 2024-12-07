@@ -38,26 +38,31 @@ const DeletedUsers: React.FC = observer(() => {
       field: 'id',
       headerName: 'ID',
       flex: 1,
+      minWidth: 50,
     },
     {
       field: 'name',
       headerName: 'Имя',
       flex: 2,
+      minWidth: 160,
     },
     {
       field: 'surname',
       headerName: 'Фамилия',
       flex: 2,
+      minWidth: 160,
     },
     {
       field: 'email',
       headerName: 'Email',
       flex: 2,
+      minWidth: 150,
     },
     {
       field: 'roles',
       headerName: 'Роль',
       flex: 1.5,
+      minWidth: 100,
       valueGetter: (roles: Role[]) => {
         return `${roles[0]?.name || ''}`
       },
@@ -66,6 +71,7 @@ const DeletedUsers: React.FC = observer(() => {
       field: 'actions',
       headerName: 'Действия',
       flex: 1.5,
+      minWidth: 100,
       renderCell: (params: GridRenderCellParams<User>) => (
         <Box
           sx={{

@@ -4,25 +4,26 @@ import {
   DocumentsList,
 } from '@/components/documentsList/documentsList.tsx'
 import { Document, Signature, User } from '@/types/sharedTypes.ts'
-import { GridColDef } from '@mui/x-data-grid'
+import { GridColDef, GridRowParams } from '@mui/x-data-grid'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import documentsListStore from '@/stores/DocumentsListStore'
-import { ToolbarButton } from '@/components/documentsList/types.ts'
+import { ToolbarButton } from '@/types/types'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useNotifications } from '@toolpad/core'
 import { GridRowId } from '@mui/x-data-grid/models/gridRows'
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel'
 import { observer } from 'mobx-react-lite'
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
-import { PageContainer } from '@toolpad/core/PageContainer'
-import { options } from '@/pages/forwardPage/dateOptions.ts'
+import { options } from '@/utils/dateOptions'
+import Typography from '@mui/material/Typography'
+import { useNavigate } from 'react-router-dom'
 
-export interface RowData {
+interface RowData {
   id: number
   documentName: string
   sender: User
   signatures: Signature[]
-  file: string
+  file: string | null
   date: string
 }
 
@@ -73,19 +74,25 @@ const columns: GridColDef<RowData>[] = [
 
 export const ForwardPage = observer(() => {
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
-  const { deleteDocument, documents, countTotalDocuments, documentsSize } =
-    documentsListStore
+  const {
+    fetchDocuments,
+    deleteDocument,
+    documents,
+    countTotalDocuments,
+    documentsSize,
+  } = documentsListStore
 
   const notifications = useNotifications()
+  const navigate = useNavigate()
 
   useEffect(() => {
     void countTotalDocuments()
 
-    void documentsListStore.fetchDocuments({
+    void fetchDocuments({
       page: DEFAULT_PAGE,
       size: DEFAULT_PAGE_SIZE,
     })
-  }, [countTotalDocuments])
+  }, [countTotalDocuments, fetchDocuments])
 
   const rows = useMemo(() => {
     return documents.map(({ documentData }): RowData => {
@@ -115,12 +122,19 @@ export const ForwardPage = observer(() => {
 
   const handlePaginationModelChange = useCallback(
     (paginationModel: GridPaginationModel) => {
-      void documentsListStore.fetchDocuments({
+      void fetchDocuments({
         page: paginationModel.page,
         size: paginationModel.pageSize,
       })
     },
-    []
+    [fetchDocuments]
+  )
+
+  const handleRowClick = useCallback(
+    (params: GridRowParams) => {
+      navigate(`${params.id}`)
+    },
+    [navigate]
   )
 
   const handleDelete = useCallback(async () => {
@@ -154,14 +168,10 @@ export const ForwardPage = observer(() => {
   ]
 
   return (
-    <PageContainer
-      breadcrumbs={[]}
-      sx={{
-        '&.MuiContainer-root': {
-          maxWidth: 'none',
-        },
-      }}
-    >
+    <>
+      <Typography variant="h4" sx={{ pb: 2 }}>
+        Исходящие
+      </Typography>
       <DocumentsList
         columns={columns}
         rows={rows}
@@ -169,7 +179,8 @@ export const ForwardPage = observer(() => {
         onSelectionChange={handleChange}
         onPaginationModelChange={handlePaginationModelChange}
         totalDocuments={documentsSize}
+        onRowClick={handleRowClick}
       />
-    </PageContainer>
+    </>
   )
 })

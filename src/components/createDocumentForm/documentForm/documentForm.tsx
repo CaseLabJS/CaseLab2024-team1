@@ -40,10 +40,12 @@ interface DocumentFormProps {
    * @param file - The file to be added, optional.
    */
   addFile: (index: number, file?: File) => void
+
+  isDraft?: boolean
 }
 
 export const DocumentForm = (props: DocumentFormProps) => {
-  const { file, fileIndex, onRemoveDocument, single, addFile } = props
+  const { file, fileIndex, onRemoveDocument, single, addFile, isDraft } = props
   const theme = useTheme()
 
   const documentTypes = documentTypeListStore.types
@@ -188,8 +190,9 @@ export const DocumentForm = (props: DocumentFormProps) => {
           <Controller
             name={`items.${fileIndex}.title`}
             rules={{
-              required: 'Название документа обязательно',
+              required: !isDraft ? 'Название документа обязательно' : false,
               validate: (value) =>
+                isDraft ||
                 value.trim() !== '' ||
                 'Название должно содержать хотя бы один символ',
             }}
@@ -270,13 +273,18 @@ export const DocumentForm = (props: DocumentFormProps) => {
         {attributes.map((_field, index) => {
           const documentType = getDocumentType(documentTypeId)
           if (!documentType) return null
-          const attr = documentType.data.attributes[index]
+          const attr = documentType.data.attributes
+            .slice()
+            .sort((a, b) => a.name.localeCompare(b.name))[index]
+          if (!attr) return
 
           return (
             <Controller
               rules={{
-                required: attr.required ? `${attr.name} обязателен` : false,
+                required:
+                  !isDraft && attr.required ? `${attr.name} обязателен` : false,
                 validate: (value) =>
+                  isDraft ||
                   !attr.required ||
                   value.trim() !== '' ||
                   'Название должно содержать хотя бы один символ',

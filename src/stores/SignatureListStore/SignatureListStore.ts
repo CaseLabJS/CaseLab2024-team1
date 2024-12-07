@@ -7,7 +7,6 @@ import {
   SignatureRequestModel,
   VoteModel,
   Signature,
-  SignatureRequest,
   Vote,
   VoteCanceled,
   SignatureModel,
@@ -39,7 +38,7 @@ class SignatureListStore {
 
   getSignatureRequestById = async (
     id: number
-  ): Promise<void | SignatureRequest> => {
+  ): Promise<void | SignatureRequestStore> => {
     const signatureRequestJson = await executeWithLoading(this, async () =>
       signatureControllerApi.getSignatureRequestById(id)
     )
@@ -55,23 +54,36 @@ class SignatureListStore {
 
   createSignatureRequest = async (
     signatureRequestModel: SignatureRequestModel
-  ): Promise<void | SignatureRequest> => {
+  ): Promise<SignatureRequestStore | null> => {
     const signatureRequest = await executeWithLoading(this, () =>
       signatureControllerApi.createSignatureRequest(signatureRequestModel)
     )
 
-    if (signatureRequest) {
+    if (!signatureRequest) return null
+
+    const signatureRequestStore = new SignatureRequestStore(signatureRequest)
+    runInAction(() => {
+      this.signatureRequests.push(signatureRequestStore)
+    })
+    return signatureRequestStore
+  }
+
+  fetchVotes = async (): Promise<void> => {
+    const fetchedVotes = await executeWithLoading(this, async () =>
+      signatureControllerApi.getVotes()
+    )
+
+    if (fetchedVotes) {
       runInAction(() => {
-        this.signatureRequests.push(new SignatureRequestStore(signatureRequest))
+        this.votes = fetchedVotes
       })
     }
   }
 
-  createVote = async (voteModel: VoteModel): Promise<void | Vote> => {
-    return await executeWithLoading(this, () =>
+  createVote = async (voteModel: VoteModel): Promise<Vote | null> =>
+    (await executeWithLoading(this, () =>
       signatureControllerApi.createVote(voteModel)
-    )
-  }
+    )) || null
 
   cancelVote = async (voteId: number): Promise<void | VoteCanceled> => {
     return await executeWithLoading(this, () =>

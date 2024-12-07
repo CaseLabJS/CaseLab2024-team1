@@ -14,9 +14,13 @@ import { SignOutPage } from '@/pages/signOut'
 import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
 import { ForwardPage } from '@/pages/forwardPage'
+// import { InboxPage } from '@/pages/inboxPage'
+import { DeletedPage } from '@/pages/deletedPage'
 import { Navigate } from 'react-router-dom'
-import AttributesPage from '@/pages/AttributesPage'
-import CreateAttributePage from '@/pages/CreateAttributePage'
+import { DocumentPage } from '@/pages/documentPage'
+import AliveTypes from '@/components/documentTypesTable/AliveTypes'
+import DeadTypes from '@/components/documentTypesTable/DeadTypes'
+import { DraftPage } from '@/pages/draftPage'
 
 export const publicRoutes = [
   {
@@ -72,17 +76,17 @@ export const appRoutes = [
             children: [
               {
                 path: ':id',
-                //Component: DocumentPage,
+                Component: DocumentPage,
               },
             ],
           },
           {
             path: ROUTES.app('draft'),
-            //Component: DraftPage,
+            Component: DraftPage,
           },
           {
             path: ROUTES.app('deleted'),
-            //Component: DeletedPage,
+            Component: DeletedPage,
           },
         ],
       },
@@ -117,11 +121,11 @@ export const adminRoutes = [
           },
           {
             path: ROUTES.admin('document-types'),
-            element: <div>AliveTypes</div>,
+            element: <AliveTypes />,
           },
           {
             path: ROUTES.admin('document-types/deleted'),
-            element: <div>DeadTypes</div>,
+            element: <DeadTypes />,
           },
           {
             path: ROUTES.admin('document-types/create'),
@@ -129,15 +133,7 @@ export const adminRoutes = [
           },
           {
             path: ROUTES.admin('attribute-type'),
-            element: <AttributesPage aliveTable={true} key={0} />,
-          },
-          {
-            path: ROUTES.admin('attribute-type/create'),
-            element: <CreateAttributePage />,
-          },
-          {
-            path: ROUTES.admin('attribute-type/delete'),
-            element: <AttributesPage aliveTable={false} key={1} />,
+            element: <div>Attribute Type</div>,
           },
         ],
       },

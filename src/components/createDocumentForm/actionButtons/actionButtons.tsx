@@ -1,9 +1,13 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import { useNavigate } from 'react-router-dom'
-import { ROUTES } from '@/router/constants.ts'
 
-export const ActionButtons = () => {
+interface ActionButtonsProps {
+  onSaveDraft: () => void
+}
+
+export const ActionButtons = (props: ActionButtonsProps) => {
+  const { onSaveDraft } = props
   const navigate = useNavigate()
 
   return (
@@ -37,7 +41,8 @@ export const ActionButtons = () => {
             fullWidth
             size="small"
             variant="text"
-            onClick={() => navigate(ROUTES.app('draft'))}
+            onClick={onSaveDraft}
+            type="submit"
           >
             Сохранить в черновиках
           </Button>
@@ -48,7 +53,7 @@ export const ActionButtons = () => {
             fullWidth
             variant="text"
             size="small"
-            onClick={() => navigate('..')}
+            onClick={() => navigate(-1)}
           >
             Отменить
           </Button>

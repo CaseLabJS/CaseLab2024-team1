@@ -5,16 +5,17 @@ import {
   GridRowParams,
   GridValidRowModel,
 } from '@mui/x-data-grid'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel'
 import { GridRowId } from '@mui/x-data-grid/models/gridRows'
 import Paper from '@mui/material/Paper'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { GridToolbar } from '@/components/documentsList/gridToolbar.tsx'
 import { useTheme } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
-import { ToolbarButton } from '@/components/documentsList/types.ts'
+import { ToolbarButton } from '@/types/types'
+import { GridFeatureMode } from '@mui/x-data-grid/models/gridFeatureMode'
 
 export const DEFAULT_PAGE_SIZE = 15
 export const DEFAULT_PAGE = 0
@@ -23,7 +24,7 @@ const DEFAULT_PAGINATION_OPTIONS = [15, 30, 40]
 interface DocumentsListProps<T extends GridValidRowModel> {
   rows: T[]
   columns: GridColDef<T>[]
-  totalDocuments: number
+  totalDocuments?: number
   initialPage?: number
   initialPageSize?: number
   paginationOption?: number[]
@@ -31,6 +32,8 @@ interface DocumentsListProps<T extends GridValidRowModel> {
   selectionModel?: GridRowId[]
   onSelectionChange?: (newSelectionModel: GridRowSelectionModel) => void
   onPaginationModelChange?: (paginationModel: GridPaginationModel) => void
+  paginationMode?: GridFeatureMode
+  onRowClick?: (params: GridRowParams) => void
 }
 
 export const DocumentsList = <T extends GridValidRowModel>(
@@ -47,6 +50,8 @@ export const DocumentsList = <T extends GridValidRowModel>(
     selectionModel,
     onSelectionChange,
     onPaginationModelChange,
+    paginationMode = 'server',
+    onRowClick,
   } = props
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
@@ -54,15 +59,7 @@ export const DocumentsList = <T extends GridValidRowModel>(
     pageSize: initialPageSize,
   })
 
-  const navigate = useNavigate()
   const theme = useTheme()
-
-  const handleRowClick = useCallback(
-    (params: GridRowParams) => {
-      navigate(`${params.id}`)
-    },
-    [navigate]
-  )
 
   const handleRowSelectionModelChange = useCallback(
     (newSelectionModel: GridRowSelectionModel) => {
@@ -83,23 +80,32 @@ export const DocumentsList = <T extends GridValidRowModel>(
     [onPaginationModelChange]
   )
 
+  const rowCount = useMemo(() => {
+    if (paginationMode === 'server') {
+      return totalDocuments
+    }
+
+    return
+  }, [paginationMode, totalDocuments])
+
   return (
     <>
       <Paper>
         <DataGrid
           rows={rows}
           columns={columns}
-          paginationMode="server"
+          paginationMode={paginationMode}
           paginationModel={paginationModel}
           onPaginationModelChange={handlePaginationModelChange}
-          rowCount={totalDocuments}
+          rowCount={rowCount}
           pageSizeOptions={paginationOption}
           checkboxSelection
+          disableVirtualization
           disableColumnMenu
           disableRowSelectionOnClick
           onRowSelectionModelChange={handleRowSelectionModelChange}
           rowSelectionModel={selectionModel}
-          onRowClick={handleRowClick}
+          onRowClick={onRowClick}
           localeText={{
             footerRowSelected: (count) => `${count} выбрано`,
             noResultsOverlayLabel: 'Нет результатов',

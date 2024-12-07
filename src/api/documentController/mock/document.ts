@@ -1,4 +1,5 @@
 import { Document, Roles } from '@/types/sharedTypes'
+import { DocumentTransitions } from '@/api/documentController/types.ts'
 
 const user = {
   id: 1,
@@ -63,6 +64,7 @@ const document: Document = {
       createdAt: '2024-11-07T10:07:16.357068023',
     },
   ],
+  state: DocumentTransitions.CREATED,
 }
 
 export default Promise.resolve(() => document)

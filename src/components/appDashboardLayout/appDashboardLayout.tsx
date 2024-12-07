@@ -1,13 +1,15 @@
 import { DashboardLayout } from '@toolpad/core/DashboardLayout'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { Search } from '@/components/search/search.tsx'
-import authStore from '@/stores/AuthStore'
 
 export const AppDashboardLayout = () => {
+  const location = useLocation()
+  const isAppRoute = location.pathname.startsWith('/app')
+
   return (
     <DashboardLayout
       slots={{
-        toolbarActions: !authStore.isAdmin ? Search : () => null,
+        toolbarActions: isAppRoute ? Search : () => null,
       }}
       sx={{
         '& .MuiDrawer-docked': {
