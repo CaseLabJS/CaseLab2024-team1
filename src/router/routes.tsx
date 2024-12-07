@@ -16,6 +16,7 @@ import { CreateDocumentPage } from '@/pages/createDocumentPage'
 import { ForwardPage } from '@/pages/forwardPage'
 import { Navigate } from 'react-router-dom'
 import AttributesPage from '@/pages/AttributesPage'
+import CreateAttributePage from '@/pages/CreateAttributePage'
 
 export const publicRoutes = [
   {
@@ -61,9 +62,27 @@ export const appRoutes = [
             path: ROUTES.app('new-document'),
             Component: CreateDocumentPage,
           },
+          // {
+          //   path: ROUTES.app('inbox'),
+          //   Component: InboxPage,
+          // },
           {
             path: ROUTES.app('forward'),
             Component: ForwardPage,
+            children: [
+              {
+                path: ':id',
+                //Component: DocumentPage,
+              },
+            ],
+          },
+          {
+            path: ROUTES.app('draft'),
+            //Component: DraftPage,
+          },
+          {
+            path: ROUTES.app('deleted'),
+            //Component: DeletedPage,
           },
         ],
       },
@@ -98,7 +117,11 @@ export const adminRoutes = [
           },
           {
             path: ROUTES.admin('document-types'),
-            element: <div>Document Type</div>,
+            element: <div>AliveTypes</div>,
+          },
+          {
+            path: ROUTES.admin('document-types/deleted'),
+            element: <div>DeadTypes</div>,
           },
           {
             path: ROUTES.admin('document-types/create'),
@@ -106,11 +129,15 @@ export const adminRoutes = [
           },
           {
             path: ROUTES.admin('attribute-type'),
-            element: <AttributesPage aliveTable={true} />,
+            element: <AttributesPage aliveTable={true} key={0} />,
+          },
+          {
+            path: ROUTES.admin('attribute-type/create'),
+            element: <CreateAttributePage />,
           },
           {
             path: ROUTES.admin('attribute-type/delete'),
-            element: <AttributesPage aliveTable={false} />,
+            element: <AttributesPage aliveTable={false} key={1} />,
           },
         ],
       },

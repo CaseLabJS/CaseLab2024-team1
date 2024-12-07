@@ -10,11 +10,14 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove'
+import AssignmentIcon from '@mui/icons-material/Assignment'
+import FolderDeleteIcon from '@mui/icons-material/FolderDelete'
+import PostAddIcon from '@mui/icons-material/PostAdd'
 import { ROUTES } from '@/router/constants.ts'
 import { getNavigationPath } from '@/components/appDashboardLayout/navigation/getNavigationPath.ts'
+import { TextIncrease } from '@mui/icons-material'
 import CodeIcon from '@mui/icons-material/Code'
 import CodeOffIcon from '@mui/icons-material/CodeOff'
-import { TextIncrease } from '@mui/icons-material'
 
 export const NAVIGATION: Navigation = [
   {
@@ -80,6 +83,11 @@ export const ADMIN_NAVIGATION: Navigation = [
     icon: <TextIncrease />,
   },
   {
+    segment: ROUTES.admin('admin/document-types/create'),
+    title: 'Создать тип документа',
+    icon: <PostAddIcon />,
+  },
+  {
     kind: 'divider',
   },
   {
@@ -106,5 +114,15 @@ export const ADMIN_NAVIGATION: Navigation = [
     segment: ROUTES.admin('admin/attribute-type/delete'),
     title: 'Удаленные аттрибуты',
     icon: <CodeOffIcon />,
+  },
+  {
+    segment: ROUTES.admin('admin/document-types'),
+    title: 'Типы документов',
+    icon: <AssignmentIcon />,
+  },
+  {
+    segment: ROUTES.admin('admin/document-types/deleted'),
+    title: 'Удаленные типы',
+    icon: <FolderDeleteIcon />,
   },
 ]

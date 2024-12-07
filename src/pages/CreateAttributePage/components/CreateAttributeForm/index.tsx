@@ -69,7 +69,7 @@ const CreateAttributeForm = observer((props: Props) => {
       <Snackbar
         open={props.snackbarIsOpen}
         autoHideDuration={6000}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         onClose={() => props.setSnackbarIsOpen(false)}
       >
         <Alert

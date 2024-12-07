@@ -52,6 +52,12 @@ class AttributeControllerApi extends BaseApi {
     this.createRequest<never>({
       request: () => privateApi.patch(`${SERVICE_URL}/${id}/recover`),
     })
+
+  getAttributesCount = (params?: QueryParams) =>
+    this.createRequest<number>({
+      request: () =>
+        privateApi.get(`${SERVICE_URL}/countAttributes`, params && { params }),
+    })
 }
 
 export const attributeControllerApi = new AttributeControllerApi()
