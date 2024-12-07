@@ -16,6 +16,9 @@ import { getNavigationPath } from '@/components/appDashboardLayout/navigation/ge
 import QuizIcon from '@mui/icons-material/Quiz'
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
 import GradingIcon from '@mui/icons-material/Grading'
+import { TextIncrease } from '@mui/icons-material'
+import CodeIcon from '@mui/icons-material/Code'
+import CodeOffIcon from '@mui/icons-material/CodeOff'
 
 export const NAVIGATION: Navigation = [
   {
@@ -86,6 +89,11 @@ export const ADMIN_NAVIGATION: Navigation = [
     icon: <PostAddIcon />,
   },
   {
+    segment: ROUTES.admin('admin/attribute-type/create'),
+    title: 'Создать атрибут',
+    icon: <TextIncrease />,
+  },
+  {
     kind: 'divider',
   },
   {
@@ -112,5 +120,15 @@ export const ADMIN_NAVIGATION: Navigation = [
     segment: ROUTES.admin('admin/document-types/deleted'),
     title: 'Удаленные типы',
     icon: <FolderDeleteIcon />,
+  },
+  {
+    segment: ROUTES.admin('admin/attribute-type'),
+    title: 'Атрибуты',
+    icon: <CodeIcon />,
+  },
+  {
+    segment: ROUTES.admin('admin/attribute-type/delete'),
+    title: 'Удаленные атрибуты',
+    icon: <CodeOffIcon />,
   },
 ]
