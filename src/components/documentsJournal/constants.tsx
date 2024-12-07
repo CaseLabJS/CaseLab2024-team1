@@ -2,26 +2,22 @@ import { DocumentWithSignature } from '@/stores/DocumentsSignService'
 import { GridColDef } from '@mui/x-data-grid'
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '../documentsList/documentsList'
 import { DocumentTransitions } from '@/api/documentController/types'
+import { JournalState } from './types'
+
+const stateLabelMap: Record<string, string> = {
+  [DocumentTransitions.SENT_ON_REWORK]: 'Отправлен на доработку',
+  [DocumentTransitions.SENT_ON_SIGNING]: 'На согласовании',
+  [DocumentTransitions.SENT_ON_VOTING]: 'На согласовании',
+}
 
 const getState = (document: DocumentWithSignature) => {
-  if (!document.isSignedByUser) return 'Не подписан'
+  const { state } = document.documentData
+  const { isSignedByAuthor, isSignedByUser } = document
 
-  if (document.documentData.state === DocumentTransitions.SIGNED)
-    return 'Подписан'
-
-  if (
-    document.isSignedByAuthor &&
-    document.documentData.state !== DocumentTransitions.SENT_ON_SIGNING &&
-    document.documentData.state !== DocumentTransitions.SENT_ON_VOTING
-  ) {
-    return 'Ждет отправки на согласование'
-  }
-  if (
-    document.isSignedByAuthor &&
-    (document.documentData.state === DocumentTransitions.SENT_ON_SIGNING ||
-      document.documentData.state === DocumentTransitions.SENT_ON_VOTING)
-  ) {
-    return 'На согласовании'
+  if (!isSignedByUser) return 'Не подписан'
+  if (state === DocumentTransitions.SIGNED) return 'Подписан'
+  if (isSignedByAuthor) {
+    return stateLabelMap[state] || 'Ждет отправки на согласование'
   }
 
   return '?'
@@ -97,6 +93,13 @@ export const filtersMap = {
 export const default_pagination_model = {
   page: DEFAULT_PAGE,
   pageSize: DEFAULT_PAGE_SIZE,
+}
+
+export const initialState: JournalState = {
+  filteredDocuments: [],
+  selectionModel: [],
+  paginationModel: default_pagination_model,
+  rows: [],
 }
 
 export const JournalTypeLabelMap = {
