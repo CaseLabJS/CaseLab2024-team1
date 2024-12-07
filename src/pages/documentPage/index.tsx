@@ -8,6 +8,7 @@ import Paper from '@mui/material/Paper'
 import DocumentStore from '@/stores/DocumentStore'
 import { DocumentHeader } from '@/components/documentDetails/documentHeader/documentHeader.tsx'
 import { DocumentDetails } from '@/components/documentDetails/documentDetails.tsx'
+import CreateDocumentVersion from '@/components/editDocument/CreateDocumentVersion'
 
 export const DocumentPage = observer(() => {
   const { getDocumentById, loading } = documentsListStore
@@ -69,8 +70,11 @@ export const DocumentPage = observer(() => {
           <DocumentDetails documentStore={documentStore} />
         )}
         {documentStore && isChecked && (
-          //TODO здесь будет компонент для редактирования
-          <Typography variant="body2">Режим редактирования</Typography>
+          <CreateDocumentVersion
+            document={documentStore?.documentData}
+            error={documentStore?.error}
+            updateDocument={documentStore?.createDocumentVersion}
+          />
         )}
       </Paper>
     </Modal>
