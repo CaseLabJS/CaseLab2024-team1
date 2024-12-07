@@ -1,11 +1,16 @@
 import { DashboardLayout } from '@toolpad/core/DashboardLayout'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { Search } from '@/components/search/search.tsx'
 
 export const AppDashboardLayout = () => {
+  const location = useLocation()
+  const isAppRoute = location.pathname.startsWith('/app')
+
   return (
     <DashboardLayout
-      slots={{ toolbarActions: Search }}
+      slots={{
+        toolbarActions: isAppRoute ? Search : () => null,
+      }}
       sx={{
         '& .MuiDrawer-docked': {
           maxWidth: '230px',
@@ -19,10 +24,13 @@ export const AppDashboardLayout = () => {
           },
         },
         '& .MuiDrawer-root': {
-          maxWidth: '230px',
+          maxWidth: '270px',
           '& .MuiPaper-root': {
-            maxWidth: '230px',
+            maxWidth: '270px',
           },
+        },
+        '& >.MuiBox-root': {
+          overflow: 'auto',
         },
       }}
     >

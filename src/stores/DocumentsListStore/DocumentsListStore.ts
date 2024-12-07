@@ -7,6 +7,7 @@ import type { QueryParams } from '@/api/core/types.ts'
 
 class DocumentsListStore {
   documents: InstanceType<typeof DocumentStore>[] = []
+  documentsSize: number = 0
   loading: boolean = false
   error: SerializedError | null = null
 
@@ -28,9 +29,9 @@ class DocumentsListStore {
     }
   }
 
-  getDocumentById = async (documentId: number, showOnlyAlive?: boolean) => {
+  getDocumentById = async (documentId: number, isAlive?: boolean) => {
     const document = await executeWithLoading(this, async () =>
-      documentControllerApi.getDocumentById(documentId, { showOnlyAlive })
+      documentControllerApi.getDocumentById(documentId, { isAlive })
     )
 
     if (document) {
@@ -38,9 +39,9 @@ class DocumentsListStore {
     }
   }
 
-  createDocument = async (document: DocumentModel) => {
+  createDocument = async (document: DocumentModel, isDraft?: boolean) => {
     const createdDocument = await executeWithLoading(this, () =>
-      documentControllerApi.createDocument(document)
+      documentControllerApi.createDocument(document, { isDraft })
     )
 
     if (createdDocument) {
@@ -70,6 +71,40 @@ class DocumentsListStore {
         this.documents = this.documents.filter(
           (currentDocument) => currentDocument.documentData.id !== documentId
         )
+      })
+    }
+  }
+
+  recoverDocument = async (documentId: number) => {
+    const documentExists = this.documents.some(
+      (doc) => doc.documentData.id === documentId
+    )
+    if (!documentExists) {
+      console.warn(`Document with ID ${documentId} does not exist.`)
+      return
+    }
+
+    await executeWithLoading(this, () =>
+      documentControllerApi.recover(documentId)
+    )
+
+    if (!this.error) {
+      runInAction(() => {
+        this.documents = this.documents.filter(
+          (currentDocument) => currentDocument.documentData.id !== documentId
+        )
+      })
+    }
+  }
+
+  countTotalDocuments = async (isAlive?: boolean, showDraft?: boolean) => {
+    const countDocuments = await executeWithLoading(this, () =>
+      documentControllerApi.getDocumentsCount({ isAlive, showDraft })
+    )
+
+    if (countDocuments) {
+      runInAction(() => {
+        this.documentsSize = countDocuments
       })
     }
   }

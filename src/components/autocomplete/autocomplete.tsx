@@ -1,7 +1,18 @@
-import Box from '@mui/material/Box'
-import TextField from '@mui/material/TextField'
 import MuiAutocomplete from '@mui/material/Autocomplete'
-import { ForwardedRef, forwardRef, useCallback } from 'react'
+import {
+  ForwardedRef,
+  forwardRef,
+  SyntheticEvent,
+  useCallback,
+  useState,
+} from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/router/constants.ts'
+import { useTheme } from '@mui/material'
+import { alpha } from '@mui/material/styles'
+import Paper from '@mui/material/Paper'
+import { CustomOption } from '@/components/autocomplete/option.tsx'
+import { CustomInput } from '@/components/autocomplete/input.tsx'
 
 interface GenericOption {
   id: number
@@ -14,9 +25,9 @@ interface CustomAutocompleteProps<T extends GenericOption> {
   options: T[]
 
   /**
-   * The label for the input field
+   * The placeholder for the input field
    */
-  label?: string
+  placeholder?: string
 
   /**
    * The unique identifier for the component
@@ -44,14 +55,24 @@ interface CustomAutocompleteProps<T extends GenericOption> {
   defaultValue?: T
 
   /**
-   * Disabled
+   * Indicates whether the component is disabled
    */
-  disabled?: boolean
+  isDisabled?: boolean
 
   /**
-   * Error message
+   * Indicates whether the component is in a loading state
    */
-  errorMessage?: string
+  isLoading?: boolean
+
+  /**
+   * Callback function to be called when the component is clicked
+   */
+  onClick?: () => void
+
+  /**
+   * Callback function to be called when a value is added
+   */
+  onValueAdd?: (value: T) => void
 }
 
 const CustomAutocomplete = <T extends GenericOption>(
@@ -60,20 +81,28 @@ const CustomAutocomplete = <T extends GenericOption>(
 ) => {
   const {
     options,
-    label,
+    placeholder,
     id,
     noOptionsText = 'Нет вариантов',
     displayFields,
     sx,
     defaultValue,
-    disabled,
-    errorMessage,
+    isDisabled,
+    isLoading,
+    onClick,
+    onValueAdd,
     ...otherProps
   } = props
 
+  const [open, setOpen] = useState(false)
+  const [selectedValue, setSelectedValue] = useState<T | null>(null)
+  const [inputValue, setInputValue] = useState('')
+  const navigate = useNavigate()
+  const theme = useTheme()
+
   const getOptionLabel = useCallback(
     (option: T) => {
-      return displayFields.map((field) => option[field]).join(' ')
+      return displayFields.map((field) => option[field]).join('|')
     },
     [displayFields]
   )
@@ -83,46 +112,98 @@ const CustomAutocomplete = <T extends GenericOption>(
       const lowercasedInput = inputValue.toLowerCase()
       return options.filter((option) =>
         displayFields.some((field) =>
-          String(option[field]).toLowerCase().includes(lowercasedInput)
+          String(option[field]).toLowerCase().startsWith(lowercasedInput)
         )
       )
     },
     [displayFields]
   )
 
+  const handleInputChange = useCallback(
+    (_event: SyntheticEvent, value: string) => {
+      setOpen(value.length > 0)
+      setInputValue(value)
+
+      if (onClick) {
+        onClick()
+      }
+    },
+    [onClick]
+  )
+
+  const handleChange = useCallback(
+    (_event: SyntheticEvent, value: T | null) => {
+      setSelectedValue(value)
+      setOpen(false)
+      setInputValue('')
+
+      if (value && onValueAdd) {
+        setSelectedValue(null)
+        onValueAdd(value)
+        navigate(`${ROUTES.app('forward')}/${value.id}`)
+      }
+    },
+    [navigate, onValueAdd]
+  )
+
   return (
     <MuiAutocomplete
+      open={open}
+      onInputChange={handleInputChange}
+      onChange={handleChange}
+      size="small"
       fullWidth
       disablePortal
       options={options}
+      loading={isLoading}
       getOptionLabel={getOptionLabel}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       filterOptions={filterOptions}
-      disabled={disabled}
-      renderOption={(props, option) => {
-        return (
-          <Box component="li" {...props} key={props.id}>
-            {getOptionLabel(option)}
-          </Box>
-        )
-      }}
+      disabled={isDisabled}
+      value={selectedValue}
+      renderOption={(props, option) => (
+        <CustomOption
+          option={option}
+          displayFields={displayFields}
+          inputValue={inputValue}
+          {...props}
+          key={option.id}
+        />
+      )}
       renderInput={(params) => (
-        <TextField
-          {...params}
-          label={label}
-          variant="outlined"
-          fullWidth
+        <CustomInput
+          params={params}
+          placeholder={placeholder || ''}
           ref={ref}
-          error={!!errorMessage}
-          helperText={errorMessage}
-          sx={{
-            '& .MuiInputBase-root': {
-              backgroundColor: 'background.paper',
-            },
-          }}
           {...otherProps}
         />
       )}
       id={id}
+      PaperComponent={(props) => (
+        <Paper
+          {...props}
+          sx={{
+            '& .MuiAutocomplete-listbox': {
+              '& .Mui-focused': {
+                backgroundColor: alpha(theme.palette.primary.light, 0.15),
+                '& .title-text, .description-text, .main-icon': {
+                  color: 'primary.main',
+                },
+                '& .main-icon': {
+                  opacity: 1,
+                },
+              },
+              '&::-webkit-scrollbar': {
+                width: '0.5rem',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: 'grey',
+                borderRadius: '0.5rem',
+              },
+            },
+          }}
+        />
+      )}
       sx={{
         borderRadius: '0.5rem',
         ...sx,

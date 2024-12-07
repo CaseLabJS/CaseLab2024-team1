@@ -3,12 +3,18 @@ import { BaseApi } from '../core/baseApi'
 import { privateApi } from '../core/private.api'
 import {
   DocumentModel,
+  DocumentTransitions,
   DocumentVersionFields,
   DocumentVersionModel,
 } from './types'
-import type { QueryParams } from '../core/types'
+import {
+  CreateDocumentQueryParams,
+  PatchDocumentQueryParams,
+  QueryParams,
+} from '../core/types'
 
 const SERVICE_URL = '/documents'
+
 class DocumentControllerApi extends BaseApi {
   getDocumentById = (id: number, params?: QueryParams) =>
     this.createRequest<Document>({
@@ -17,9 +23,13 @@ class DocumentControllerApi extends BaseApi {
       mock: () => import('./mock/document'),
     })
   //возвращает документ
-  createDocument = (documentModel: DocumentModel) =>
+  createDocument = (
+    documentModel: DocumentModel,
+    params?: CreateDocumentQueryParams
+  ) =>
     this.createRequest<Document>({
-      request: () => privateApi.post(SERVICE_URL, documentModel),
+      request: () =>
+        privateApi.post(SERVICE_URL, documentModel, params && { params }),
       mock: () => import('./mock/document'),
     })
   //возвращает новую версию документа
@@ -35,11 +45,16 @@ class DocumentControllerApi extends BaseApi {
   //возвращает новую версию документа
   patchDocumentVersion = (
     documentId: number,
-    documentFields: DocumentVersionFields
+    documentFields: DocumentVersionFields,
+    params?: PatchDocumentQueryParams
   ) =>
     this.createRequest<Document>({
       request: () =>
-        privateApi.patch(`${SERVICE_URL}/${documentId}`, documentFields),
+        privateApi.patch(
+          `${SERVICE_URL}/${documentId}`,
+          documentFields,
+          params && { params }
+        ),
       mock: async () => {
         const version = await this.getDocumentVersion(1, 1)
         return () => ({ ...version, ...documentFields })
@@ -65,7 +80,7 @@ class DocumentControllerApi extends BaseApi {
     versionId: number,
     params?: QueryParams
   ) =>
-    this.createRequest<Document>({
+    this.createRequest<DocumentVersion>({
       request: () =>
         privateApi.get(
           `${SERVICE_URL}/${documentId}/${versionId}`,
@@ -100,13 +115,23 @@ class DocumentControllerApi extends BaseApi {
     })
 
   getTransitions = (id: number, params?: QueryParams) =>
-    this.createRequest<Document>({
+    this.createRequest<DocumentTransitions[]>({
       request: () =>
         privateApi.get(
           `${SERVICE_URL}/${id}/transitions`,
           params && { params }
         ),
       mock: () => import('./mock/status'),
+    })
+
+  getDocumentsCount = (params?: QueryParams) =>
+    this.createRequest<number>({
+      request: () =>
+        privateApi.get(`${SERVICE_URL}/countDocuments`, params && { params }),
+      mock: async () => {
+        const count = await Promise.resolve(1)
+        return () => count
+      },
     })
 }
 

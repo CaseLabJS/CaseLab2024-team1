@@ -2,55 +2,76 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import { DocumentForm } from '@/components/createDocumentForm/documentForm/documentForm'
-import { FormEvent, useCallback, useEffect, useMemo } from 'react'
+import { FormEvent, useCallback, useEffect, useState } from 'react'
 import { ActionButtons } from '@/components/createDocumentForm/actionButtons/actionButtons.tsx'
 import { useForm, FormProvider, useFieldArray } from 'react-hook-form'
-import { FormValues } from '@/components/createDocumentForm/types.ts'
+import { FormItem, FormValues } from '@/components/createDocumentForm/types.ts'
 import { AddDocumentButton } from '@/components/createDocumentForm/addDocumentButton/addDocumentButton.tsx'
 import documentsListStore from '@/stores/DocumentsListStore'
-import authStore from '@/stores/AuthStore'
 import documentTypeListStore from '@/stores/DocumentTypeListStore'
-import { Value } from '@/types/sharedTypes.ts'
 import { observer } from 'mobx-react-lite'
-import { fileToBase64 } from '@/utils/fileToBase64.ts'
 import { useNotifications } from '@toolpad/core'
 import { ROUTES } from '@/router/constants.ts'
-import { useNavigate } from 'react-router-dom'
-import { Document } from '@/types/sharedTypes.ts'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { createFormItemFromDocument } from '@/components/createDocumentForm/createFormItemFromDocument.ts'
+import DocumentStore from '@/stores/DocumentStore'
+import { useDefaultDocumentForm } from '@/components/createDocumentForm/useFefaultDocumentForm.ts'
+import { useDocumentActions } from '@/components/createDocumentForm/useDocumentActions.ts'
 
 const MAX_UPLOADABLE_FILES = 10
 
 export const CreateDocumentForm = observer(() => {
-  const initialDocumentType = documentTypeListStore.types[0]
-  const { createDocument } = documentsListStore
-  const { user } = authStore
+  const { getDocumentById } = documentsListStore
 
   const notifications = useNotifications()
   const navigate = useNavigate()
 
-  const defaultFormItem = useMemo(() => {
-    return {
-      title: '',
-      documentTypeId: initialDocumentType?.data.id || null,
-      description: '',
-      attributes:
-        initialDocumentType?.data.attributes.reduce<Record<string, string>[]>(
-          (acc, attr) => {
-            acc.push({
-              [attr.name]: '',
-            })
-            return acc
-          },
-          []
-        ) || null,
-    }
-  }, [initialDocumentType])
+  const [isDraft, setIsDraft] = useState(false)
+  const [draftData, setDraftData] = useState<FormItem | null>(null)
+  const [draftDocument, setDraftDocument] = useState<DocumentStore | null>(null)
+
+  const { getDefaultFormItem, getDraftFormItem } =
+    useDefaultDocumentForm(draftData)
+  const { updateDraftDocument, createDocuments } = useDocumentActions(
+    draftDocument,
+    isDraft
+  )
+
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search)
+  const draftId = queryParams.get('draftId')
 
   const form = useForm<FormValues>({
     defaultValues: {
-      items: [defaultFormItem],
+      items: [getDefaultFormItem()],
+    },
+    values: {
+      items: [getDraftFormItem()],
     },
   })
+
+  useEffect(() => {
+    void (async () => {
+      if (draftId) {
+        const draftDocument = await getDocumentById(+draftId)
+
+        if (draftDocument) {
+          const formItem = createFormItemFromDocument(
+            draftDocument.documentData
+          )
+          setDraftData(formItem)
+          setDraftDocument(draftDocument)
+        }
+      } else {
+        form.reset({ items: [getDefaultFormItem()] })
+        setIsDraft(false)
+      }
+    })()
+
+    void documentTypeListStore.fetchDocumentTypes()
+    // добавление form в зависимости вызовет бесконечный цикл
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftId])
 
   const { fields, remove, append, update } = useFieldArray({
     control: form.control,
@@ -68,60 +89,43 @@ export const CreateDocumentForm = observer(() => {
 
   const handleAddDocument = useCallback(() => {
     if (fields.length < MAX_UPLOADABLE_FILES) {
-      append(defaultFormItem)
+      append(getDefaultFormItem())
     } else {
       notifications.show('Превышен лимит файлов', {
         severity: 'error',
         autoHideDuration: 2000,
       })
     }
-  }, [append, defaultFormItem, fields.length, notifications])
-
-  const convertAttributesToValues = useCallback(
-    (attributes: Record<string, string>[]): Value[] => {
-      const values: Value[] = []
-
-      attributes.forEach((attribute) => {
-        for (const [key, value] of Object.entries(attribute)) {
-          values.push({ attributeName: key, value: value.trim() })
-        }
-      })
-
-      return values
-    },
-    []
-  )
+  }, [append, fields.length, getDefaultFormItem, notifications])
 
   const onSubmit = useCallback(
     async (data: FormValues) => {
-      const promises: Promise<void | Document>[] = []
+      let items = form.getValues('items')
 
-      for (const document of data.items) {
-        const base64 = await fileToBase64(document.file ? document.file : null)
+      if (draftId) {
+        const result = await updateDraftDocument(data.items[0])
 
-        if (document.attributes && document.documentTypeId) {
-          promises.push(
-            createDocument({
-              title: document.title.trim(),
-              userId: user ? user.id : 0,
-              documentTypeId: document.documentTypeId,
-              description: document.description,
-              values: convertAttributesToValues(document.attributes),
-              base64Content: base64,
-            })
-          )
-        }
-      }
-
-      const results = await Promise.all(promises)
-
-      results.map((result, index) => {
         if (result) {
-          remove(index)
+          items = []
         }
-      })
+      } else {
+        const results = await createDocuments(data.items)
 
-      const items = form.getValues('items')
+        const removedIndexes = results.reduce<number[]>(
+          (acc, result, index) => {
+            if (result) {
+              acc.push(index)
+            }
+            return acc
+          },
+          []
+        )
+
+        items = items.filter((_item, index) => {
+          return !removedIndexes.includes(index)
+        })
+        form.setValue('items', items)
+      }
 
       if (!items.length) {
         notifications.show('Успешно сохранено', {
@@ -129,7 +133,7 @@ export const CreateDocumentForm = observer(() => {
           autoHideDuration: 2000,
         })
 
-        navigate(ROUTES.app('forward'))
+        navigate(ROUTES.app(isDraft || draftId ? 'draft' : 'forward'))
       } else {
         notifications.show('Ошибка при операции', {
           severity: 'error',
@@ -139,12 +143,12 @@ export const CreateDocumentForm = observer(() => {
     },
     [
       form,
-      createDocument,
-      user,
-      convertAttributesToValues,
-      remove,
+      draftId,
+      updateDraftDocument,
+      createDocuments,
       notifications,
       navigate,
+      isDraft,
     ]
   )
 
@@ -164,8 +168,8 @@ export const CreateDocumentForm = observer(() => {
     [update, fieldsValue]
   )
 
-  useEffect(() => {
-    void documentTypeListStore.fetchDocumentTypes()
+  const handleSaveDraft = useCallback(() => {
+    setIsDraft(true)
   }, [])
 
   return (
@@ -179,12 +183,16 @@ export const CreateDocumentForm = observer(() => {
       elevation={6}
     >
       <Box>
-        <Typography variant="h6" sx={{ fontWeight: '600' }}>
-          {`Добавлено документов: ${fields.length}`}
-        </Typography>
-        <Typography variant="caption" sx={{ color: 'grey.500' }}>
-          Максимум 10 документов
-        </Typography>
+        {!draftId && (
+          <>
+            <Typography variant="h6" sx={{ fontWeight: '600' }}>
+              {`Добавлено документов: ${fields.length}`}
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'grey.500' }}>
+              Максимум 10 документов
+            </Typography>
+          </>
+        )}
       </Box>
 
       <FormProvider {...form}>
@@ -193,10 +201,12 @@ export const CreateDocumentForm = observer(() => {
           onSubmit={handleFormSubmit}
           sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
         >
-          <AddDocumentButton
-            onAddDocument={handleAddDocument}
-            disabled={fields.length < MAX_UPLOADABLE_FILES}
-          />
+          {!draftId && (
+            <AddDocumentButton
+              onAddDocument={handleAddDocument}
+              disabled={fields.length < MAX_UPLOADABLE_FILES}
+            />
+          )}
 
           <Box
             sx={{
@@ -216,12 +226,13 @@ export const CreateDocumentForm = observer(() => {
                   onRemoveDocument={() => handleRemoveDocument(index)}
                   single={isSingleDocument}
                   addFile={attachFileToDocument}
+                  isDraft={isDraft}
                 />
               )
             })}
           </Box>
 
-          <ActionButtons />
+          <ActionButtons onSaveDraft={handleSaveDraft} />
         </Box>
       </FormProvider>
     </Paper>

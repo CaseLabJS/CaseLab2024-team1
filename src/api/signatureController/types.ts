@@ -7,15 +7,20 @@ export type SignatureRequestModel = {
   documentId: number
 }
 
+export type SignatureRequestStatus = 'APPROVED' | 'REJECTED' | 'PENDING'
+
 export type SignatureRequest = {
   id: number
   userTo: User
+  documentId: number
   documentVersionId: number
+  status: SignatureRequestStatus
+  votingId: number | null
 }
 
 export type SignatureModel = {
   placeholderTitle: string
-  status: string
+  status: SignatureRequestStatus
 }
 
 export type VoteModel = {
@@ -28,6 +33,7 @@ export type VoteModel = {
 
 export type Vote = {
   participants: User[]
+  documentId: number
   documentVersion: DocumentVersion
   approvalThreshold: number
   deadline: string //YYYY-MM-DD

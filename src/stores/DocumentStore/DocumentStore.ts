@@ -6,9 +6,11 @@ import {
 import { executeWithLoading } from '@/utils/executeWithLoading.ts'
 import { Document } from '@/types/sharedTypes.ts'
 import { SerializedError } from '@/api/core/serializedError.ts'
+import { DocumentTransitions } from '@/api/documentController/types.ts'
 
 class DocumentStore {
   documentData: Document
+  transitions: DocumentTransitions[] = []
   loading: boolean = false
   error: SerializedError | null = null
 
@@ -18,9 +20,14 @@ class DocumentStore {
     this.documentData = document
   }
 
-  patchDocumentVersion = async (fields: Partial<DocumentVersionModel>) => {
+  patchDocumentVersion = async (
+    fields: Partial<DocumentVersionModel>,
+    isDone?: boolean
+  ) => {
     const patchedDocument = await executeWithLoading(this, () =>
-      documentControllerApi.patchDocumentVersion(this.documentData.id, fields)
+      documentControllerApi.patchDocumentVersion(this.documentData.id, fields, {
+        isDone,
+      })
     )
 
     if (patchedDocument) {
@@ -28,6 +35,8 @@ class DocumentStore {
         this.documentData = patchedDocument
       })
     }
+
+    return patchedDocument
   }
 
   createDocumentVersion = async (documentVersion: DocumentVersionModel) => {
@@ -51,7 +60,7 @@ class DocumentStore {
     }
   }
 
-  addComment = async (comment: string) => {
+  addDocumentComment = async (comment: string) => {
     const addedComment = await executeWithLoading(this, () =>
       documentControllerApi.addComment(this.documentData.id, comment)
     )
@@ -64,11 +73,33 @@ class DocumentStore {
         }
       })
     }
+
+    return addedComment
   }
 
-  recoverDocument = async () => {
-    await executeWithLoading(this, () =>
-      documentControllerApi.recover(this.documentData.id)
+  getDocumentTransitions = async (isAlive?: boolean) => {
+    const documentTransitions = await executeWithLoading(this, () =>
+      documentControllerApi.getTransitions(this.documentData.id, {
+        isAlive,
+      })
+    )
+
+    if (documentTransitions) {
+      runInAction(() => {
+        this.transitions = documentTransitions
+      })
+    }
+  }
+
+  getDocumentVersion = async (versionId: number, isAlive?: boolean) => {
+    return await executeWithLoading(this, () =>
+      documentControllerApi.getDocumentVersion(
+        this.documentData.id,
+        versionId,
+        {
+          isAlive,
+        }
+      )
     )
   }
 }

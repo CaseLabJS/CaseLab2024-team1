@@ -14,9 +14,15 @@ class DocumentTypeListStore {
     makeAutoObservable(this)
   }
 
-  async fetchDocumentTypes() {
+  async fetchDocumentTypes(params?: {
+    showOnlyAlive?: boolean
+    isAlive?: boolean
+    page?: number
+    size?: number
+    ascending?: boolean
+  }) {
     const fetchedTypes = await executeWithLoading(this, async () =>
-      documentTypesControllerApi.getDocumentTypes()
+      documentTypesControllerApi.getDocumentTypes(params)
     )
 
     if (fetchedTypes) {
@@ -53,9 +59,23 @@ class DocumentTypeListStore {
       documentTypesControllerApi.deleteDocumentTypes(typeId)
     )
 
-    runInAction(() => {
-      this.types = [...this.types.filter((type) => type.data.id !== typeId)]
-    })
+    if (!this.error) {
+      runInAction(() => {
+        this.types = [...this.types.filter((type) => type.data.id !== typeId)]
+      })
+    }
+  }
+
+  async recoverDocumentType(typeId: number) {
+    await executeWithLoading(this, () =>
+      documentTypesControllerApi.recover(typeId)
+    )
+
+    if (!this.error) {
+      runInAction(() => {
+        this.types = [...this.types.filter((type) => type.data.id !== typeId)]
+      })
+    }
   }
 }
 

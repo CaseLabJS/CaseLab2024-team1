@@ -80,7 +80,9 @@ const UserTable: React.FC = observer(() => {
     })
   }
   useEffect(() => {
-    void usersListStore.fetchUsers()
+    void usersListStore.fetchUsers({
+      isAlive: true,
+    })
   }, [])
   useEffect(() => {
     if (error) {
@@ -104,26 +106,31 @@ const UserTable: React.FC = observer(() => {
       field: 'id',
       headerName: 'ID',
       flex: 1,
+      minWidth: 50,
     },
     {
       field: 'name',
       headerName: 'Имя',
       flex: 2,
+      minWidth: 160,
     },
     {
       field: 'surname',
       headerName: 'Фамилия',
       flex: 2,
+      minWidth: 160,
     },
     {
       field: 'email',
       headerName: 'Email',
       flex: 2,
+      minWidth: 150,
     },
     {
       field: 'roles',
       headerName: 'Роль',
       flex: 1.5,
+      minWidth: 100,
       valueGetter: (roles: Role[]) => {
         return `${roles[0]?.name || ''}`
       },
@@ -132,6 +139,7 @@ const UserTable: React.FC = observer(() => {
       field: 'actions',
       headerName: 'Действия',
       flex: 1.5,
+      minWidth: 100,
       renderCell: (params: GridRenderCellParams<User>) => (
         <Box
           sx={{
@@ -151,12 +159,7 @@ const UserTable: React.FC = observer(() => {
           >
             <DeleteIcon />
           </IconButton>
-          <IconButton
-            aria-label="edit"
-            onClick={() => {
-              handleEdit(params.row)
-            }}
-          >
+          <IconButton aria-label="edit" onClick={() => handleEdit(params.row)}>
             <EditIcon />
           </IconButton>
         </Box>
@@ -170,13 +173,11 @@ const UserTable: React.FC = observer(() => {
         <Box textAlign="left" mb={1}>
           <Typography variant="h5">Пользователи</Typography>
         </Box>
-
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Button variant="outlined" onClick={handleAddUser}>
             Добавить пользователя
           </Button>
         </Box>
-
         <DataGrid
           rows={rows}
           columns={columns}

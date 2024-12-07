@@ -1,9 +1,9 @@
-import { DocumentStatus } from '../types'
+import { DocumentTransitions } from '../types'
 
-const status: DocumentStatus[] = [
-  DocumentStatus.CREATED,
-  DocumentStatus.SIGNED_BY_AUTHOR,
-  DocumentStatus.MODIFIED,
+const transitions: DocumentTransitions[] = [
+  DocumentTransitions.CREATED,
+  DocumentTransitions.SIGNED_BY_AUTHOR,
+  DocumentTransitions.MODIFIED,
 ]
 
-export default Promise.resolve(() => status)
+export default Promise.resolve(() => transitions)

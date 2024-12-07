@@ -6,27 +6,32 @@ import {
   signatureControllerApi,
   SignatureModel,
   SignatureRequest,
+  SignatureQueryParams,
+  SignatureRequestStatus,
 } from '@/api/signatureController'
 
 class SignatureRequestStore {
-  id: number
-  userTo: User
-  documentVersionId: number
+  id!: number
+  userTo!: User
+  documentId!: number
+  documentVersionId!: number
+  status!: SignatureRequestStatus
+  votingId!: number | null
   loading: boolean = false
   error: SerializedError | null = null
 
-  constructor({ id, userTo, documentVersionId }: SignatureRequest) {
-    this.id = id
-    this.userTo = userTo
-    this.documentVersionId = documentVersionId
+  constructor(signatureRequest: SignatureRequest) {
+    Object.assign(this, signatureRequest)
     makeAutoObservable(this)
   }
 
-  sign = async (signatureModel: SignatureModel): Promise<void | Signature> => {
-    return await executeWithLoading(this, () =>
-      signatureControllerApi.sign(this.id, signatureModel)
-    )
-  }
+  sign = async (
+    signatureModel: SignatureModel,
+    params?: SignatureQueryParams
+  ): Promise<Signature | null> =>
+    (await executeWithLoading(this, () =>
+      signatureControllerApi.sign(this.id, signatureModel, params)
+    )) || null
 }
 
 export default SignatureRequestStore

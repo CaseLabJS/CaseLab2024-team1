@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { Loader } from '@/components/loader/loader'
 import { UserCredentials } from '@/types/sharedTypes'
 import { usersListStore } from '@/stores/UsersListStore'
@@ -15,23 +14,18 @@ import {
   InputAdornment,
   Alert,
   Snackbar,
+  Paper,
 } from '@mui/material'
 import {
   Visibility,
   VisibilityOff,
   Email as EmailIcon,
 } from '@mui/icons-material'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import Bird from '@/assets/bird.svg'
 const CreateUser: React.FC = observer(() => {
   const [showPassword, setShowPassword] = useState(true)
   const [loaderIsOpen, setLoaderIsOpen] = useState(true)
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
   const { loading, error } = usersListStore
-  const navigate = useNavigate()
-  const navigateBack = () => {
-    navigate(-1)
-  }
   const {
     register,
     formState: { errors, isValid },
@@ -51,36 +45,17 @@ const CreateUser: React.FC = observer(() => {
     }
   }, [error])
   return (
-    <Box
+    <Paper
       sx={{
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         padding: 2,
-        maxWidth: 400,
         margin: 'auto',
-        minHeight: 600,
+        maxWidth: '370px',
       }}
     >
-      <Button
-        variant="contained"
-        size="small"
-        color="secondary"
-        onClick={navigateBack}
-        startIcon={<ChevronLeftIcon />}
-        style={{
-          fontSize: 10,
-          display: 'flex',
-          alignItems: 'center',
-          margin: 20,
-        }}
-      >
-        Вернуться на предыдущую страницу
-      </Button>
-      <Box>
-        <img src={Bird} alt="Logo" width={50} height={50} />
-      </Box>
       <Box
         sx={{
           display: 'flex',
@@ -177,7 +152,7 @@ const CreateUser: React.FC = observer(() => {
         </Box>
         <Snackbar
           open={snackbarIsOpen}
-          autoHideDuration={6000}
+          autoHideDuration={2000}
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           onClose={() => setSnackbarIsOpen(false)}
         >
@@ -202,7 +177,7 @@ const CreateUser: React.FC = observer(() => {
           <Loader />
         </Box>
       </Modal>
-    </Box>
+    </Paper>
   )
 })
 

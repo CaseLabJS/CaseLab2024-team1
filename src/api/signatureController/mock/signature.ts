@@ -17,7 +17,10 @@ const user = {
 const signature: SignatureRequest = {
   id: 1,
   userTo: user,
+  documentId: 1,
   documentVersionId: 2,
+  status: 'PENDING',
+  votingId: null,
 }
 
 export default Promise.resolve(() => signature)
