@@ -21,6 +21,8 @@ import { DocumentPage } from '@/pages/documentPage'
 import AliveTypes from '@/components/documentTypesTable/AliveTypes'
 import DeadTypes from '@/components/documentTypesTable/DeadTypes'
 import { DraftPage } from '@/pages/draftPage'
+import AttributesPage from '@/pages/AttributesPage'
+import CreateAttributePage from '@/pages/CreateAttributePage'
 
 export const publicRoutes = [
   {
@@ -133,7 +135,15 @@ export const adminRoutes = [
           },
           {
             path: ROUTES.admin('attribute-type'),
-            element: <div>Attribute Type</div>,
+            element: <AttributesPage aliveTable={true} key={0} />,
+          },
+          {
+            path: ROUTES.admin('attribute-type/create'),
+            element: <CreateAttributePage />,
+          },
+          {
+            path: ROUTES.admin('attribute-type/delete'),
+            element: <AttributesPage aliveTable={false} key={1} />,
           },
         ],
       },

@@ -63,28 +63,39 @@ const CreateAttributePage = observer(() => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log(attribute)
-    const createAttribute = async () => {
-      await attributeListStore.createAttribute(attribute)
+    if (
+      new Set(attribute.documentTypesIds).size ===
+      attribute.documentTypesIds.length
+    ) {
+      const createAttribute = async () => {
+        await attributeListStore.createAttribute(attribute)
+      }
+      void createAttribute()
+        .then(() => {
+          setSuccess('Атрибут успешно создан!')
+          setError(null)
+        })
+        .catch((error) => {
+          setError(
+            `Ошибка при создании атрибута->${error}. Попробуйте еще раз.`
+          )
+          setSuccess(null)
+        })
+        .finally(() => {
+          setSnackbarIsOpen(true)
+          setTimeout(() => {
+            setAttribute({
+              documentTypesIds: [],
+              name: '',
+              required: false,
+            })
+          }, 1000)
+        })
+    } else {
+      setError(`Все типы документов должны быть уникальными`)
+      setSuccess(null)
+      setSnackbarIsOpen(true)
     }
-    void createAttribute()
-      .then(() => {
-        setSuccess('Атрибут успешно создан!')
-        setError(null)
-      })
-      .catch((error) => {
-        setError(`Ошибка при создании атрибута->${error}. Попробуйте еще раз.`)
-        setSuccess(null)
-      })
-      .finally(() => {
-        setSnackbarIsOpen(true)
-        setTimeout(() => {
-          setAttribute({
-            documentTypesIds: [],
-            name: '',
-            required: false,
-          })
-        }, 1000)
-      })
   }
 
   const getHtmlDocumentTypesIds = (count: number) => {

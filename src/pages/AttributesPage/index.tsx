@@ -376,6 +376,8 @@ const AttributesPage = (props: Props) => {
               null,
               `Аттрибут с ID->${selectAliveRowId} успешно изменен`
             )
+            void fetchAliveData()
+            setTimeout(() => setModalEditIsOpen(false), 3500)
           })
           .catch((errorApi: SerializedError) => {
             changeEdit(
@@ -403,7 +405,7 @@ const AttributesPage = (props: Props) => {
     <>
       {props.aliveTable ? (
         <>
-          <h1 style={{ textAlign: 'center' }}>Аттрибуты</h1>
+          <h1 style={{ textAlign: 'left' }}>Атрибуты</h1>
           <AttributeTable
             key={0}
             documentTypesNamesCell={getDocumentTypesNamesCell()}
@@ -412,6 +414,7 @@ const AttributesPage = (props: Props) => {
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
             rowCount={totalAliveCount}
+            aliveTable={props.aliveTable}
           />
           <ModalEditAttribute
             modalEditIsOpen={modalEditIsOpen}
@@ -429,7 +432,7 @@ const AttributesPage = (props: Props) => {
         </>
       ) : (
         <>
-          <h1 style={{ textAlign: 'center' }}>Удаленные атрибуты</h1>
+          <h1 style={{ textAlign: 'left' }}>Удаленные атрибуты</h1>
           <AttributeTable
             key={1}
             documentTypesNamesCell={getDocumentTypesNamesCell()}
@@ -438,6 +441,7 @@ const AttributesPage = (props: Props) => {
             paginationModel={paginationModel}
             onPaginationModelChange={setPaginationModel}
             rowCount={totalDeadCount}
+            aliveTable={props.aliveTable}
           />
         </>
       )}
