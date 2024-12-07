@@ -10,6 +10,7 @@ import DocumentStore from '@/stores/DocumentStore'
 import { getNavigationType } from '@/components/appDashboardLayout/navigation/getNavigationType.ts'
 import { useActionButtons } from '@/components/documentDetails/useActionButtons.tsx'
 import { FilePreviewModal } from '@/components/documentDetails/filePreview/filePreviewModal.tsx'
+import { useLocation } from 'react-router-dom'
 
 interface DocumentDetailsProps {
   documentStore: DocumentStore
@@ -18,6 +19,7 @@ interface DocumentDetailsProps {
 export const DocumentDetails = (props: DocumentDetailsProps) => {
   const { documentStore } = props
   const document = documentStore.documentData
+  const location = useLocation()
   const navigationType = getNavigationType(location.pathname)
 
   const theme = useTheme()

@@ -13,7 +13,16 @@ export type QueryParams = Partial<{
   page: number
   size: number
   ascending: boolean
+  showDraft: boolean
 }>
+
+export type CreateDocumentQueryParams = QueryParams & {
+  isDraft?: boolean
+}
+
+export type PatchDocumentQueryParams = QueryParams & {
+  isDone?: boolean
+}
 
 export interface CustomAxiosRequestConfig<T = unknown>
   extends AxiosRequestConfig<T> {

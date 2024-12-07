@@ -20,6 +20,7 @@ import { Navigate } from 'react-router-dom'
 import { DocumentPage } from '@/pages/documentPage'
 import AliveTypes from '@/components/documentTypesTable/AliveTypes'
 import DeadTypes from '@/components/documentTypesTable/DeadTypes'
+import { DraftPage } from '@/pages/draftPage'
 import { JournalPage } from '@/pages/journalPage'
 import { DocumentPage as MockPage } from '@/mock/documentPage'
 
@@ -80,6 +81,10 @@ export const appRoutes = [
                 Component: DocumentPage,
               },
             ],
+          },
+          {
+            path: ROUTES.app('draft'),
+            Component: DraftPage,
           },
           {
             path: ROUTES.app('deleted'),

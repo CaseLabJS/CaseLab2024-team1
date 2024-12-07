@@ -2,63 +2,50 @@ import { Meta, StoryObj } from '@storybook/react'
 import { ThemeProvider } from '@/theme/theme-provider/theme-provider.tsx'
 import CssBaseline from '@mui/material/CssBaseline'
 import { Autocomplete } from '@/components/autocomplete/autocomplete.tsx'
-import { testContractors } from '@/stories/autocomplete/testData/testData.ts'
+import { testDocumentVersions } from '@/stories/autocomplete/testData/testData.ts'
+import { MemoryRouter } from 'react-router-dom'
 
 const meta = {
   title: 'Components/Autocomplete',
   component: Autocomplete,
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
-  tags: ['autodocs'],
   args: {
-    options: testContractors,
-    label: 'Введите название или ИНН контрагента',
+    options: testDocumentVersions,
+    placeholder: 'Поиск по документам',
     id: 'contractor-id',
-    displayFields: ['name', 'inn'],
-    noOptionsText: 'Нет организаций в списке ваших контрагентов.',
+    displayFields: ['title', 'description'],
+    noOptionsText: 'Документы не найдены',
   },
   decorators: [
     (Story) => (
-      <ThemeProvider>
-        <CssBaseline />
-        <Story />
-      </ThemeProvider>
+      <MemoryRouter>
+        <ThemeProvider>
+          <CssBaseline />
+          <Story />
+        </ThemeProvider>
+      </MemoryRouter>
     ),
   ],
-} satisfies Meta<typeof Autocomplete<(typeof testContractors)[number]>>
+} satisfies Meta<typeof Autocomplete<(typeof testDocumentVersions)[number]>>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Disabled: Story = {
+export const Default: Story = {
   args: {
-    options: testContractors,
-    label: 'Введите название или ИНН контрагента',
-    id: 'contractor-id-disabled',
-    noOptionsText: 'Нет организаций в списке ваших контрагентов.',
-    sx: { opacity: 0.5, minWidth: '25rem' },
-    disabled: true,
-  },
-}
-
-export const WithPredefinedValue: Story = {
-  args: {
-    options: testContractors,
-    label: 'Введите название или ИНН контрагента',
-    id: 'contractor-id-predefined',
-    noOptionsText: 'Нет организаций в списке ваших контрагентов.',
-    defaultValue: testContractors[0],
-    sx: { minWidth: '25rem' },
+    sx: { minWidth: '20rem' },
   },
 }
 
 export const NoOptions: Story = {
   args: {
     options: [],
-    label: 'Введите название или ИНН контрагента',
+    placeholder: 'Поиск',
     id: 'contractor-id-no-options',
-    noOptionsText: 'Нет доступных вариантов.',
-    sx: { minWidth: '25rem' },
+    noOptionsText: 'Нет доступных документов',
+    sx: { minWidth: '20rem' },
   },
 }

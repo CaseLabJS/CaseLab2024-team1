@@ -1,12 +1,14 @@
 import DocumentType from './DocumentType'
 import { DocumentTypesTableProps } from '../types'
 import { DocumentType as DocumentTypeType } from '@/types/sharedTypes'
+import { Loader } from '@/components/loader'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useState } from 'react'
 import documentTypeListStore from '@/stores/DocumentTypeListStore'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/router/constants'
 import {
+  Box,
   Table,
   TableHead,
   TableBody,
@@ -19,10 +21,13 @@ import {
   Alert,
   Modal,
 } from '@mui/material'
-import EditDocumentType from '@/components/editDocumentType/editDocumentType'
+import EditDocumentObserver from '@/components/editDocumentType/EditDocType'
+import React from 'react'
 
 const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
-  const { types } = documentTypeListStore
+  const ref = React.createRef()
+  const { types, error, loading } = documentTypeListStore
+  const [loaderIsOpen, setLoaderIsOpen] = useState(true)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const handleModalClose = () => {
     setEditModalOpen(false)
@@ -40,9 +45,8 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
     void documentTypeListStore.fetchDocumentTypes({
       showOnlyAlive: props.showOnlyAlive,
     })
-  }, [])
+  }, [props.showOnlyAlive])
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
-  const { error } = documentTypeListStore
   return (
     <>
       <Paper
@@ -67,7 +71,7 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
             sx={{
               mt: '8px',
               '.MuiTableCell-root': {
-                fontSize: { xs: '11px', md: '14px', lg: '14px' },
+                fontSize: { xs: '10px', md: '14px', lg: '14px' },
                 padding: { xs: '2px' },
               },
             }}
@@ -129,8 +133,28 @@ const DocumentTypesTable = observer((props: DocumentTypesTableProps) => {
               : 'Тип документа восстановлен'}
         </Alert>
       </Snackbar>
-      <Modal open={editModalOpen} onClose={handleModalClose}>
-        <EditDocumentType type={typeToEdit} />
+      <Modal
+        open={editModalOpen}
+        onClose={handleModalClose}
+        sx={{ overflow: 'auto', maxWidth: '100%', maxHeight: '100%' }}
+      >
+        <EditDocumentObserver type={typeToEdit} ref={ref} />
+      </Modal>
+      <Modal
+        open={loading && loaderIsOpen}
+        onClick={() => setLoaderIsOpen(false)}
+        closeAfterTransition
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+          }}
+        >
+          <Loader />
+        </Box>
       </Modal>
     </>
   )

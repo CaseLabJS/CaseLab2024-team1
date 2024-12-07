@@ -20,9 +20,14 @@ class DocumentStore {
     this.documentData = document
   }
 
-  patchDocumentVersion = async (fields: Partial<DocumentVersionModel>) => {
+  patchDocumentVersion = async (
+    fields: Partial<DocumentVersionModel>,
+    isDone?: boolean
+  ) => {
     const patchedDocument = await executeWithLoading(this, () =>
-      documentControllerApi.patchDocumentVersion(this.documentData.id, fields)
+      documentControllerApi.patchDocumentVersion(this.documentData.id, fields, {
+        isDone,
+      })
     )
 
     if (patchedDocument) {
@@ -30,6 +35,8 @@ class DocumentStore {
         this.documentData = patchedDocument
       })
     }
+
+    return patchedDocument
   }
 
   createDocumentVersion = async (documentVersion: DocumentVersionModel) => {

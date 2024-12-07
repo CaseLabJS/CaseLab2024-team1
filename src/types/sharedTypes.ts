@@ -1,6 +1,8 @@
 import { DocumentTransitions } from '@/api/documentController/types'
 
 // user-controller
+import { DocumentTransitions } from '@/api/documentController/types.ts'
+
 export interface User {
   id: number
   name: string
@@ -76,7 +78,7 @@ export interface DocumentVersion {
   description: string
   createdAt: string //ISOString
   values: Value[]
-  base64Content: string
+  base64Content: string | null
   signatures: Signature[]
 }
 
