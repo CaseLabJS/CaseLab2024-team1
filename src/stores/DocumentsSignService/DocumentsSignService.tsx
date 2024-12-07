@@ -11,6 +11,7 @@ import { Vote } from '@/api/signatureController'
 
 class DocumentSignService {
   isSRsFetched: boolean = false
+  fetchPromise: Promise<void> | null = null
   documents: { [key: string]: DocumentWithSignature } = {}
   signatureRequests: VersionGroup<SignatureRequestStore[]> = {}
   votes: VersionGroup<Vote[]> = {}
@@ -43,11 +44,26 @@ class DocumentSignService {
   }
 
   initialFetch = async () => {
-    if (!this.isSRsFetched) {
-      await this.fetchSignatureRequests()
-      await signatureListStore.fetchVotes()
-      this.isSRsFetched = true
+    if (this.fetchPromise) {
+      await this.fetchPromise
+      return
     }
+
+    if (this.isSRsFetched) {
+      return
+    }
+
+    this.fetchPromise = (async () => {
+      try {
+        await this.fetchSignatureRequests()
+        await signatureListStore.fetchVotes()
+        this.isSRsFetched = true
+      } finally {
+        this.fetchPromise = null
+      }
+    })()
+
+    await this.fetchPromise
   }
   wrapWithSignature = async (document: DocumentStore) => {
     await this.initialFetch()
@@ -55,6 +71,28 @@ class DocumentSignService {
     const documentWithSignature = combineDocumentWithSignature(document)
     return documentWithSignature
   }
+  fetchMoreDocuments = async (pageSize: number) => {
+    const currentPages = Math.floor(
+      Object.keys(this.documents).length / pageSize
+    )
+    await documentsListStore.fetchDocuments({
+      page: currentPages,
+      size: pageSize,
+    })
+
+    const result = await Promise.all(
+      documentsListStore.documents.map((document) => {
+        return this.wrapWithSignature(document)
+      })
+    )
+
+    runInAction(() => {
+      result.forEach((documentWithSignature) => {
+        this.documents[documentWithSignature.id] = documentWithSignature
+      })
+    })
+  }
+
   fetchDocumentById = async (documentId: number): Promise<void> => {
     try {
       if (!this.documents[documentId]) {
@@ -79,6 +117,10 @@ class DocumentSignService {
 
   get error() {
     return documentsListStore.error || signatureListStore.error
+  }
+
+  get documentsSize() {
+    return Object.keys(this.documents).length
   }
 }
 const documentSignService = new DocumentSignService()

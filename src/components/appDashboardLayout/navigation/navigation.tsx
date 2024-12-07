@@ -3,8 +3,6 @@ import InboxIcon from '@mui/icons-material/Inbox'
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox'
 import DraftsIcon from '@mui/icons-material/Drafts'
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep'
-import DocumentScannerIcon from '@mui/icons-material/DocumentScanner'
-import GradingIcon from '@mui/icons-material/Grading'
 import AddIcon from '@mui/icons-material/Add'
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
@@ -15,9 +13,9 @@ import FolderDeleteIcon from '@mui/icons-material/FolderDelete'
 import PostAddIcon from '@mui/icons-material/PostAdd'
 import { ROUTES } from '@/router/constants.ts'
 import { getNavigationPath } from '@/components/appDashboardLayout/navigation/getNavigationPath.ts'
-import { TextIncrease } from '@mui/icons-material'
-import CodeIcon from '@mui/icons-material/Code'
-import CodeOffIcon from '@mui/icons-material/CodeOff'
+import QuizIcon from '@mui/icons-material/Quiz'
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
+import GradingIcon from '@mui/icons-material/Grading'
 
 export const NAVIGATION: Navigation = [
   {
@@ -60,13 +58,18 @@ export const NAVIGATION: Navigation = [
     title: 'Согласование',
   },
   {
+    segment: getNavigationPath(ROUTES.app('signing')),
+    title: 'Требуют подписания',
+    icon: <HistoryEduIcon />,
+  },
+  {
     segment: getNavigationPath(ROUTES.app('processing')),
-    title: 'Требуют обработки',
-    icon: <DocumentScannerIcon />,
+    title: 'Ожидают согласования',
+    icon: <QuizIcon />,
   },
   {
     segment: getNavigationPath(ROUTES.app('processed')),
-    title: 'Обработанные',
+    title: 'Согласованные',
     icon: <GradingIcon />,
   },
 ]
@@ -81,11 +84,6 @@ export const ADMIN_NAVIGATION: Navigation = [
     segment: ROUTES.admin('admin/document-types/create'),
     title: 'Создать тип документа',
     icon: <PostAddIcon />,
-  },
-  {
-    segment: ROUTES.admin('admin/attribute-type/create'),
-    title: 'Создать атрибут',
-    icon: <TextIncrease />,
   },
   {
     kind: 'divider',
@@ -114,15 +112,5 @@ export const ADMIN_NAVIGATION: Navigation = [
     segment: ROUTES.admin('admin/document-types/deleted'),
     title: 'Удаленные типы',
     icon: <FolderDeleteIcon />,
-  },
-  {
-    segment: ROUTES.admin('admin/attribute-type'),
-    title: 'Атрибуты',
-    icon: <CodeIcon />,
-  },
-  {
-    segment: ROUTES.admin('admin/attribute-type/delete'),
-    title: 'Удаленные атрибуты',
-    icon: <CodeOffIcon />,
   },
 ]

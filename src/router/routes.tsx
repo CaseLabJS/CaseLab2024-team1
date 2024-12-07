@@ -21,8 +21,8 @@ import { DocumentPage } from '@/pages/documentPage'
 import AliveTypes from '@/components/documentTypesTable/AliveTypes'
 import DeadTypes from '@/components/documentTypesTable/DeadTypes'
 import { DraftPage } from '@/pages/draftPage'
-import AttributesPage from '@/pages/AttributesPage'
-import CreateAttributePage from '@/pages/CreateAttributePage'
+import { JournalPage } from '@/pages/journalPage'
+import { DocumentPage as MockPage } from '@/mock/documentPage'
 
 export const publicRoutes = [
   {
@@ -90,6 +90,16 @@ export const appRoutes = [
             path: ROUTES.app('deleted'),
             Component: DeletedPage,
           },
+          {
+            path: ROUTES.app(':journal'),
+            Component: JournalPage,
+            children: [
+              {
+                path: ':id',
+                Component: MockPage,
+              },
+            ],
+          },
         ],
       },
     ],
@@ -135,15 +145,7 @@ export const adminRoutes = [
           },
           {
             path: ROUTES.admin('attribute-type'),
-            element: <AttributesPage aliveTable={true} key={0} />,
-          },
-          {
-            path: ROUTES.admin('attribute-type/create'),
-            element: <CreateAttributePage />,
-          },
-          {
-            path: ROUTES.admin('attribute-type/delete'),
-            element: <AttributesPage aliveTable={false} key={1} />,
+            element: <div>Attribute Type</div>,
           },
         ],
       },
