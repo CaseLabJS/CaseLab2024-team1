@@ -1,4 +1,4 @@
-import AdminPage from '@/components/adminPage/AdminPage'
+import { AdminPage } from '@/pages/adminPage'
 import UserTable from '@/components/userTable/UserTable'
 import CreateUser from '@/components/createUser/CreateUser'
 import DeletedUsers from '@/components/deletedUsers/DeletedUsers'
@@ -116,7 +116,11 @@ export const adminRoutes = [
         Component: AppDashboardLayout,
         children: [
           {
-            path: ROUTES.admin(),
+            index: true,
+            element: <Navigate to="statistics" replace />,
+          },
+          {
+            path: ROUTES.admin('statistics'),
             element: <AdminPage />,
           },
           {
