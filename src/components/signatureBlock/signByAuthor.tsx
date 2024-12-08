@@ -1,13 +1,6 @@
 import { FC, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import {
-  Stack,
-  Button,
-  ButtonGroup,
-  Box,
-  Alert,
-  Typography,
-} from '@mui/material'
+import { Stack, Button, ButtonGroup, Alert } from '@mui/material'
 import documentSignService from '@/stores/DocumentsSignService'
 import { SignatureModeSelector } from './signatureModeSelector'
 import { CensorsListMenu } from './censorsListMenu'
@@ -15,6 +8,8 @@ import { VoteForm } from './voteForm'
 import { modesMap } from './constants'
 import { Modes, SignByAuthorProps, VoteFormValues } from './types'
 import { DocumentTransitions } from '@/api/documentController/types'
+import GradingIcon from '@mui/icons-material/Grading'
+import { runInAction } from 'mobx'
 
 export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
   const { loading } = documentSignService
@@ -24,29 +19,28 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
 
   if (!document.isSignedByAuthor) {
     return (
-      <Box mt={2}>
-        <Button
-          size="medium"
-          color="primary"
-          variant="contained"
-          onClick={() => void document.sign(true)}
-          disabled={loading}
-        >
-          Подписать документ
-        </Button>
-      </Box>
+      <Button
+        size="small"
+        sx={{
+          display: 'flex',
+          gap: '0.2rem',
+        }}
+        variant="outlined"
+        onClick={() => void document.sign(true)}
+        disabled={loading}
+      >
+        <GradingIcon />
+        Подписать документ
+      </Button>
     )
   }
 
   if (
     document.documentData.state === DocumentTransitions.SENT_ON_SIGNING ||
-    document.documentData.state === DocumentTransitions.SENT_ON_VOTING
+    document.documentData.state === DocumentTransitions.SENT_ON_VOTING ||
+    document.documentData.state === DocumentTransitions.SIGNED
   ) {
-    return <Typography> Документ на согласовании или голосовании</Typography>
-  }
-
-  if (document.documentData.state === DocumentTransitions.SIGNED) {
-    return <Typography> Документ согласован</Typography>
+    return null
   }
 
   const showCensorsList = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -54,9 +48,13 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
   }
 
   return (
-    <Stack spacing={2} direction="row" mt={2}>
-      <ButtonGroup variant="contained" aria-label="manage censors">
-        <Button sx={{ minWidth: '14rem!important' }} onClick={showCensorsList}>
+    <Stack spacing={2} direction="row">
+      <ButtonGroup variant="outlined" aria-label="manage censors">
+        <Button
+          size="small"
+          sx={{ minWidth: '11rem!important' }}
+          onClick={showCensorsList}
+        >
           {modesMap[mode]}
         </Button>
         <SignatureModeSelector selectMode={setMode} />
@@ -75,7 +73,13 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
               <Button
                 variant="contained"
                 disabled={loading || !censors.length || censors.length > 1}
-                onClick={() => void document.sendSignRequest(censors)}
+                onClick={() => {
+                  void document.sendSignRequest(censors)
+                  runInAction(() => {
+                    document.documentData.state =
+                      DocumentTransitions.SENT_ON_SIGNING
+                  })
+                }}
               >
                 {modesMap[mode]}
               </Button>
@@ -83,9 +87,13 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
           ) : (
             <VoteForm
               disabled={loading || !censors.length}
-              startVote={(formValues: VoteFormValues) =>
+              startVote={(formValues: VoteFormValues) => {
                 void document.startVote({ ...formValues, censors })
-              }
+                runInAction(() => {
+                  document.documentData.state =
+                    DocumentTransitions.SENT_ON_VOTING
+                })
+              }}
             />
           )
         }}

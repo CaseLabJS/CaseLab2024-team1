@@ -1,6 +1,7 @@
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import { ToolbarButton } from '@/types/types.ts'
+import { SignatureBlock } from '@/components/signatureBlock'
 
 interface DocumentActionsProps {
   buttons: ToolbarButton[]
@@ -26,6 +27,7 @@ export const DocumentActions = (props: DocumentActionsProps) => {
           {button.content} {button.text}
         </Button>
       ))}
+      {<SignatureBlock />}
     </Box>
   )
 }

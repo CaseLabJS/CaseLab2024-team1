@@ -7,7 +7,11 @@ import { isCurrentUser, isSameUser } from '@/lib'
 import SR from '@/stores/SignatureRequestStore'
 import SL from '@/stores/SignatureListStore'
 import authorStore from '@/stores/AuthStore'
-import { SignatureModel, Vote } from '@/api/signatureController'
+import {
+  SignatureModel,
+  SignatureRequestStatus,
+  Vote,
+} from '@/api/signatureController'
 import { filterFulfilled } from './helpers'
 import { DocumentTransitions } from '@/api/documentController/types'
 import { stateLabelMap } from '@/components/documentsJournal/constants'
@@ -68,7 +72,15 @@ export class SignService {
   }
 
   protected signByUser = async (signatureModel: SignatureModel) => {
-    const promises = this.ownSR.map((sr) => sr.sign(signatureModel))
+    const promises = this.ownSR.map((sr) =>
+      sr.sign({
+        ...signatureModel,
+        ...(sr.votingId !== null && {
+          status:
+            `${signatureModel.status}_BY_VOTING` as SignatureRequestStatus,
+        }),
+      })
+    )
 
     const results = await Promise.allSettled(promises)
 
@@ -79,18 +91,19 @@ export class SignService {
 
     runInAction(() => {
       this.lastVersion?.signatures.push(...successSignatures)
+      // TODO
+      this.document.documentData.state = DocumentTransitions.SIGNED
     })
   }
 
-  sign = async (isApproved: boolean = true) => {
+  sign = async (isApproved: boolean = true, placeholderTitle: string = '') => {
     const signatureModel: SignatureModel = {
-      placeholderTitle: '',
+      placeholderTitle,
       status: isApproved ? 'APPROVED' : 'REJECTED',
     }
 
     if (this.isUserAuthor) return await this.signByAuthor(signatureModel)
-
-    void (await this.signByUser(signatureModel))
+    await this.signByUser(signatureModel)
   }
 
   sendSignRequest = async (censors: Censor[]) => {

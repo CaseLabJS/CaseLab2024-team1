@@ -89,7 +89,8 @@ export const initialState: JournalState = {
 }
 
 export const JournalTypeLabelMap = {
+  all: 'Все документы',
   signing: 'Требующие подписания',
   processing: 'Требующие согласования',
-  processed: 'Обработанные',
+  processed: 'Согласованные',
 }

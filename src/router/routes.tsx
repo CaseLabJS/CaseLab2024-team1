@@ -22,7 +22,6 @@ import AliveTypes from '@/components/documentTypesTable/AliveTypes'
 import DeadTypes from '@/components/documentTypesTable/DeadTypes'
 import { DraftPage } from '@/pages/draftPage'
 import { JournalPage } from '@/pages/journalPage'
-import { DocumentPage as MockPage } from '@/mock/documentPage'
 import AttributesPage from '@/pages/AttributesPage'
 import CreateAttributePage from '@/pages/CreateAttributePage'
 
@@ -110,7 +109,7 @@ export const appRoutes = [
             children: [
               {
                 path: ':id',
-                Component: MockPage,
+                Component: DocumentPage,
               },
             ],
           },
