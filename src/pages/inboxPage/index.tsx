@@ -1,7 +1,7 @@
 import { DocumentsList } from '@/components/documentsList/documentsList'
 import { Signature, User } from '@/types/sharedTypes.ts'
 import { GridColDef, GridRowParams } from '@mui/x-data-grid'
-import { useEffect, useMemo, useCallback } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import signatureListStore from '@/stores/SignatureListStore'
 import documentsListStore from '@/stores/DocumentsListStore'
 import authStore from '@/stores/AuthStore'
@@ -15,7 +15,7 @@ export interface RowData {
   documentName: string
   sender: User
   signatures: Signature[]
-  file: string
+  file: string | null
   date: string
 }
 
@@ -64,21 +64,39 @@ const columns: GridColDef<RowData>[] = [
   },
 ]
 export const InboxPage = observer(() => {
-  const { documents, countTotalDocuments, documentsSize } = documentsListStore
+  const {
+    loading,
+    documents,
+    countTotalDocuments,
+    documentsSize,
+    fetchDocuments,
+  } = documentsListStore
+  const [countTotalForwardSize, setCountTotalForwardSize] = useState(0)
   const { signatureRequests } = signatureListStore
   const { user } = authStore
 
   const navigate = useNavigate()
 
   useEffect(() => {
-    void countTotalDocuments()
-    void documentsListStore.fetchDocuments({
-      isAlive: true,
-      page: 0,
-      size: 15,
-    })
-    void signatureListStore.fetchSignatureRequests()
-  }, [countTotalDocuments])
+    void (async () => {
+      const result = await countTotalDocuments()
+      if (result) {
+        setCountTotalForwardSize(result)
+      }
+
+      if (countTotalForwardSize) {
+        await fetchDocuments({
+          size: countTotalForwardSize,
+        })
+      }
+      await signatureListStore.fetchSignatureRequests()
+    })()
+  }, [
+    countTotalDocuments,
+    countTotalForwardSize,
+    documentsSize,
+    fetchDocuments,
+  ])
 
   const rows = useMemo(() => {
     return signatureRequests
@@ -123,11 +141,10 @@ export const InboxPage = observer(() => {
       <DocumentsList
         columns={columns}
         rows={rows}
-        buttons={[]}
-        onSelectionChange={() => {}}
-        onPaginationModelChange={() => {}}
-        totalDocuments={documentsSize}
         onRowClick={handleRowClick}
+        paginationMode="client"
+        loading={loading}
+        checkboxSelection={false}
       />
     </>
   )
