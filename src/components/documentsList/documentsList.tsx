@@ -36,6 +36,7 @@ interface DocumentsListProps<T extends GridValidRowModel> {
   paginationMode?: GridFeatureMode
   onRowClick?: (params: GridRowParams) => void
   loading?: boolean
+  checkboxSelection?: boolean
 }
 
 export const DocumentsList = observer(
@@ -54,6 +55,7 @@ export const DocumentsList = observer(
       paginationMode = 'server',
       onRowClick,
       loading,
+      checkboxSelection = true,
     } = props
 
     const [paginationModel, setPaginationModel] = useState<GridPaginationModel>(
@@ -104,7 +106,7 @@ export const DocumentsList = observer(
             onPaginationModelChange={handlePaginationModelChange}
             rowCount={rowCount}
             pageSizeOptions={paginationOption}
-            checkboxSelection
+            checkboxSelection={checkboxSelection}
             disableColumnMenu
             disableRowSelectionOnClick
             disableVirtualization
