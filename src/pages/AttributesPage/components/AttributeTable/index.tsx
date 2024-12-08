@@ -109,11 +109,11 @@ const AttributeTable = (props: Props) => {
         rows={props.rows}
         disableRowSelectionOnClick
         getRowHeight={() => 'auto'}
-        paginationMode="server"
+        // paginationMode="server"
         paginationModel={props.paginationModel}
         onPaginationModelChange={props.onPaginationModelChange}
         pageSizeOptions={[10, 20, 40]}
-        rowCount={props.rowCount}
+        //rowCount={props.rowCount}
         slots={{
           pagination: () => (
             <GridPagination labelRowsPerPage={'Аттрибутов на странице'} />
