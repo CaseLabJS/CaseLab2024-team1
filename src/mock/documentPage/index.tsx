@@ -17,11 +17,6 @@ export const DocumentPage = observer(() => {
   const navigate = useNavigate()
   const document = documentId ? documents[documentId] : null
 
-  const [selectedVersionIndex, setSelectedVersionIndex] = useState(0)
-  const handleVersionSelect = useCallback((index: number) => {
-    setSelectedVersionIndex(index)
-  }, [])
-
   useEffect(() => {
     if (documentId) void fetchDocumentById(Number(documentId))
   }, [documentId, fetchDocumentById])
@@ -41,6 +36,13 @@ export const DocumentPage = observer(() => {
 
   if (loading) return <Loader />
   if (!document) return null
+
+  const lastIndex = document.documentData.documentVersions.length - 1
+  const [selectedVersionIndex, setSelectedVersionIndex] = useState(lastIndex)
+
+  const handleVersionSelect = useCallback((index: number) => {
+    setSelectedVersionIndex(index)
+  }, [])
 
   return (
     <Modal open={!!documentId} onClose={handleClose}>

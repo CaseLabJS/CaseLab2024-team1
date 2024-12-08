@@ -12,7 +12,7 @@ import DocumentStore from '@/stores/DocumentStore'
 
 interface DocumentHeaderProps {
   isChecked: boolean
-  onChangeSwitch: (event: ChangeEvent<HTMLInputElement>) => void
+  onChangeSwitch?: (event: ChangeEvent<HTMLInputElement>) => void
   isLatestVersion?: boolean
   documentStore?: DocumentStore | null
 }
