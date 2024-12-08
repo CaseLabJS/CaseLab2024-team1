@@ -14,7 +14,7 @@ const HandleFileActions = (props: HandleFileActionsProps) => {
       props.setFile(file)
     }
     if (firstRender) setFirstRender(false)
-  }, [file, firstRender])
+  }, [file, firstRender, props])
   const handleDownload = useCallback(() => {
     if (props.file) {
       const url = URL.createObjectURL(props.file)
@@ -36,6 +36,7 @@ const HandleFileActions = (props: HandleFileActionsProps) => {
       props.setFile(fileList[0])
       const newBase64 = await fileToBase64(fileList[0])
       props.setValue('base64Content', newBase64, { shouldDirty: true })
+      return
     }
   }
   return (
@@ -111,7 +112,7 @@ const HandleFileActions = (props: HandleFileActionsProps) => {
             accept: '.pdf,.png,.jpg,.jpeg,.txt,.docx',
             multiple: false,
           }}
-          onChange={void handleAttachFile}
+          onChange={handleAttachFile}
         />
       </Box>
     </Box>

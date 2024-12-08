@@ -16,7 +16,8 @@ import { CreateDocumentVersionProps } from './types'
 import { FormData } from './types'
 import HandleFileActions from './HandleFileActions'
 import { base64ToFile } from '@/utils/base64ToFile'
-const CreateDocumentVersion = (props: CreateDocumentVersionProps) => {
+import { observer } from 'mobx-react-lite'
+const CreateDocumentVersion = observer((props: CreateDocumentVersionProps) => {
   const [document] = useState<DocumentVersion>(
     props.document.documentVersions[props.document.documentVersions.length - 1]
   )
@@ -208,5 +209,5 @@ const CreateDocumentVersion = (props: CreateDocumentVersionProps) => {
       </Snackbar>
     </>
   )
-}
+})
 export default CreateDocumentVersion
