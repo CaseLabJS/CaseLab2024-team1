@@ -1,6 +1,6 @@
 import { Loader } from '@/components/loader'
 import { useNotifications } from '@toolpad/core'
-import { useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import documentsSignService from '@/stores/DocumentsSignService'
 import { observer } from 'mobx-react-lite'
@@ -16,6 +16,11 @@ export const DocumentPage = observer(() => {
   const notifications = useNotifications()
   const navigate = useNavigate()
   const document = documentId ? documents[documentId] : null
+
+  const [selectedVersionIndex, setSelectedVersionIndex] = useState(0)
+  const handleVersionSelect = useCallback((index: number) => {
+    setSelectedVersionIndex(index)
+  }, [])
 
   useEffect(() => {
     if (documentId) void fetchDocumentById(Number(documentId))
@@ -54,7 +59,13 @@ export const DocumentPage = observer(() => {
       >
         <DocumentHeader isChecked={false} onChangeSwitch={() => {}} />
 
-        {document && <DocumentDetails documentStore={document} />}
+        {document && (
+          <DocumentDetails
+            documentStore={document}
+            selectedVersionIndex={selectedVersionIndex}
+            onVersionSelect={handleVersionSelect}
+          />
+        )}
         <SignatureBlock document={document} />
       </Paper>
     </Modal>

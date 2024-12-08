@@ -1,5 +1,5 @@
-import { useNavigate, useParams } from 'react-router-dom'
-import { ChangeEvent, useCallback, useEffect, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import documentsListStore from '@/stores/DocumentsListStore'
 import Modal from '@mui/material/Modal'
 import { observer } from 'mobx-react-lite'
@@ -8,15 +8,21 @@ import Paper from '@mui/material/Paper'
 import DocumentStore from '@/stores/DocumentStore'
 import { DocumentHeader } from '@/components/documentDetails/documentHeader/documentHeader.tsx'
 import { DocumentDetails } from '@/components/documentDetails/documentDetails.tsx'
+import { getNavigationType } from '@/components/appDashboardLayout/navigation/getNavigationType.ts'
+import { NavigationType } from '@/components/appDashboardLayout/navigation/types.ts'
+import { Loader } from '@/components/loader'
 
 export const DocumentPage = observer(() => {
   const { getDocumentById, loading } = documentsListStore
 
   const [documentStore, setDocumentStore] = useState<DocumentStore>()
   const [isChecked, setIsChecked] = useState(false)
+  const [selectedVersionIndex, setSelectedVersionIndex] = useState(0)
 
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const navigationType = getNavigationType(location.pathname)
 
   const handleChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setIsChecked(event.target.checked)
@@ -29,10 +35,36 @@ export const DocumentPage = observer(() => {
   useEffect(() => {
     if (!id) return
     void (async () => {
-      const getDocument = await getDocumentById(+id)
+      let getDocument
+
+      if (navigationType === NavigationType.DELETED) {
+        getDocument = await getDocumentById(+id, false)
+      } else {
+        getDocument = await getDocumentById(+id)
+      }
       setDocumentStore(getDocument)
     })()
-  }, [getDocumentById, id])
+  }, [getDocumentById, id, navigationType])
+
+  useEffect(() => {
+    if (documentStore) {
+      const lastIndex = documentStore.documentData.documentVersions.length - 1
+      setSelectedVersionIndex(lastIndex)
+    }
+  }, [documentStore])
+
+  const handleVersionSelect = useCallback((index: number) => {
+    setSelectedVersionIndex(index)
+  }, [])
+
+  const isLatestVersion = useMemo(() => {
+    return (
+      (documentStore &&
+        selectedVersionIndex ===
+          documentStore.documentData.documentVersions.length - 1) ||
+      false
+    )
+  }, [documentStore, selectedVersionIndex])
 
   return (
     <Modal open={!!id} onClose={handleClose}>
@@ -46,7 +78,7 @@ export const DocumentPage = observer(() => {
           left: '50%',
           transform: 'translate(-50%, -50%)',
           minWidth: { lg: 1050, md: 850, sm: 550, xs: 380 },
-          maxHeight: { md: 750, sm: 650, xs: 550 },
+          maxHeight: 650,
           overflow: 'auto',
           border: 'none',
           padding: { lg: '3rem', md: '2.5rem', xs: '2rem' },
@@ -54,19 +86,31 @@ export const DocumentPage = observer(() => {
             ':focus-visible': {
               outline: 'none',
             },
+            '&::-webkit-scrollbar': {
+              width: '0.5rem',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: 'grey',
+              borderRadius: '0.5rem',
+            },
           },
         }}
       >
-        <DocumentHeader isChecked={isChecked} onChangeSwitch={handleChange} />
+        <DocumentHeader
+          isChecked={isChecked}
+          onChangeSwitch={handleChange}
+          isLatestVersion={isLatestVersion}
+          documentStore={documentStore || null}
+        />
 
-        {loading && (
-          <Typography variant="body2" sx={{ textAlign: 'center' }}>
-            Загрузка документа...
-          </Typography>
-        )}
+        {loading && <Loader />}
 
         {documentStore && !isChecked && (
-          <DocumentDetails documentStore={documentStore} />
+          <DocumentDetails
+            documentStore={documentStore}
+            selectedVersionIndex={selectedVersionIndex}
+            onVersionSelect={handleVersionSelect}
+          />
         )}
         {documentStore && isChecked && (
           //TODO здесь будет компонент для редактирования

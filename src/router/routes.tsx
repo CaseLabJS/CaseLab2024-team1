@@ -89,6 +89,12 @@ export const appRoutes = [
           {
             path: ROUTES.app('deleted'),
             Component: DeletedPage,
+            children: [
+              {
+                path: ':id',
+                Component: DocumentPage,
+              },
+            ],
           },
           {
             path: ROUTES.app(':journal'),

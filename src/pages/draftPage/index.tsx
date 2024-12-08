@@ -65,23 +65,29 @@ const columns: GridColDef<RowData>[] = [
 
 export const DraftPage = observer(() => {
   const {
+    loading,
     deleteDocument,
     fetchDocuments,
     documents,
     countTotalDocuments,
-    documentsSize,
   } = documentsListStore
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
+  const [countTotalDraftSize, setCountTotalDraftSize] = useState(0)
 
   useEffect(() => {
-    void countTotalDocuments(true, true)
+    void (async () => {
+      const result = await countTotalDocuments(true, true)
+      if (result) {
+        setCountTotalDraftSize(result)
+      }
 
-    void fetchDocuments({
-      page: DEFAULT_PAGE,
-      size: DEFAULT_PAGE_SIZE,
-      showDraft: true,
-    })
-  }, [countTotalDocuments, documentsSize, fetchDocuments])
+      await fetchDocuments({
+        page: DEFAULT_PAGE,
+        size: DEFAULT_PAGE_SIZE,
+        showDraft: true,
+      })
+    })()
+  }, [countTotalDocuments, fetchDocuments])
 
   const notifications = useNotifications()
   const navigate = useNavigate()
@@ -176,8 +182,9 @@ export const DraftPage = observer(() => {
         buttons={buttons}
         onSelectionChange={handleChange}
         onPaginationModelChange={handlePaginationModelChange}
-        totalDocuments={documentsSize}
+        totalDocuments={countTotalDraftSize}
         onRowClick={handleRowClick}
+        loading={loading}
       />
     </PageContainer>
   )

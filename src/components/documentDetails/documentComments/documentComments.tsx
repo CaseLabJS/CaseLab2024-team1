@@ -7,13 +7,20 @@ import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import SendIcon from '@mui/icons-material/Send'
 import { Comment } from '@/types/sharedTypes.ts'
-import PersonIcon from '@mui/icons-material/Person'
-import { ChangeEvent, useCallback, useState } from 'react'
+import {
+  ChangeEvent,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+  useRef,
+} from 'react'
 import DocumentStore from '@/stores/DocumentStore'
 import { observer } from 'mobx-react-lite'
 import React from 'react'
 import { useNotifications } from '@toolpad/core'
-import { formatTimeAgo } from '@/utils/formatTimeAgo.ts'
+import { DocumentTransitions } from '@/api/documentController/types.ts'
+import { CommentItem } from '@/components/documentDetails/documentComments/commentItem.tsx'
 
 interface DocumentCommentsProps {
   documentStore: DocumentStore
@@ -24,6 +31,15 @@ export const DocumentComments = observer((props: DocumentCommentsProps) => {
 
   const [comment, setComment] = useState('')
   const [newCommentId, setNewCommentId] = useState<number | null>(null)
+  const [showAllComments, setShowAllComments] = useState(false)
+  const commentsEndRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (newCommentId) {
+      commentsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [newCommentId])
+
   const notifications = useNotifications()
 
   const document = documentStore.documentData
@@ -36,11 +52,20 @@ export const DocumentComments = observer((props: DocumentCommentsProps) => {
   )
 
   const handleSendComment = useCallback(async () => {
+    if (comment.trim() === '') {
+      notifications.show('Комментарий не может быть пустым', {
+        severity: 'warning',
+        autoHideDuration: 2000,
+      })
+      return
+    }
+
     const result = await documentStore.addDocumentComment(comment)
 
     if (result) {
       setNewCommentId(result.id)
       setComment('')
+      setShowAllComments(true)
 
       setTimeout(() => {
         setNewCommentId(null)
@@ -62,6 +87,14 @@ export const DocumentComments = observer((props: DocumentCommentsProps) => {
     [handleSendComment]
   )
 
+  const handleShowMoreComments = () => {
+    setShowAllComments(true)
+  }
+
+  const displayedComments = useMemo(() => {
+    return showAllComments ? document.comments : document.comments.slice(0, 3)
+  }, [document.comments, showAllComments])
+
   return (
     <Box
       sx={{
@@ -82,94 +115,84 @@ export const DocumentComments = observer((props: DocumentCommentsProps) => {
         <Divider sx={{ backgroundColor: 'primary.main' }} />
       </Box>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <AccountBoxIcon
-          sx={{
-            width: '2.8rem',
-            height: '2.8rem',
-            color: 'primary.main',
-          }}
-        />
-        <TextField
-          fullWidth
-          multiline
-          maxRows={4}
-          value={comment}
-          onChange={handleChangeComment}
-          onKeyDown={handleKeyDown}
-          slotProps={{
-            htmlInput: {
-              maxLength: 255,
-            },
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => void handleSendComment()}
-                    edge="end"
-                  >
-                    <SendIcon sx={{ color: 'primary.main' }} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-          variant="outlined"
-          placeholder="Оставьте свой комментарий..."
-          size="small"
-        />
+      {document.state !== DocumentTransitions.DELETED && (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <AccountBoxIcon
+            sx={{
+              width: '2.8rem',
+              height: '2.8rem',
+              color: 'primary.main',
+            }}
+          />
+          <TextField
+            fullWidth
+            multiline
+            maxRows={4}
+            value={comment}
+            onChange={handleChangeComment}
+            onKeyDown={handleKeyDown}
+            slotProps={{
+              htmlInput: {
+                maxLength: 255,
+              },
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => void handleSendComment()}
+                      edge="end"
+                    >
+                      <SendIcon sx={{ color: 'primary.main' }} />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+            variant="outlined"
+            placeholder="Оставьте свой комментарий..."
+            size="small"
+          />
+        </Box>
+      )}
+
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+          maxHeight: '18rem',
+          overflow: 'auto',
+          '&::-webkit-scrollbar': {
+            width: '0.5rem',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: 'grey',
+            borderRadius: '0.5rem',
+          },
+        }}
+      >
+        {displayedComments.length > 0 &&
+          displayedComments.map((comment: Comment) => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              isNew={newCommentId === comment.id}
+            />
+          ))}
+        <Box ref={commentsEndRef} />
       </Box>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {document.comments.length > 0 &&
-          document.comments.map((comment: Comment) => (
-            <Box
-              key={comment.id}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                p: 1,
-                borderRadius: '4px',
-                backgroundColor:
-                  newCommentId === comment.id ? 'grey.300' : 'transparent',
-                transition: 'background-color 0.3s',
-              }}
-            >
-              <PersonIcon
-                sx={{
-                  width: '2.5rem',
-                  height: '2.5rem',
-                  color: 'grey.600',
-                }}
-              />
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.2rem',
-                }}
-              >
-                <Box>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontWeight: 600,
-                      pr: 0.5,
-                      color: 'primary.dark',
-                    }}
-                  >
-                    {comment.author.name} {comment.author.surname}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: 'grey.500' }}>
-                    {formatTimeAgo(comment.createdAt)}
-                  </Typography>
-                </Box>
-                <Typography variant="body2">{comment.content}</Typography>
-              </Box>
-            </Box>
-          ))}
-      </Box>
+      {document.comments.length > 3 && !showAllComments && (
+        <Box sx={{ textAlign: 'center', mt: 2 }}>
+          <Typography
+            variant="body2"
+            sx={{ cursor: 'pointer', color: 'primary.main' }}
+            onClick={handleShowMoreComments}
+          >
+            Показать следующие комментарии
+          </Typography>
+        </Box>
+      )}
     </Box>
   )
 })
