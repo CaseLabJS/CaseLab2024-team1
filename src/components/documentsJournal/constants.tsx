@@ -74,8 +74,10 @@ export const filtersMap = {
   processed: (document: DocumentWithSignature) =>
     document.documentData.state === DocumentTransitions.SIGNED,
   signing: (document: DocumentWithSignature) =>
-    !document.isSignedByUser &&
-    document.ownSR.every((sr) => sr.status !== 'REJECTED'),
+    (document.isUserAuthor && !document.isSignedByUser) ||
+    (!document.isUserAuthor &&
+      document.isSignedByAuthor &&
+      document.ownSR.every((sr) => sr.status !== 'REJECTED')),
 }
 
 export const default_pagination_model = {

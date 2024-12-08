@@ -46,13 +46,14 @@ export class SignService {
       { ...signatureModel, placeholderTitle: 'sign by author' }
     )
 
-    if (signature) {
-      runInAction(() => {
+    runInAction(() => {
+      if (signature) {
         this.document.documentData.documentVersions
           .at(-1)!
           .signatures.push(signature)
-      })
-    }
+      }
+      this.document.documentData.state = DocumentTransitions.SIGNED_BY_AUTHOR
+    })
   }
 
   protected fetchVotes = () => {
@@ -72,6 +73,10 @@ export class SignService {
   }
 
   protected signByUser = async (signatureModel: SignatureModel) => {
+    if (!this.ownSR.length) {
+      await this.updateSRs()
+    }
+    const hasVote = this.lastVersionSR.some(({ votingId }) => votingId)
     const promises = this.ownSR.map((sr) =>
       sr.sign({
         ...signatureModel,
@@ -91,8 +96,14 @@ export class SignService {
 
     runInAction(() => {
       this.lastVersion?.signatures.push(...successSignatures)
-      // TODO
-      this.document.documentData.state = DocumentTransitions.SIGNED
+      if (successSignatures.length) {
+        this.document.documentData.state = DocumentTransitions.SIGNED
+      } else if (hasVote) {
+        this.document.documentData.state =
+          DocumentTransitions.REJECTED_BY_VOTING
+      } else {
+        this.document.documentData.state = DocumentTransitions.SENT_ON_REWORK
+      }
     })
   }
 
@@ -103,7 +114,7 @@ export class SignService {
     }
 
     if (this.isUserAuthor) return await this.signByAuthor(signatureModel)
-    await this.signByUser(signatureModel)
+    void this.signByUser(signatureModel)
   }
 
   sendSignRequest = async (censors: Censor[]) => {
@@ -120,6 +131,7 @@ export class SignService {
 
     runInAction(() => {
       this.lastVersionSR.push(...signatureRequestsStore)
+      this.document.documentData.state = DocumentTransitions.SENT_ON_SIGNING
     })
   }
 
@@ -139,12 +151,10 @@ export class SignService {
     })
     runInAction(() => {
       //this.vote = vote
+      this.document.documentData.state = DocumentTransitions.SENT_ON_VOTING
     })
-    return vote
-  }
 
-  cancelVote = (censors: User[]) => {
-    console.log('startVote', censors)
+    return vote
   }
 
   addCensor = (user: User) => {
@@ -185,6 +195,7 @@ export class SignService {
   }
 
   protected get lastVersionSR(): SR[] {
+    if (!this.SRVersionMap) return []
     const lastVersionId = this.lastVersion?.versionId
     return lastVersionId && lastVersionId in this.SRVersionMap
       ? this.SRVersionMap[lastVersionId]
