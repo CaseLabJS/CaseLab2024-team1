@@ -6,12 +6,14 @@ import { SignByReviewer } from './signByReviewer'
 import { SignByAuthor } from './signByAuthor'
 import { Loader } from '@/components/loader/loader'
 import { withDocument } from '@/hoc/withDocument'
+import { useSignTransition } from './useSignTransition'
 
 export const SignatureBlockRaw: FC<SignatureBlockProps> = ({ document }) => {
   const { loading } = documentsSignService
+  const hasSignTransition = useSignTransition(document)
 
   if (loading) return <Loader />
-  if (!document) return null
+  if (!document || !hasSignTransition) return null
 
   return (
     <>

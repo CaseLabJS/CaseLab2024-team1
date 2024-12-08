@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom'
 import documentsSignService, {
   DocumentWithSignature,
 } from '@/stores/DocumentsSignService'
-import { Loader } from '@/components/loader'
 
 interface WithDocumentProps {
   document: DocumentWithSignature
@@ -15,8 +14,7 @@ export const withDocument = (
 ) => {
   const HOC: React.FC = (props) => {
     const { id: documentId } = useParams<{ id: string }>()
-    const { documents, loading, error, fetchDocumentById } =
-      documentsSignService
+    const { documents, error, fetchDocumentById } = documentsSignService
     const notifications = useNotifications()
     const document = documentId ? documents[documentId] : null
 
@@ -33,7 +31,6 @@ export const withDocument = (
       }
     }, [error, notifications])
 
-    if (loading) return <Loader />
     if (!document) return null
 
     return <WrappedComponent {...props} document={document} />
