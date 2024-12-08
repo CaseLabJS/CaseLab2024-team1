@@ -67,11 +67,11 @@ const AttributesPage = (props: Props) => {
   }, [success])
   const fetchAliveData = async () => {
     try {
-      const { page, pageSize } = paginationModel
+      // const { page, pageSize } = paginationModel
       await attributeListStore.fetchAttributes({
         showOnlyAlive: true,
-        page: page,
-        size: pageSize,
+        // page: page,
+        // size: pageSize,
       })
       const fetchedAliveAttributes = getAttributes()
       await documentTypeListStore.fetchDocumentTypes()
@@ -95,11 +95,11 @@ const AttributesPage = (props: Props) => {
   }
   const fetchDeadData = async () => {
     try {
-      const { page, pageSize } = paginationModel
+      // const { page, pageSize } = paginationModel
       await attributeListStore.fetchAttributes({
         showOnlyAlive: false,
-        page: page,
-        size: pageSize,
+        // page: page,
+        // size: pageSize,
       })
       const fetchedDeadAttributes = getAttributes()
       await documentTypeListStore.fetchDocumentTypes()
