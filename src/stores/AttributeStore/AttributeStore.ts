@@ -27,7 +27,7 @@ class AttributeStore {
     }
   }
 
-  async pathAttribute(attribute: Partial<NewAttribute>) {
+  async patchAttribute(attribute: Partial<NewAttribute>) {
     const patchedAttribute = await executeWithLoading(this, async () =>
       attributeControllerApi.patchAttribute(this.data.id, attribute)
     )

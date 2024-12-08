@@ -10,14 +10,19 @@ class AttributeListStore {
   attributes: InstanceType<typeof AttributeStore>[] = []
   loading: boolean = true
   error: SerializedError | null = null
+  attributesSize: number = 0
 
   constructor() {
     makeAutoObservable(this)
   }
 
-  async fetchAttributes() {
+  async fetchAttributes(params?: {
+    page?: number
+    size?: number
+    showOnlyAlive?: boolean
+  }) {
     const fetchedAttributes = await executeWithLoading(this, async () =>
-      attributeControllerApi.getAttributes()
+      attributeControllerApi.getAttributes(params)
     )
 
     if (fetchedAttributes) {
@@ -65,6 +70,27 @@ class AttributeListStore {
         ...this.attributes.filter((attr) => attr.data.id !== attributeId),
       ]
     })
+  }
+
+  async recoverAttribute(attributeId: number) {
+    await executeWithLoading(this, () =>
+      attributeControllerApi.recover(attributeId)
+    )
+    runInAction(() => {
+      this.attributes = [
+        ...this.attributes.filter((attr) => attr.data.id !== attributeId),
+      ]
+    })
+  }
+  async countTotalAttributes(params?: { showOnlyAlive?: boolean }) {
+    const countAttributes = await executeWithLoading(this, () =>
+      attributeControllerApi.getAttributesCount(params)
+    )
+    if (countAttributes) {
+      runInAction(() => {
+        this.attributesSize = countAttributes
+      })
+    }
   }
 }
 
