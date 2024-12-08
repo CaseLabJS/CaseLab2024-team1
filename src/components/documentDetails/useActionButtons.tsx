@@ -1,6 +1,3 @@
-import { NavigationType } from '@/components/appDashboardLayout/navigation/types.ts'
-import SaveAltIcon from '@mui/icons-material/SaveAlt'
-import AssignmentIcon from '@mui/icons-material/Assignment'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { Document } from '@/types/sharedTypes.ts'
 import { useCallback, useMemo } from 'react'
@@ -10,19 +7,25 @@ import { useNavigate } from 'react-router-dom'
 import { useNotifications } from '@toolpad/core'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import { ToolbarButton } from '@/types/types.ts'
+import { DocumentTransitions } from '@/api/documentController/types.ts'
+import SaveAltIcon from '@mui/icons-material/SaveAlt'
+import UnarchiveIcon from '@mui/icons-material/Unarchive'
 
 export const useActionButtons = (
-  navigationType: NavigationType | null,
+  transitions: DocumentTransitions[],
   document: Document,
   selectedVersionIndex: number,
   onPreview: (file: File) => void
 ): ToolbarButton[] => {
-  const { deleteDocument, countTotalDocuments, error } = documentsListStore
+  const { deleteDocument, countTotalDocuments, error, recoverDocument } =
+    documentsListStore
 
   const navigate = useNavigate()
   const notifications = useNotifications()
 
   const documentContent = document.documentVersions[selectedVersionIndex]
+  const lastDocumentVersions =
+    document.documentVersions[document.documentVersions.length - 1]
   const base64Content = documentContent.base64Content
   const file = base64ToFile(base64Content)
 
@@ -48,7 +51,28 @@ export const useActionButtons = (
     }
   }, [file])
 
+  const handleRecover = useCallback(async () => {
+    navigate('..')
+    await recoverDocument(document.id)
+
+    if (!error) {
+      await countTotalDocuments()
+      notifications.show('Успешно восстановлено', {
+        severity: 'success',
+        autoHideDuration: 2000,
+      })
+    }
+  }, [
+    countTotalDocuments,
+    document.id,
+    error,
+    navigate,
+    notifications,
+    recoverDocument,
+  ])
+
   const handleDeleted = useCallback(async () => {
+    navigate('..')
     await deleteDocument(document.id)
 
     if (!error) {
@@ -57,7 +81,6 @@ export const useActionButtons = (
         severity: 'success',
         autoHideDuration: 2000,
       })
-      navigate('..')
     }
   }, [
     countTotalDocuments,
@@ -75,50 +98,59 @@ export const useActionButtons = (
   }, [file, onPreview])
 
   const actionButtons = useMemo(() => {
-    switch (navigationType) {
-      case NavigationType.INBOX:
-        return []
+    const buttons: ToolbarButton[] = []
 
-      case NavigationType.FORWARD: {
-        const buttons = [
-          {
-            content: <SaveAltIcon />,
-            text: 'Скачать',
-            onClick: handleDownload,
-            disabled: !documentContent.base64Content?.split(',')[1],
-          },
-          {
-            content: <AssignmentIcon />,
-            text: 'Подписать',
-            onClick: () => console.log(),
-          },
-          {
-            content: <DeleteIcon />,
-            text: 'Удалить',
-            onClick: () => void handleDeleted(),
-          },
-        ]
-
-        if (!fileTypeCheck) {
-          buttons.unshift({
-            content: <VisibilityIcon />,
-            text: 'Файл',
-            onClick: handlePreview,
-          })
-        }
-
-        return buttons
-      }
-
-      default:
-        return []
+    if (
+      transitions.includes(DocumentTransitions.DELETED) &&
+      lastDocumentVersions === documentContent
+    ) {
+      buttons.push({
+        content: <DeleteIcon />,
+        text: 'Удалить',
+        onClick: () => void handleDeleted(),
+        disabled:
+          !transitions.includes(DocumentTransitions.DELETED) ||
+          lastDocumentVersions !== documentContent,
+      })
     }
+
+    if (
+      transitions.includes(DocumentTransitions.DRAFT) &&
+      lastDocumentVersions === documentContent
+    ) {
+      buttons.push({
+        content: <UnarchiveIcon />,
+        text: 'Восстановить',
+        onClick: () => void handleRecover(),
+      })
+    }
+
+    if (documentContent.base64Content?.split(',')[1]) {
+      buttons.push({
+        content: <SaveAltIcon />,
+        text: 'Скачать',
+        onClick: handleDownload,
+      })
+    }
+
+    if (!fileTypeCheck) {
+      buttons.unshift({
+        content: <VisibilityIcon />,
+        text: 'Файл',
+        onClick: handlePreview,
+        disabled: false,
+      })
+    }
+
+    return buttons
   }, [
-    navigationType,
-    handleDownload,
-    documentContent.base64Content,
-    fileTypeCheck,
+    transitions,
+    lastDocumentVersions,
+    documentContent,
     handleDeleted,
+    handleRecover,
+    fileTypeCheck,
+    handleDownload,
     handlePreview,
   ])
 

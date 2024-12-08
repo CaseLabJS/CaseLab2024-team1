@@ -15,6 +15,8 @@ import {
   renderNoResults,
   renderRecentSearches,
 } from '@/components/search/searchModal/searchModalRenderers.tsx'
+import authStore from '@/stores/AuthStore'
+import searchStore from '@/stores/SearchStore'
 
 interface SearchModalProps {
   openModal: boolean
@@ -38,6 +40,8 @@ export const SearchModal = (props: SearchModalProps) => {
   const [searchQuery, setSearchQuery] = useState('')
   const navigate = useNavigate()
   const theme = useTheme()
+  const { user } = authStore
+  const { findDocumentById } = searchStore
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -64,9 +68,15 @@ export const SearchModal = (props: SearchModalProps) => {
     (documentInfo: DocumentVersion) => {
       onValueAdd(documentInfo)
       onCloseModal()
-      navigate(`${ROUTES.app('forward')}/${documentInfo.id}`)
+      const document = findDocumentById(documentInfo.id)
+
+      if (document) {
+        navigate(
+          `${ROUTES.app(document.user.id === user?.id ? 'forward' : 'inbox')}/${documentInfo.id}`
+        )
+      }
     },
-    [onValueAdd, onCloseModal, navigate]
+    [onValueAdd, onCloseModal, findDocumentById, navigate, user?.id]
   )
 
   return (

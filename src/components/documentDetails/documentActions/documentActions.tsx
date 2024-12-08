@@ -23,7 +23,7 @@ export const DocumentActions = (props: DocumentActionsProps) => {
           onClick={() => void button.onClick()}
           disabled={button.disabled}
         >
-          {button.content} {button.text && button.text}
+          {button.content} {button.text}
         </Button>
       ))}
     </Box>

@@ -1,8 +1,4 @@
-import {
-  DEFAULT_PAGE,
-  DEFAULT_PAGE_SIZE,
-  DocumentsList,
-} from '@/components/documentsList/documentsList.tsx'
+import { DocumentsList } from '@/components/documentsList/documentsList.tsx'
 import { Document, Signature, User } from '@/types/sharedTypes.ts'
 import { GridColDef, GridRowParams } from '@mui/x-data-grid'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -13,10 +9,12 @@ import { useNotifications } from '@toolpad/core'
 import { GridRowId } from '@mui/x-data-grid/models/gridRows'
 import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel'
 import { observer } from 'mobx-react-lite'
-import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
 import { options } from '@/utils/dateOptions'
 import Typography from '@mui/material/Typography'
 import { useNavigate } from 'react-router-dom'
+import authStore from '@/stores/AuthStore'
+import searchStore from '@/stores/SearchStore'
+import { DocumentTransitions } from '@/api/documentController/types.ts'
 
 interface RowData {
   id: number
@@ -74,60 +72,68 @@ const columns: GridColDef<RowData>[] = [
 
 export const ForwardPage = observer(() => {
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
+  const [countTotalForwardSize, setCountTotalForwardSize] = useState(0)
   const {
+    loading,
     fetchDocuments,
     deleteDocument,
     documents,
     countTotalDocuments,
     documentsSize,
   } = documentsListStore
+  const { user } = authStore
 
   const notifications = useNotifications()
   const navigate = useNavigate()
 
   useEffect(() => {
-    void countTotalDocuments()
+    void (async () => {
+      const result = await countTotalDocuments()
+      if (result) {
+        setCountTotalForwardSize(result)
+      }
 
-    void fetchDocuments({
-      page: DEFAULT_PAGE,
-      size: DEFAULT_PAGE_SIZE,
-    })
-  }, [countTotalDocuments, fetchDocuments])
+      if (countTotalForwardSize) {
+        await fetchDocuments({
+          size: countTotalForwardSize,
+        })
+      }
+    })()
+  }, [
+    countTotalDocuments,
+    countTotalForwardSize,
+    documentsSize,
+    fetchDocuments,
+  ])
 
   const rows = useMemo(() => {
-    return documents.map(({ documentData }): RowData => {
-      const lastDocumentVersions =
-        documentData.documentVersions[documentData.documentVersions.length - 1]
+    return documents
+      .filter(({ documentData }) => documentData.user.id === user?.id)
+      .map(({ documentData }): RowData => {
+        const lastDocumentVersions =
+          documentData.documentVersions[
+            documentData.documentVersions.length - 1
+          ]
 
-      return {
-        id: documentData.id,
-        documentName: lastDocumentVersions.title,
-        sender: documentData.user,
-        signatures: lastDocumentVersions.signatures,
-        file: lastDocumentVersions.base64Content,
-        date: new Date(lastDocumentVersions.createdAt).toLocaleDateString(
-          'ru-RU',
-          options
-        ),
-      }
-    })
-  }, [documents])
+        return {
+          id: documentData.id,
+          documentName: lastDocumentVersions.title,
+          sender: documentData.user,
+          signatures: lastDocumentVersions.signatures,
+          file: lastDocumentVersions.base64Content,
+          date: new Date(lastDocumentVersions.createdAt).toLocaleDateString(
+            'ru-RU',
+            options
+          ),
+        }
+      })
+  }, [documents, user])
 
   const handleChange = useCallback(
     (newSelectionModel: GridRowSelectionModel) => {
       setSelectionModel([...newSelectionModel])
     },
     []
-  )
-
-  const handlePaginationModelChange = useCallback(
-    (paginationModel: GridPaginationModel) => {
-      void fetchDocuments({
-        page: paginationModel.page,
-        size: paginationModel.pageSize,
-      })
-    },
-    [fetchDocuments]
   )
 
   const handleRowClick = useCallback(
@@ -163,7 +169,14 @@ export const ForwardPage = observer(() => {
     {
       content: <DeleteIcon />,
       onClick: handleDelete,
-      disabled: selectionModel.length === 0,
+      disabled:
+        selectionModel.length === 0 ||
+        selectionModel.some((id) => {
+          const document = searchStore.findDocumentById(+id)
+          return (
+            document && document.state === DocumentTransitions.SENT_ON_VOTING
+          )
+        }),
     },
   ]
 
@@ -177,9 +190,9 @@ export const ForwardPage = observer(() => {
         rows={rows}
         buttons={buttons}
         onSelectionChange={handleChange}
-        onPaginationModelChange={handlePaginationModelChange}
-        totalDocuments={documentsSize}
         onRowClick={handleRowClick}
+        paginationMode="client"
+        loading={loading}
       />
     </>
   )

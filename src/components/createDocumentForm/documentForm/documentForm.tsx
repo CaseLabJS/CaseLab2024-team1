@@ -294,6 +294,7 @@ export const DocumentForm = (props: DocumentFormProps) => {
               control={control}
               render={({ field, fieldState }) => (
                 <DynamicFormField
+                  isFilled={!!field.value}
                   errorMessage={fieldState.error?.message}
                   title={attr.name}
                   required={attr.required}

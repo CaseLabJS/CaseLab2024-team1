@@ -107,6 +107,8 @@ class DocumentsListStore {
         this.documentsSize = countDocuments
       })
     }
+
+    return countDocuments
   }
 }
 

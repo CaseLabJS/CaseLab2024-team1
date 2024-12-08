@@ -1,10 +1,9 @@
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
-  DeletedDocs,
 } from '@/components/deletedDocs/deletedDocs'
 import { Signature, User } from '@/types/sharedTypes.ts'
-import { GridColDef } from '@mui/x-data-grid'
+import { GridColDef, GridRowParams } from '@mui/x-data-grid'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import documentsListStore from '@/stores/DocumentsListStore'
 import { ToolbarButton } from '@/types/types'
@@ -15,14 +14,16 @@ import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionM
 import { observer } from 'mobx-react-lite'
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
 import { options } from '@/utils/dateOptions'
-import { PageContainer } from '@toolpad/core'
+import Typography from '@mui/material/Typography'
+import { DocumentsList } from '@/components/documentsList/documentsList.tsx'
+import { useNavigate } from 'react-router-dom'
 
 export interface RowData {
   id: number
   documentName: string
   sender: User
   signatures: Signature[]
-  file: string
+  file: string | null
   date: string
 }
 
@@ -72,20 +73,25 @@ const columns: GridColDef<RowData>[] = [
 ]
 export const DeletedPage = observer(() => {
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
-  const { recoverDocument, documents, countTotalDocuments, documentsSize } =
+  const [countTotalDeletedSize, setCountTotalDeletedSize] = useState(0)
+  const { fetchDocuments, recoverDocument, documents, countTotalDocuments } =
     documentsListStore
 
   const notifications = useNotifications()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    void countTotalDocuments(false)
+    void (async () => {
+      const result = await countTotalDocuments(false)
+      setCountTotalDeletedSize(result || 0)
 
-    void documentsListStore.fetchDocuments({
-      isAlive: false,
-      page: DEFAULT_PAGE,
-      size: DEFAULT_PAGE_SIZE,
-    })
-  }, [countTotalDocuments])
+      void fetchDocuments({
+        isAlive: false,
+        page: DEFAULT_PAGE,
+        size: DEFAULT_PAGE_SIZE,
+      })
+    })()
+  }, [countTotalDocuments, fetchDocuments])
 
   const rows = useMemo(() => {
     return documents.map(({ documentData }): RowData => {
@@ -115,13 +121,20 @@ export const DeletedPage = observer(() => {
 
   const handlePaginationModelChange = useCallback(
     (paginationModel: GridPaginationModel) => {
-      void documentsListStore.fetchDocuments({
+      void fetchDocuments({
         isAlive: false,
         page: paginationModel.page,
         size: paginationModel.pageSize,
       })
     },
-    []
+    [fetchDocuments]
+  )
+
+  const handleRowClick = useCallback(
+    (params: GridRowParams) => {
+      navigate(`${params.id}`)
+    },
+    [navigate]
   )
 
   const handleRecover = useCallback(async () => {
@@ -155,22 +168,19 @@ export const DeletedPage = observer(() => {
   ]
 
   return (
-    <PageContainer
-      breadcrumbs={[]}
-      sx={{
-        '&.MuiContainer-root': {
-          maxWidth: 'none',
-        },
-      }}
-    >
-      <DeletedDocs
+    <>
+      <Typography variant="h4" sx={{ pb: 2 }}>
+        Удаленные
+      </Typography>
+      <DocumentsList
         columns={columns}
         rows={rows}
         buttons={buttons}
         onSelectionChange={handleChange}
         onPaginationModelChange={handlePaginationModelChange}
-        totalDocuments={documentsSize}
+        totalDocuments={countTotalDeletedSize}
+        onRowClick={handleRowClick}
       />
-    </PageContainer>
+    </>
   )
 })
