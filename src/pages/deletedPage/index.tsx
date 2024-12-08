@@ -1,7 +1,8 @@
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
-} from '@/components/deletedDocs/deletedDocs'
+  DocumentsList,
+} from '@/components/documentsList/documentsList'
 import { Signature, User } from '@/types/sharedTypes.ts'
 import { GridColDef, GridRowParams } from '@mui/x-data-grid'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -15,7 +16,6 @@ import { observer } from 'mobx-react-lite'
 import { GridPaginationModel } from '@mui/x-data-grid/models/gridPaginationProps'
 import { options } from '@/utils/dateOptions'
 import Typography from '@mui/material/Typography'
-import { DocumentsList } from '@/components/documentsList/documentsList.tsx'
 import { useNavigate } from 'react-router-dom'
 
 export interface RowData {
