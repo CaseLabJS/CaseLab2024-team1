@@ -6,6 +6,7 @@ import { combineDocumentWithSignature, groupByVersions } from './helpers'
 import DocumentStore from '../DocumentStore'
 import SignatureRequestStore from '../SignatureRequestStore'
 import { Vote } from '@/api/signatureController'
+import authStore from '../AuthStore'
 
 //* SRs - SignatureRequests
 
@@ -22,6 +23,17 @@ class DocumentSignService {
       () => [signatureListStore.signatureRequests, signatureListStore.votes],
       () => {
         this.groupVoteAndSRs()
+      }
+    )
+
+    reaction(
+      () => authStore.user, // Что отслеживать
+      () => {
+        this.isSRsFetched = false
+        this.fetchPromise = null
+        this.signatureRequests = {}
+        this.votes = {}
+        this.documents = {}
       }
     )
   }
