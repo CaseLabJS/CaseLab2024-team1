@@ -5,22 +5,23 @@ import { SignatureBlockProps } from './types'
 import { SignByReviewer } from './signByReviewer'
 import { SignByAuthor } from './signByAuthor'
 import { Loader } from '@/components/loader/loader'
+import { withDocument } from '@/hoc/withDocument'
 
-export const SignatureBlock: FC<SignatureBlockProps> = observer(
-  ({ document }) => {
-    const { loading } = documentsSignService
+export const SignatureBlockRaw: FC<SignatureBlockProps> = ({ document }) => {
+  const { loading } = documentsSignService
 
-    if (loading) return <Loader />
-    if (!document) return null
+  if (loading) return <Loader />
+  if (!document) return null
 
-    return (
-      <>
-        {document.isUserAuthor ? (
-          <SignByAuthor document={document} />
-        ) : (
-          <SignByReviewer document={document} />
-        )}
-      </>
-    )
-  }
-)
+  return (
+    <>
+      {document.isUserAuthor ? (
+        <SignByAuthor document={document} />
+      ) : (
+        <SignByReviewer document={document} />
+      )}
+    </>
+  )
+}
+
+export const SignatureBlock = withDocument(observer(SignatureBlockRaw))

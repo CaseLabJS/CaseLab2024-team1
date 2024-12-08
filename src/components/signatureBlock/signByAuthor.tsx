@@ -26,9 +26,12 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
     return (
       <Box mt={2}>
         <Button
-          size="medium"
-          color="primary"
-          variant="contained"
+          size="small"
+          sx={{
+            display: 'flex',
+            gap: '0.2rem',
+          }}
+          variant="outlined"
           onClick={() => void document.sign(true)}
           disabled={loading}
         >
@@ -55,8 +58,12 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
 
   return (
     <Stack spacing={2} direction="row" mt={2}>
-      <ButtonGroup variant="contained" aria-label="manage censors">
-        <Button sx={{ minWidth: '14rem!important' }} onClick={showCensorsList}>
+      <ButtonGroup variant="outlined" aria-label="manage censors">
+        <Button
+          size="small"
+          sx={{ minWidth: '11rem!important' }}
+          onClick={showCensorsList}
+        >
           {modesMap[mode]}
         </Button>
         <SignatureModeSelector selectMode={setMode} />
