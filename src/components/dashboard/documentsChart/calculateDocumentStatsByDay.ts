@@ -27,7 +27,7 @@ export const calculateDocumentStatsByDay = (
     const timezoneOffset = date.getTimezoneOffset()
     const localTime = new Date(date.getTime() - timezoneOffset * 60000)
 
-    if (versionsCount > 1) {
+    if (versionsCount > 1 && doc.state === DocumentTransitions.MODIFIED) {
       if (localTime.getMonth() === currentMonth) {
         modifiedData[localTime.getDate() - 1]++
       }
