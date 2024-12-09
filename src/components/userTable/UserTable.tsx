@@ -178,12 +178,7 @@ const UserTable: React.FC = observer(() => {
             Добавить пользователя
           </Button>
         </Box>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSizeOptions={[5]}
-          disableRowSelectionOnClick
-        />
+        <DataGrid rows={rows} columns={columns} disableRowSelectionOnClick />
       </Box>
       <ConfirmPopover
         open={popoverIsOpen}

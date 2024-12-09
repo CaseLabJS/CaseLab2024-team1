@@ -2,18 +2,21 @@ import { CreateDocumentForm } from '@/components/createDocumentForm/createDocume
 import { Meta, StoryObj } from '@storybook/react'
 import { ThemeProvider } from '@/theme/theme-provider/theme-provider.tsx'
 import CssBaseline from '@mui/material/CssBaseline'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { http, HttpResponse } from 'msw'
+import { mockDocumentTypes } from '@/stories/selectField/testData/testData.ts'
 
 const meta = {
   title: 'Components/CreateDocumentForm',
   component: CreateDocumentForm,
-  tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/document-types']}>
         <ThemeProvider>
           <CssBaseline />
-          <Story />
+          <Routes>
+            <Route path="/document-types" element={<Story />} />
+          </Routes>
         </ThemeProvider>
       </MemoryRouter>
     ),
@@ -23,4 +26,14 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+export const Default: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        http.get('http://localhost:6006/api/document-types', () => {
+          return HttpResponse.json(mockDocumentTypes)
+        }),
+      ],
+    },
+  },
+}

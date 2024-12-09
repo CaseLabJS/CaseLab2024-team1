@@ -6,7 +6,6 @@ import { DocumentsChart } from '@/components/dashboard/documentsChart/documentsC
 import { observer } from 'mobx-react-lite'
 import { useDocumentStats } from '@/components/dashboard/dashboardContent/useDocumentStats.ts'
 import documentSearchStore from '@/stores/DocumentSearchStore'
-import { PageVotingBarChart } from '@/components/dashboard/documentsChart/pageVotingBarChart.tsx'
 import { useEffect } from 'react'
 import documentsListStore from '@/stores/DocumentsListStore'
 
@@ -48,9 +47,9 @@ export const DashboardContent = observer(() => {
               <Grid size={12}>
                 <DocumentsChart documents={allDocuments} />
               </Grid>
-              <Grid size={12}>
-                <PageVotingBarChart documents={allDocuments} />
-              </Grid>
+              {/*<Grid size={12}>*/}
+              {/*  <PageVotingBarChart documents={allDocuments} />*/}
+              {/*</Grid>*/}
             </Grid>
           </Box>
         </Stack>

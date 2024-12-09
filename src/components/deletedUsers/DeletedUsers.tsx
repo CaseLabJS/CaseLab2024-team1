@@ -100,12 +100,7 @@ const DeletedUsers: React.FC = observer(() => {
         <Box textAlign="left" mb={1}>
           <Typography variant="h5">Удаленные пользователи</Typography>
         </Box>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSizeOptions={[5]}
-          disableRowSelectionOnClick
-        />
+        <DataGrid rows={rows} columns={columns} disableRowSelectionOnClick />
       </Box>
       <Snackbar
         open={snackbarIsOpen}
