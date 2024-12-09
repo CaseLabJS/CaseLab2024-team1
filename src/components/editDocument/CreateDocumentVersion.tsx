@@ -1,4 +1,4 @@
-import { DocumentVersion } from '@/types/sharedTypes'
+import { DocumentVersion, Value } from '@/types/sharedTypes'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import {
   Box,
@@ -17,17 +17,19 @@ import { FormData } from './types'
 import HandleFileActions from './HandleFileActions'
 import { base64ToFile } from '@/utils/base64ToFile'
 import { observer } from 'mobx-react-lite'
+import documentTypeListStore from '@/stores/DocumentTypeListStore'
 const CreateDocumentVersion = observer((props: CreateDocumentVersionProps) => {
   const [document] = useState<DocumentVersion>(
     props.document.documentVersions[props.document.documentVersions.length - 1]
   )
   const documentBase64 = document.base64Content ? document.base64Content : ''
-  const [defaultDocumentValues, setDefaultDocumentValues] = useState<FormData>({
+  const [defaultDocumentValues] = useState<FormData>({
     title: document.title,
     description: document.description,
     values: document.values,
     base64Content: documentBase64,
   })
+  const [allValues, setAllValues] = useState<Value[]>([])
   const [file, setFile] = useState<File | null>(null)
   const [snackbarIsOpen, setSnackbarIsOpen] = useState(false)
   const {
@@ -38,6 +40,7 @@ const CreateDocumentVersion = observer((props: CreateDocumentVersionProps) => {
     watch,
     reset,
     setValue,
+    resetField,
   } = useForm<FormData>({
     mode: 'onChange',
     defaultValues: defaultDocumentValues,
@@ -49,17 +52,44 @@ const CreateDocumentVersion = observer((props: CreateDocumentVersionProps) => {
     control,
     name: 'values',
   })
-
-  const [title, description, attrValues] = watch([
-    'title',
-    'description',
-    'values',
-    'base64Content',
-  ])
-  const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log(data)
-    void props.updateDocument(data)
-    setDefaultDocumentValues(data)
+  const getDocumentType = async (id: number) => {
+    const newType = await documentTypeListStore.getDocumentTypeById(id)
+    const values = newType?.attributes.map((attribute) => {
+      return { attributeName: attribute.name, value: '' }
+    })
+    if (values?.length) {
+      setAllValues(values)
+    }
+  }
+  useEffect(() => {
+    void getDocumentType(props.document.documentType.id)
+  }, [])
+  useEffect(() => {
+    if (allValues) {
+      const newValues = allValues.map((value) => {
+        const newValueOfAttr = defaultDocumentValues.values.find(
+          (val) => val.attributeName === value.attributeName
+        )
+        if (newValueOfAttr)
+          return {
+            attributeName: value.attributeName,
+            value: newValueOfAttr.value,
+          }
+        else
+          return {
+            attributeName: value.attributeName,
+            value: value.value,
+          }
+      })
+      resetField('values', { defaultValue: newValues })
+    }
+  }, [allValues, defaultDocumentValues])
+  const [attrValues] = watch(['values'])
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    reset(data)
+    const newValues = data.values.filter((value) => value.value !== '')
+    data.values = newValues
+    void (await props.updateDocument(data))
     setSnackbarIsOpen(true)
   }
   const resetAll = () => {
@@ -134,10 +164,6 @@ const CreateDocumentVersion = observer((props: CreateDocumentVersionProps) => {
               }}
               variant="outlined"
               fullWidth
-              color={
-                defaultDocumentValues.title !== title ? 'success' : 'primary'
-              }
-              focused={defaultDocumentValues.title !== title}
               {...register('title', {
                 required: 'Title required',
               })}
@@ -167,12 +193,6 @@ const CreateDocumentVersion = observer((props: CreateDocumentVersionProps) => {
               maxLength={255}
               multiline
               rows={5}
-              color={
-                defaultDocumentValues.description !== description
-                  ? 'success'
-                  : 'primary'
-              }
-              focused={defaultDocumentValues.description !== description}
               {...register('description')}
             />
           </Box>
