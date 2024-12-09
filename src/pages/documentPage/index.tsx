@@ -11,6 +11,7 @@ import { DocumentDetails } from '@/components/documentDetails/documentDetails.ts
 import { getNavigationType } from '@/components/appDashboardLayout/navigation/getNavigationType.ts'
 import { NavigationType } from '@/components/appDashboardLayout/navigation/types.ts'
 import { Loader } from '@/components/loader'
+import CreateDocumentVersion from '@/components/editDocument/CreateDocumentVersion'
 
 export const DocumentPage = observer(() => {
   const { getDocumentById, loading } = documentsListStore
@@ -113,8 +114,11 @@ export const DocumentPage = observer(() => {
           />
         )}
         {documentStore && isChecked && (
-          //TODO здесь будет компонент для редактирования
-          <Typography variant="body2">Режим редактирования</Typography>
+          <CreateDocumentVersion
+            document={documentStore?.documentData}
+            error={documentStore?.error}
+            updateDocument={documentStore?.createDocumentVersion}
+          />
         )}
       </Paper>
     </Modal>
