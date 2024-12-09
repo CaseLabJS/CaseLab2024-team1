@@ -3,7 +3,6 @@ import { SerializedError } from '@/api/core/serializedError.ts'
 import { makeAutoObservable, runInAction } from 'mobx'
 import { executeWithLoading } from '@/utils/executeWithLoading.ts'
 import { documentControllerApi } from '@/api/documentController'
-import documentsListStore from '@/stores/DocumentsListStore'
 
 class SearchStore {
   allDocuments: Document[] = []
@@ -15,9 +14,7 @@ class SearchStore {
     makeAutoObservable(this)
   }
 
-  fetchAllDocuments = async () => {
-    const { documentsSize } = documentsListStore
-
+  fetchAllDocuments = async (documentsSize: number) => {
     await this.loadDocuments(documentsSize)
   }
 
@@ -39,6 +36,10 @@ class SearchStore {
         this.searchHistory.push(documentVersion)
       })
     }
+  }
+
+  findDocumentById = (id: number) => {
+    return this.allDocuments.find((document) => document.id === id) || null
   }
 }
 

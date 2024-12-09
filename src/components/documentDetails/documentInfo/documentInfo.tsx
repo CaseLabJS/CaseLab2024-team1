@@ -5,6 +5,7 @@ import Divider from '@mui/material/Divider'
 import { DocumentVersion } from '@/types/sharedTypes.ts'
 import { useLocation } from 'react-router-dom'
 import { getNavigationType } from '@/components/appDashboardLayout/navigation/getNavigationType.ts'
+import { useMemo } from 'react'
 
 interface DocumentInfoProps {
   documentVersions: DocumentVersion[]
@@ -30,22 +31,36 @@ export const DocumentInfo = (props: DocumentInfoProps) => {
   const documentDescription = documentVersions[selectedVersionIndex].description
   const documentCreatedAt = documentVersions[selectedVersionIndex].createdAt
   const documentSignatures = documentVersions[selectedVersionIndex].signatures
+  const documentFile =
+    documentVersions[selectedVersionIndex].base64Content?.split(',')[0]
+  const filename = useMemo(() => {
+    if (documentFile) {
+      const filenameMatch = documentFile.match(/filename:([^;]+)/)
+
+      return filenameMatch ? filenameMatch[1] : ''
+    }
+  }, [documentFile])
 
   return (
     <>
       <Box>
         <Typography variant="h5" sx={{ fontWeight: 600, pb: 1 }}>
           {navigationType ? navigationLabels[navigationType] : 'Документ'}{' '}
-          {documentTitle}
+          {`"${documentTitle}"`}
         </Typography>
         <Divider sx={{ backgroundColor: 'primary.main' }} />
       </Box>
 
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-        <Typography variant="body2" gutterBottom>
-          {documentName} от{' '}
-          {new Date(documentCreatedAt).toLocaleDateString('ru-RU')}
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant="body2" gutterBottom>
+            {documentName} от{' '}
+            {new Date(documentCreatedAt).toLocaleDateString('ru-RU')}
+          </Typography>
+          <Typography variant="caption" color="primary.main">
+            {filename}
+          </Typography>
+        </Box>
 
         <Typography variant="body2" gutterBottom>
           Отправитель:{' '}

@@ -1,6 +1,7 @@
 import { DashboardLayout } from '@toolpad/core/DashboardLayout'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Search } from '@/components/search/search.tsx'
+import UserControls from '../userControls/UserControls'
 
 export const AppDashboardLayout = () => {
   const location = useLocation()
@@ -9,7 +10,12 @@ export const AppDashboardLayout = () => {
   return (
     <DashboardLayout
       slots={{
-        toolbarActions: isAppRoute ? Search : () => null,
+        toolbarActions: () => (
+          <>
+            {isAppRoute && <Search />}
+            <UserControls />
+          </>
+        ),
       }}
       sx={{
         '& .MuiDrawer-docked': {
@@ -31,6 +37,9 @@ export const AppDashboardLayout = () => {
         },
         '& >.MuiBox-root': {
           overflow: 'auto',
+        },
+        '& .MuiStack-root': {
+          alignItems: 'center',
         },
       }}
     >

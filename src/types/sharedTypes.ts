@@ -1,5 +1,3 @@
-import { DocumentTransitions } from '@/api/documentController/types'
-
 // user-controller
 import { DocumentTransitions } from '@/api/documentController/types.ts'
 

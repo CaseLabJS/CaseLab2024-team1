@@ -15,8 +15,7 @@ import { useHandleFunctions } from './useHandleFunctions'
 
 export const DocumentsJournal: FC<DocumentsJournalProps> = observer(
   ({ type }) => {
-    if (!(type in filtersMap)) return null
-
+    const journalType = type in filtersMap ? type : 'all'
     const { documents, fetchMoreDocuments } = documentSignService
     const [state, setState] = useState<JournalState>(initialState)
     const {
@@ -32,16 +31,15 @@ export const DocumentsJournal: FC<DocumentsJournalProps> = observer(
     })
 
     const rows = Object.values(documents)
-    const filteredRows = rows.filter(
-      filtersMap[type as keyof typeof filtersMap]
-    )
+    const filterFn = filtersMap[journalType as keyof typeof filtersMap]
+    const filteredRows = rows.filter(filterFn)
     const pagedRows = filteredRows.slice(startIndex, endIndex)
 
     useEffect(() => {
-      if (endIndex >= rows.length) {
+      if (endIndex > filteredRows.length) {
         void fetchMoreDocuments(pageSize)
       }
-    }, [endIndex, fetchMoreDocuments, pageSize, rows.length, type])
+    }, [endIndex, fetchMoreDocuments, filteredRows.length, pageSize, type])
 
     const {
       handleSelectionModelChange,
@@ -52,7 +50,7 @@ export const DocumentsJournal: FC<DocumentsJournalProps> = observer(
     return (
       <>
         <Typography variant="h4" sx={{ pb: 2 }}>
-          {JournalTypeLabelMap[type as keyof typeof JournalTypeLabelMap]}
+          {JournalTypeLabelMap[journalType as keyof typeof JournalTypeLabelMap]}
         </Typography>
         <DocumentsList
           columns={columns}

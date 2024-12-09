@@ -1,22 +1,16 @@
-import { DocumentsList } from '@/components/documentsList/documentsList.tsx'
-import { Document, Signature, User } from '@/types/sharedTypes.ts'
+import { DocumentsList } from '@/components/documentsList/documentsList'
+import { Signature, User } from '@/types/sharedTypes.ts'
 import { GridColDef, GridRowParams } from '@mui/x-data-grid'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
+import signatureListStore from '@/stores/SignatureListStore'
 import documentsListStore from '@/stores/DocumentsListStore'
-import { ToolbarButton } from '@/types/types'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { useNotifications } from '@toolpad/core'
-import { GridRowId } from '@mui/x-data-grid/models/gridRows'
-import { GridRowSelectionModel } from '@mui/x-data-grid/models/gridRowSelectionModel'
+import authStore from '@/stores/AuthStore'
 import { observer } from 'mobx-react-lite'
 import { options } from '@/utils/dateOptions'
 import Typography from '@mui/material/Typography'
 import { useNavigate } from 'react-router-dom'
-import authStore from '@/stores/AuthStore'
-import searchStore from '@/stores/SearchStore'
-import { DocumentTransitions } from '@/api/documentController/types.ts'
 
-interface RowData {
+export interface RowData {
   id: number
   documentName: string
   sender: User
@@ -69,21 +63,18 @@ const columns: GridColDef<RowData>[] = [
     minWidth: 150,
   },
 ]
-
-export const ForwardPage = observer(() => {
-  const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
-  const [countTotalForwardSize, setCountTotalForwardSize] = useState(0)
+export const InboxPage = observer(() => {
   const {
     loading,
-    fetchDocuments,
-    deleteDocument,
     documents,
     countTotalDocuments,
     documentsSize,
+    fetchDocuments,
   } = documentsListStore
+  const [countTotalForwardSize, setCountTotalForwardSize] = useState(0)
+  const { signatureRequests } = signatureListStore
   const { user } = authStore
 
-  const notifications = useNotifications()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -98,6 +89,7 @@ export const ForwardPage = observer(() => {
           size: countTotalForwardSize,
         })
       }
+      await signatureListStore.fetchSignatureRequests()
     })()
   }, [
     countTotalDocuments,
@@ -107,14 +99,18 @@ export const ForwardPage = observer(() => {
   ])
 
   const rows = useMemo(() => {
-    return documents
-      .filter(({ documentData }) => documentData.user.id === user?.id)
-      .map(({ documentData }): RowData => {
+    return signatureRequests
+      .filter(({ userTo }) => user?.id === userTo.id)
+      .map(({ documentId }) => {
+        const documentMatch = documents.find(
+          (document) => document.documentData.id === documentId
+        )
+        if (!documentMatch) return null
+        const { documentData } = documentMatch
         const lastDocumentVersions =
           documentData.documentVersions[
             documentData.documentVersions.length - 1
           ]
-
         return {
           id: documentData.id,
           documentName: lastDocumentVersions.title,
@@ -127,14 +123,8 @@ export const ForwardPage = observer(() => {
           ),
         }
       })
-  }, [documents, user])
-
-  const handleChange = useCallback(
-    (newSelectionModel: GridRowSelectionModel) => {
-      setSelectionModel([...newSelectionModel])
-    },
-    []
-  )
+      .filter((row) => row !== null)
+  }, [documents, signatureRequests, user?.id])
 
   const handleRowClick = useCallback(
     (params: GridRowParams) => {
@@ -143,56 +133,18 @@ export const ForwardPage = observer(() => {
     [navigate]
   )
 
-  const handleDelete = useCallback(async () => {
-    const promises: Promise<void | Document>[] = []
-
-    selectionModel.map((selectedId) => {
-      promises.push(deleteDocument(+selectedId))
-    })
-    const results = await Promise.all(promises)
-    await countTotalDocuments()
-
-    if (selectionModel.some((_, index) => results[index])) {
-      notifications.show('Ошибка при удалении', {
-        severity: 'error',
-        autoHideDuration: 5000,
-      })
-    } else {
-      notifications.show('Успешно удалено', {
-        severity: 'success',
-        autoHideDuration: 2000,
-      })
-    }
-  }, [countTotalDocuments, selectionModel, deleteDocument, notifications])
-
-  const buttons: ToolbarButton[] = [
-    {
-      content: <DeleteIcon />,
-      onClick: handleDelete,
-      disabled:
-        selectionModel.length === 0 ||
-        selectionModel.some((id) => {
-          const document = searchStore.findDocumentById(+id)
-          return (
-            document && document.state === DocumentTransitions.SENT_ON_VOTING
-          )
-        }),
-    },
-  ]
-
   return (
     <>
       <Typography variant="h4" sx={{ pb: 2 }}>
-        Исходящие
+        Входящие
       </Typography>
       <DocumentsList
         columns={columns}
         rows={rows}
-        buttons={buttons}
-        onSelectionChange={handleChange}
         onRowClick={handleRowClick}
         paginationMode="client"
         loading={loading}
+        checkboxSelection={false}
       />
     </>
   )
