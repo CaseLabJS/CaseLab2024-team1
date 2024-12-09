@@ -21,3 +21,8 @@ export interface FunctionDocumentTypesNamesCell {
 export interface FunctionActionCell {
   (params: GridRenderCellParams<AttributesWithDocumentTypes>): JSX.Element
 }
+
+export const PaginationModel = {
+  page: 0,
+  pageSize: 10,
+}

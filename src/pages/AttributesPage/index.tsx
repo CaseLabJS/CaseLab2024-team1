@@ -1,6 +1,5 @@
-import AttributeTable from '@/pages/AttributesPage/components/AttributeTable'
 import { Attribute, DocumentType, NewAttribute } from '@/types/sharedTypes.ts'
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import { SerializedError } from '@/api/core/serializedError.ts'
 import attributeListStore from '@/stores/AttributeListStore'
 import documentTypeListStore from '@/stores/DocumentTypeListStore'
@@ -13,9 +12,12 @@ import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash'
 import {
   AttributesWithDocumentTypes,
   DocumentTypeWithoutAttributesArray,
+  PaginationModel,
 } from '@/pages/AttributesPage/attributesPageTypes.ts'
 import DocumentTypeId from '@/pages/CreateAttributePage/components/DocumentTypeId'
 import ModalEditAttribute from '@/pages/AttributesPage/components/ModalEditAttribute'
+import AliveAttributesTable from '@/pages/AttributesPage/components/AliveAttributesTable'
+import DeadAttributesTable from '@/pages/AttributesPage/components/DeadAttributesTable'
 
 interface Props {
   aliveTable: boolean
@@ -40,32 +42,10 @@ const AttributesPage = (props: Props) => {
   const [selectAliveRowId, setSelectAliveRowId] = useState<number>(-1)
   const [attributeBeforeChanges, setAttributeBeforeChanges] =
     useState<NewAttribute>()
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  })
+  const [paginationModel, setPaginationModel] = useState(PaginationModel)
   const [totalAliveCount, setTotalAliveCount] = useState<number>(0)
   const [totalDeadCount, setTotalDeadCount] = useState<number>(0)
-  useEffect(() => {
-    if (props.aliveTable) void fetchAliveData()
-  }, [paginationModel, props.aliveTable])
-  useEffect(() => {
-    if (!props.aliveTable) void fetchDeadData()
-  }, [paginationModel, props.aliveTable])
-  useEffect(() => {
-    setSuccess(null)
-    //setSnackbarIsOpen(true)
-  }, [error])
-  useEffect(() => {
-    setError(null)
-    if (props.aliveTable) {
-      void fetchAliveData()
-    } else {
-      void fetchDeadData()
-    }
-    //setSnackbarIsOpen(true)
-  }, [success])
-  const fetchAliveData = async () => {
+  const fetchAliveData = useCallback(async () => {
     try {
       // const { page, pageSize } = paginationModel
       await attributeListStore.fetchAttributes({
@@ -92,8 +72,8 @@ const AttributesPage = (props: Props) => {
         )
       }
     }
-  }
-  const fetchDeadData = async () => {
+  }, [])
+  const fetchDeadData = useCallback(async () => {
     try {
       // const { page, pageSize } = paginationModel
       await attributeListStore.fetchAttributes({
@@ -126,7 +106,26 @@ const AttributesPage = (props: Props) => {
         setSnackbarIsOpen(true)
       }
     }
-  }
+  }, [])
+  useEffect(() => {
+    if (props.aliveTable) void fetchAliveData()
+  }, [fetchAliveData, props.aliveTable])
+  useEffect(() => {
+    if (!props.aliveTable) void fetchDeadData()
+  }, [fetchDeadData, props.aliveTable])
+  useEffect(() => {
+    setSuccess(null)
+    //setSnackbarIsOpen(true)
+  }, [error])
+  useEffect(() => {
+    setError(null)
+    if (props.aliveTable) {
+      void fetchAliveData()
+    } else {
+      void fetchDeadData()
+    }
+    //setSnackbarIsOpen(true)
+  }, [fetchAliveData, fetchDeadData, props.aliveTable, success])
   const getAttributes = () => {
     const array: Attribute[] = []
     attributeListStore.attributes.forEach((attribute) => {
@@ -405,15 +404,13 @@ const AttributesPage = (props: Props) => {
     <>
       {props.aliveTable ? (
         <>
-          <h1 style={{ textAlign: 'left' }}>Атрибуты</h1>
-          <AttributeTable
-            key={0}
-            documentTypesNamesCell={getDocumentTypesNamesCell()}
-            actionCell={getAliveCell()}
-            rows={aliveRows}
+          <AliveAttributesTable
+            getDocumentTypesNamesCell={getDocumentTypesNamesCell}
+            getAliveCell={getAliveCell}
+            aliveRows={aliveRows}
             paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            rowCount={totalAliveCount}
+            setPaginationModel={setPaginationModel}
+            totalAliveCount={totalAliveCount}
             aliveTable={props.aliveTable}
           />
           <ModalEditAttribute
@@ -432,15 +429,13 @@ const AttributesPage = (props: Props) => {
         </>
       ) : (
         <>
-          <h1 style={{ textAlign: 'left' }}>Удаленные атрибуты</h1>
-          <AttributeTable
-            key={1}
-            documentTypesNamesCell={getDocumentTypesNamesCell()}
-            actionCell={getDeadCell()}
-            rows={deadRows}
+          <DeadAttributesTable
+            getDocumentTypesNamesCell={getDocumentTypesNamesCell}
+            getDeadCell={getDeadCell}
+            deadRows={deadRows}
             paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            rowCount={totalDeadCount}
+            setPaginationModel={setPaginationModel}
+            totalDeadCount={totalDeadCount}
             aliveTable={props.aliveTable}
           />
         </>

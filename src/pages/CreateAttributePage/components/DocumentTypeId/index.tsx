@@ -1,5 +1,4 @@
 import DeleteIcon from '@mui/icons-material/Delete'
-import Grid2 from '@mui/material/Grid2'
 import React from 'react'
 import { DocumentType, NewAttribute } from '@/types/sharedTypes.ts'
 import Select from '@mui/material/Select'
@@ -8,6 +7,7 @@ import InputLabel from '@mui/material/InputLabel'
 import { Button, SelectChangeEvent } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import { observer } from 'mobx-react-lite'
+import Box from '@mui/material/Box'
 
 interface Props {
   i: number
@@ -21,8 +21,8 @@ interface Props {
 
 const DocumentTypeId = observer((props: Props) => {
   return (
-    <Grid2 key={props.i}>
-      <FormControl required>
+    <Box key={props.i} sx={{ paddingTop: 2 }}>
+      <FormControl>
         <InputLabel id={`documentTypesIds${props.i}`}>
           {`Тип документа ${props.i + 1})`}
         </InputLabel>
@@ -32,7 +32,11 @@ const DocumentTypeId = observer((props: Props) => {
           name={`documentTypesIds${props.i}`}
           value={props.attribute.documentTypesIds[props.i] || ''}
           autoWidth
-          sx={{ minWidth: 300 }}
+          sx={
+            props.i === 0
+              ? { minWidth: 379, textAlign: 'left' }
+              : { minWidth: 300, textAlign: 'left' }
+          }
           onChange={props.handleChangeSelect}
         >
           {props.documentTypesIds.map((type) => {
@@ -53,7 +57,7 @@ const DocumentTypeId = observer((props: Props) => {
           <DeleteIcon />
         </Button>
       )}
-    </Grid2>
+    </Box>
   )
 })
 

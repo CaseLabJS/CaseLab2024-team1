@@ -4,7 +4,7 @@ import CreateAttributeForm from '@/pages/CreateAttributePage/components/CreateAt
 import { observer } from 'mobx-react-lite'
 import { DocumentType, NewAttribute } from '@/types/sharedTypes.ts'
 import documentTypeListStore from '@/stores/DocumentTypeListStore/DocumentTypeListStore.ts'
-import { SelectChangeEvent } from '@mui/material'
+import { Paper, SelectChangeEvent } from '@mui/material'
 import attributeListStore from '@/stores/AttributeListStore/AttributeListStore.ts'
 
 const CreateAttributePage = observer(() => {
@@ -136,18 +136,30 @@ const CreateAttributePage = observer(() => {
   }
 
   return (
-    <CreateAttributeForm
-      attribute={attribute}
-      countAttributeTypes={countAttributeTypes}
-      error={error}
-      success={success}
-      snackbarIsOpen={snackbarIsOpen}
-      setSnackbarIsOpen={setSnackbarIsOpen}
-      handleSubmit={handleSubmit}
-      handleChange={handleChange}
-      getHtmlDocumentTypesIds={getHtmlDocumentTypesIds}
-      addDocumentTypesNames={addDocumentTypesNames}
-    />
+    <Paper
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 2,
+        margin: 'auto',
+        maxWidth: '570px',
+      }}
+    >
+      <CreateAttributeForm
+        attribute={attribute}
+        countAttributeTypes={countAttributeTypes}
+        error={error}
+        success={success}
+        snackbarIsOpen={snackbarIsOpen}
+        setSnackbarIsOpen={setSnackbarIsOpen}
+        handleSubmit={handleSubmit}
+        handleChange={handleChange}
+        getHtmlDocumentTypesIds={getHtmlDocumentTypesIds}
+        addDocumentTypesNames={addDocumentTypesNames}
+      />
+    </Paper>
   )
 })
 
