@@ -4,7 +4,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { executeWithLoading } from '@/utils/executeWithLoading.ts'
 import { documentControllerApi } from '@/api/documentController'
 
-class SearchStore {
+class DocumentSearchStore {
   allDocuments: Document[] = []
   loading: boolean = false
   error: SerializedError | null = null
@@ -43,5 +43,5 @@ class SearchStore {
   }
 }
 
-const searchStore = new SearchStore()
-export default searchStore
+const documentSearchStore = new DocumentSearchStore()
+export default documentSearchStore

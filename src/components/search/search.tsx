@@ -7,8 +7,8 @@ import Tooltip from '@mui/material/Tooltip'
 import SearchIcon from '@mui/icons-material/Search'
 import { DocumentVersion } from '@/types/sharedTypes.ts'
 import { SearchModal } from '@/components/search/searchModal/searchModal.tsx'
-import searchStore from '@/stores/SearchStore'
 import documentsListStore from '@/stores/DocumentsListStore'
+import documentSearchStore from '@/stores/DocumentSearchStore'
 
 export const Search = observer(() => {
   const {
@@ -17,28 +17,20 @@ export const Search = observer(() => {
     addToSearchHistory: storeAddToSearchHistory,
     allDocuments,
     loading,
-  } = searchStore
+  } = documentSearchStore
   const { documentsSize, countTotalDocuments } = documentsListStore
 
   const [openModal, setOpenModal] = useState(false)
-  // const [countAllDocuments, setCountAllDocuments] = useState(0)
 
   useEffect(() => {
     void (async () => {
-      if (!documentsSize) {
-        const result = await countTotalDocuments()
+      const result = await countTotalDocuments()
 
-        if (result) {
-          await fetchAllDocuments(result)
-        }
+      if (result) {
+        await fetchAllDocuments(result)
       }
     })()
-  }, [
-    allDocuments.length,
-    countTotalDocuments,
-    documentsSize,
-    fetchAllDocuments,
-  ])
+  }, [countTotalDocuments, documentsSize, fetchAllDocuments])
 
   const addToSearchHistory = useCallback(
     (value: DocumentVersion) => {

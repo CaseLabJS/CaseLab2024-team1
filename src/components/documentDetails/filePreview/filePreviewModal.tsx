@@ -46,14 +46,14 @@ export const FilePreviewModal = (props: FilePreviewModalProps) => {
             onClick={handleImageClick}
             style={{
               cursor: zoomed ? 'zoom-out' : 'zoom-in',
-              maxWidth: isSmallScreen ? '100%' : 'none',
+              maxWidth: '100%',
               maxHeight: '100%',
               transition: 'transform 0.4s ease',
               willChange: 'transform',
               transform: zoomed
                 ? isSmallScreen
                   ? 'scale(0.8)'
-                  : 'scale(1.1)'
+                  : 'scale(1.4)'
                 : 'scale(1)',
             }}
           />

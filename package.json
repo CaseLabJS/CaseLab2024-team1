@@ -24,6 +24,7 @@
     "@hookform/resolvers": "^3.9.1",
     "@mui/icons-material": "^6.1.5",
     "@mui/material": "^6.1.5",
+    "@mui/x-charts": "^7.23.0",
     "@mui/x-data-grid": "^7.22.0",
     "@toolpad/core": "^0.8.1",
     "@types/node": "^22.7.9",

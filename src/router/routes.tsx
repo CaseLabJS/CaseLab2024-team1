@@ -24,6 +24,7 @@ import { DraftPage } from '@/pages/draftPage'
 import { JournalPage } from '@/pages/journalPage'
 import AttributesPage from '@/pages/AttributesPage'
 import CreateAttributePage from '@/pages/CreateAttributePage'
+import { DashboardPage } from '@/pages/dashboardPage'
 
 export const publicRoutes = [
   {
@@ -102,6 +103,10 @@ export const appRoutes = [
                 Component: DocumentPage,
               },
             ],
+          },
+          {
+            path: ROUTES.app('dashboard'),
+            Component: DashboardPage,
           },
           {
             path: ROUTES.app(':journal'),
