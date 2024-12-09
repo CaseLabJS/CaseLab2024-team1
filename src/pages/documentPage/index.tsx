@@ -3,7 +3,6 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import documentsListStore from '@/stores/DocumentsListStore'
 import Modal from '@mui/material/Modal'
 import { observer } from 'mobx-react-lite'
-import Typography from '@mui/material/Typography'
 import Paper from '@mui/material/Paper'
 import DocumentStore from '@/stores/DocumentStore'
 import { DocumentHeader } from '@/components/documentDetails/documentHeader/documentHeader.tsx'
@@ -14,7 +13,7 @@ import { Loader } from '@/components/loader'
 import CreateDocumentVersion from '@/components/editDocument/CreateDocumentVersion'
 
 export const DocumentPage = observer(() => {
-  const { getDocumentById, loading } = documentsListStore
+  const { getDocumentById, loading, updateDocumentVersion } = documentsListStore
 
   const [documentStore, setDocumentStore] = useState<DocumentStore>()
   const [isChecked, setIsChecked] = useState(false)
@@ -29,9 +28,26 @@ export const DocumentPage = observer(() => {
     setIsChecked(event.target.checked)
   }, [])
 
+  const isLatestVersion = useMemo(() => {
+    return (
+      (documentStore &&
+        selectedVersionIndex ===
+          documentStore.documentData.documentVersions.length - 1) ||
+      false
+    )
+  }, [documentStore, selectedVersionIndex])
+
   const handleClose = useCallback(() => {
+    if (id && documentStore) {
+      updateDocumentVersion(
+        +id,
+        documentStore.documentData.documentVersions[
+          documentStore.documentData.documentVersions.length - 1
+        ]
+      )
+    }
     navigate('..')
-  }, [navigate])
+  }, [documentStore, id, navigate, updateDocumentVersion])
 
   useEffect(() => {
     if (!id) return
@@ -52,20 +68,11 @@ export const DocumentPage = observer(() => {
       const lastIndex = documentStore.documentData.documentVersions.length - 1
       setSelectedVersionIndex(lastIndex)
     }
-  }, [documentStore])
+  }, [documentStore, isChecked])
 
   const handleVersionSelect = useCallback((index: number) => {
     setSelectedVersionIndex(index)
   }, [])
-
-  const isLatestVersion = useMemo(() => {
-    return (
-      (documentStore &&
-        selectedVersionIndex ===
-          documentStore.documentData.documentVersions.length - 1) ||
-      false
-    )
-  }, [documentStore, selectedVersionIndex])
 
   return (
     <Modal open={!!id} onClose={handleClose}>

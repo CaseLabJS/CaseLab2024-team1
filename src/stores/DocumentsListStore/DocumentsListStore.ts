@@ -4,6 +4,7 @@ import { executeWithLoading } from '@/utils/executeWithLoading.ts'
 import { documentControllerApi, DocumentModel } from '@/api/documentController'
 import { SerializedError } from '@/api/core/serializedError.ts'
 import type { QueryParams } from '@/api/core/types.ts'
+import { DocumentVersion } from '@/types/sharedTypes.ts'
 
 class DocumentsListStore {
   documents: InstanceType<typeof DocumentStore>[] = []
@@ -109,6 +110,29 @@ class DocumentsListStore {
     }
 
     return countDocuments
+  }
+
+  updateDocumentVersion = (
+    documentId: number,
+    updatedVersion: DocumentVersion
+  ) => {
+    const findDocument = this.documents.find(
+      (doc) => doc.documentData.id === documentId
+    )
+
+    if (!findDocument) {
+      console.warn(`Document with ID ${documentId} does not exist.`)
+      return
+    }
+
+    runInAction(() => {
+      this.documents = this.documents.map((document) => {
+        if (document.documentData.id === documentId) {
+          document.documentData.documentVersions.push(updatedVersion)
+        }
+        return document
+      })
+    })
   }
 }
 
