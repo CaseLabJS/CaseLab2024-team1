@@ -3,6 +3,7 @@ import { GridColDef } from '@mui/x-data-grid'
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '../documentsList/documentsList'
 import { DocumentTransitions } from '@/api/documentController/types'
 import { JournalState } from './types'
+import authStore from '@/stores/AuthStore'
 
 export const stateLabelMap: Record<string, string> = {
   [DocumentTransitions.SENT_ON_REWORK]: 'Отправлен на доработку',
@@ -72,10 +73,23 @@ export const filtersMap = {
     document.isSignedByUser &&
     document.documentData.state !== DocumentTransitions.SIGNED,
   processed: (document: DocumentWithSignature) =>
-    document.documentData.state === DocumentTransitions.SIGNED,
-  signing: (document: DocumentWithSignature) =>
-    !document.isSignedByUser &&
-    document.ownSR.every((sr) => sr.status !== 'REJECTED'),
+    document.documentData.state === DocumentTransitions.SIGNED &&
+    (document.censors.some((c) => c.id === authStore.user?.id) ||
+      document.isUserAuthor),
+  signing: (document: DocumentWithSignature) => {
+    const isAuthorAndNotSigned =
+      document.isUserAuthor && !document.isSignedByUser
+    const isReadyForSigningByNonAuthor =
+      !document.isUserAuthor &&
+      document.isSignedByAuthor &&
+      !document.isSignedByUser
+
+    return (
+      isAuthorAndNotSigned ||
+      (isReadyForSigningByNonAuthor &&
+        document.ownSR.every((sr) => sr.status !== 'REJECTED'))
+    )
+  },
 }
 
 export const default_pagination_model = {

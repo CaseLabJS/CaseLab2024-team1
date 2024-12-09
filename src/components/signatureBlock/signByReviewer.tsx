@@ -10,6 +10,7 @@ import {
 import { SignByReviewerProps } from './types'
 import documentSignService from '@/stores/DocumentsSignService'
 import { observer } from 'mobx-react-lite'
+import { DocumentTransitions } from '@/api/documentController/types'
 
 export const SignByReviewer: FC<SignByReviewerProps> = observer(
   ({ document }) => {
@@ -36,6 +37,14 @@ export const SignByReviewer: FC<SignByReviewerProps> = observer(
     }
 
     if (document.isSignedByUser) return null
+
+    if (
+      document.documentData.state === DocumentTransitions.SIGNED ||
+      document.documentData.state === DocumentTransitions.SENT_ON_REWORK ||
+      document.documentData.state === DocumentTransitions.REJECTED_BY_VOTING
+    ) {
+      return null
+    }
 
     return (
       <>

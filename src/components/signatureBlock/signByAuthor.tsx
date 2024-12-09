@@ -9,7 +9,6 @@ import { modesMap } from './constants'
 import { Modes, SignByAuthorProps, VoteFormValues } from './types'
 import { DocumentTransitions } from '@/api/documentController/types'
 import GradingIcon from '@mui/icons-material/Grading'
-import { runInAction } from 'mobx'
 
 export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
   const { loading } = documentSignService
@@ -75,10 +74,6 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
                 disabled={loading || !censors.length || censors.length > 1}
                 onClick={() => {
                   void document.sendSignRequest(censors)
-                  runInAction(() => {
-                    document.documentData.state =
-                      DocumentTransitions.SENT_ON_SIGNING
-                  })
                 }}
               >
                 {modesMap[mode]}
@@ -89,10 +84,6 @@ export const SignByAuthor: FC<SignByAuthorProps> = observer(({ document }) => {
               disabled={loading || !censors.length}
               startVote={(formValues: VoteFormValues) => {
                 void document.startVote({ ...formValues, censors })
-                runInAction(() => {
-                  document.documentData.state =
-                    DocumentTransitions.SENT_ON_VOTING
-                })
               }}
             />
           )
