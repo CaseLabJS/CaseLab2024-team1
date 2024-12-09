@@ -2,10 +2,7 @@ import { ChangeEvent, useState } from 'react'
 import { ThemeProvider } from '@/theme/theme-provider/theme-provider.tsx'
 import CssBaseline from '@mui/material/CssBaseline'
 import { Meta, StoryFn, StoryObj } from '@storybook/react'
-import {
-  agreement,
-  testDocumentsType,
-} from '@/stories/selectField/testData/testData.ts'
+import { mockDocumentTypes } from '@/stories/selectField/testData/testData.ts'
 import { SelectField } from '@/components/selectField/selectField.tsx'
 import { DocumentType } from '@/types/sharedTypes.ts'
 
@@ -15,10 +12,9 @@ const meta = {
   parameters: {
     layout: 'centered',
   },
-  tags: ['autodocs'],
   args: {
-    options: testDocumentsType,
-    value: testDocumentsType[0].name,
+    options: mockDocumentTypes,
+    value: mockDocumentTypes[0].name,
     onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       console.log(event.target.value),
     getOptionLabel: (option) => option.name,
@@ -39,7 +35,7 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: StoryFn<typeof SelectField> = () => {
-  const [selectedValue, setSelectedValue] = useState(testDocumentsType[0].name)
+  const [selectedValue, setSelectedValue] = useState(mockDocumentTypes[0].name)
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -51,7 +47,7 @@ export const Default: StoryFn<typeof SelectField> = () => {
 
   return (
     <SelectField
-      options={testDocumentsType}
+      options={mockDocumentTypes}
       value={selectedValue}
       onChange={handleChange}
       label="Выберите тип документа"
@@ -67,27 +63,4 @@ export const NoOptions: Story = {
     value: '',
     sx: {},
   },
-}
-
-export const AgreementSelect: StoryFn<typeof SelectField> = () => {
-  const [selectedValue, setSelectedValue] = useState(agreement[0].text)
-
-  const handleChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const value = event.target.value
-    setSelectedValue(value)
-    console.log('Выбранное значение:', value)
-  }
-
-  return (
-    <SelectField
-      options={agreement}
-      value={selectedValue}
-      onChange={handleChange}
-      label="Выберите статус"
-      getOptionLabel={(option) => option.text}
-      sx={{}}
-    />
-  )
 }

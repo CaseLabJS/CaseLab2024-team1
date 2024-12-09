@@ -1,6 +1,6 @@
 import { DocumentType } from '@/types/sharedTypes.ts'
 
-const defaultDocumentType = {
+export const defaultDocumentType = {
   id: 17181920,
   name: 'Неформализованный документ',
   attributes: [
@@ -22,7 +22,7 @@ const defaultDocumentType = {
   ],
 }
 
-export const testDocumentsType: DocumentType[] = [
+export const mockDocumentTypes: DocumentType[] = [
   defaultDocumentType,
   {
     id: 4357645,
@@ -128,16 +128,5 @@ export const testDocumentsType: DocumentType[] = [
         required: false,
       },
     ],
-  },
-]
-
-export const agreement = [
-  {
-    id: 343453,
-    text: 'На согласование',
-  },
-  {
-    id: 4341299,
-    text: 'На подпись',
   },
 ]

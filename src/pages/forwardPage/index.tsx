@@ -1,6 +1,10 @@
 import { DocumentsList } from '@/components/documentsList/documentsList.tsx'
 import { Document, Signature, User } from '@/types/sharedTypes.ts'
-import { GridColDef, GridRowParams } from '@mui/x-data-grid'
+import {
+  GridColDef,
+  GridRenderCellParams,
+  GridRowParams,
+} from '@mui/x-data-grid'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import documentsListStore from '@/stores/DocumentsListStore'
 import { ToolbarButton } from '@/types/types'
@@ -13,13 +17,15 @@ import { options } from '@/utils/dateOptions'
 import Typography from '@mui/material/Typography'
 import { useNavigate } from 'react-router-dom'
 import authStore from '@/stores/AuthStore'
-import searchStore from '@/stores/SearchStore'
+import documentSearchStore from '@/stores/DocumentSearchStore'
 import { DocumentTransitions } from '@/api/documentController/types.ts'
+import { StatusChip } from '@/pages/forwardPage/statusChip.tsx'
 
 interface RowData {
   id: number
   documentName: string
   sender: User
+  status: DocumentTransitions
   signatures: Signature[]
   file: string | null
   date: string
@@ -42,6 +48,17 @@ const columns: GridColDef<RowData>[] = [
     type: 'string',
     flex: 2,
     minWidth: 150,
+  },
+  {
+    field: 'status',
+    headerName: 'Статус',
+    editable: false,
+    flex: 1.5,
+    minWidth: 150,
+    renderCell: (params: GridRenderCellParams<RowData>) => {
+      const state = params.row
+      return <StatusChip state={state.status} />
+    },
   },
   {
     field: 'signatures',
@@ -114,17 +131,20 @@ export const ForwardPage = observer(() => {
           documentData.documentVersions[
             documentData.documentVersions.length - 1
           ]
+        const commentDate = new Date(lastDocumentVersions.createdAt)
+        const timezoneOffset = commentDate.getTimezoneOffset()
+        const localTime = new Date(
+          commentDate.getTime() - timezoneOffset * 60000
+        ).toLocaleDateString('ru-RU', options)
 
         return {
           id: documentData.id,
           documentName: lastDocumentVersions.title,
           sender: documentData.user,
+          status: documentData.state,
           signatures: lastDocumentVersions.signatures,
           file: lastDocumentVersions.base64Content,
-          date: new Date(lastDocumentVersions.createdAt).toLocaleDateString(
-            'ru-RU',
-            options
-          ),
+          date: localTime,
         }
       })
   }, [documents, user])
@@ -172,7 +192,7 @@ export const ForwardPage = observer(() => {
       disabled:
         selectionModel.length === 0 ||
         selectionModel.some((id) => {
-          const document = searchStore.findDocumentById(+id)
+          const document = documentSearchStore.findDocumentById(+id)
           return (
             document && document.state === DocumentTransitions.SENT_ON_VOTING
           )

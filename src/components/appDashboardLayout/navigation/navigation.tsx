@@ -16,6 +16,7 @@ import { getNavigationPath } from '@/components/appDashboardLayout/navigation/ge
 import QuizIcon from '@mui/icons-material/Quiz'
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu'
 import GradingIcon from '@mui/icons-material/Grading'
+import EqualizerIcon from '@mui/icons-material/Equalizer'
 import { TextIncrease } from '@mui/icons-material'
 import CodeIcon from '@mui/icons-material/Code'
 import CodeOffIcon from '@mui/icons-material/CodeOff'
@@ -52,6 +53,14 @@ export const NAVIGATION: Navigation = [
     segment: getNavigationPath(ROUTES.app('deleted')),
     title: 'Удаленные',
     icon: <DeleteSweepIcon />,
+  },
+  {
+    kind: 'divider',
+  },
+  {
+    segment: getNavigationPath(ROUTES.app('dashboard')),
+    title: 'Статистика',
+    icon: <EqualizerIcon />,
   },
   {
     kind: 'divider',

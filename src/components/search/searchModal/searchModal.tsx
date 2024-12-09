@@ -16,7 +16,7 @@ import {
   renderRecentSearches,
 } from '@/components/search/searchModal/searchModalRenderers.tsx'
 import authStore from '@/stores/AuthStore'
-import searchStore from '@/stores/SearchStore'
+import documentSearchStore from '@/stores/DocumentSearchStore'
 
 interface SearchModalProps {
   openModal: boolean
@@ -41,7 +41,7 @@ export const SearchModal = (props: SearchModalProps) => {
   const navigate = useNavigate()
   const theme = useTheme()
   const { user } = authStore
-  const { findDocumentById } = searchStore
+  const { findDocumentById } = documentSearchStore
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {

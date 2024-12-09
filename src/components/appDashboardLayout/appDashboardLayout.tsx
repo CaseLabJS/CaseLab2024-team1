@@ -10,12 +10,8 @@ export const AppDashboardLayout = () => {
   return (
     <DashboardLayout
       slots={{
-        toolbarActions: () => (
-          <>
-            {isAppRoute && <Search />}
-            <UserControls />
-          </>
-        ),
+        toolbarActions: isAppRoute ? Search : () => null,
+        toolbarAccount: UserControls,
       }}
       sx={{
         '& .MuiDrawer-docked': {
@@ -38,8 +34,10 @@ export const AppDashboardLayout = () => {
         '& >.MuiBox-root': {
           overflow: 'auto',
         },
-        '& .MuiStack-root': {
-          alignItems: 'center',
+        '& .MuiToolbar-root': {
+          '& >.MuiStack-root': {
+            alignItems: 'center',
+          },
         },
       }}
     >
