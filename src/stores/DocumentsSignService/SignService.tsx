@@ -7,11 +7,7 @@ import { isCurrentUser, isSameUser } from '@/lib'
 import SR from '@/stores/SignatureRequestStore'
 import SL from '@/stores/SignatureListStore'
 import authorStore from '@/stores/AuthStore'
-import {
-  SignatureModel,
-  SignatureRequestStatus,
-  Vote,
-} from '@/api/signatureController'
+import { SignatureModel, Vote } from '@/api/signatureController'
 import { filterFulfilled } from './helpers'
 import { DocumentTransitions } from '@/api/documentController/types'
 import { stateLabelMap } from '@/components/documentsJournal/constants'
@@ -77,15 +73,7 @@ export class SignService {
       await this.updateSRs()
     }
     const hasVote = this.lastVersionSR.some(({ votingId }) => votingId)
-    const promises = this.ownSR.map((sr) =>
-      sr.sign({
-        ...signatureModel,
-        ...(sr.votingId !== null && {
-          status:
-            `${signatureModel.status}_BY_VOTING` as SignatureRequestStatus,
-        }),
-      })
-    )
+    const promises = this.ownSR.map((sr) => sr.sign(signatureModel))
 
     const results = await Promise.allSettled(promises)
 
