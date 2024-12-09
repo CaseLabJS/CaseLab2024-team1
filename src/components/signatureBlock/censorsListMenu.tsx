@@ -7,6 +7,9 @@ import UserStore from '@/stores/UserStore'
 import { menuPositionConfig } from './constants'
 import { CensorsList } from './censorsList'
 import { SearchableSubheader } from './searchableSubheader'
+import { isSameUser } from '@/lib'
+import authStore from '@/stores/AuthStore'
+import { TokenPayloadUser } from '@/stores/AuthStore/types'
 
 export const CensorsListMenu: FC<CensorsListMenuProps> = observer(
   ({ render, anchorEl, setAnchorEl }) => {
@@ -74,7 +77,11 @@ export const CensorsListMenu: FC<CensorsListMenuProps> = observer(
           />
 
           <CensorsList
-            censors={foundUsers.filter((user) => !censors.includes(user))}
+            censors={foundUsers.filter(
+              (user) =>
+                !censors.includes(user) &&
+                !isSameUser(user.userData, authStore.user as TokenPayloadUser)
+            )}
             onCensorSelect={(censor: Censor) => {
               setCensors([...censors, censor])
             }}

@@ -4,8 +4,11 @@ import Button from '@mui/material/Button'
 import FormControl from '@mui/material/FormControl'
 import { forwardRef, Ref, useCallback, useState } from 'react'
 import Box from '@mui/material/Box'
+import { IconButton } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 
 interface DynamicFormFieldProps {
+  isFilled: boolean
   title: string
   required: boolean
   errorMessage?: string
@@ -13,8 +16,9 @@ interface DynamicFormFieldProps {
 
 export const DynamicFormField = forwardRef(
   (props: DynamicFormFieldProps, ref: Ref<HTMLInputElement>) => {
-    const { title, required, errorMessage, ...otherProps } = props
-    const [visible, setVisible] = useState(required)
+    const { isFilled, title, required, errorMessage, ...otherProps } = props
+
+    const [visible, setVisible] = useState(isFilled || required)
 
     const handleShowField = useCallback(() => {
       setVisible((prev) => !prev)
@@ -41,11 +45,17 @@ export const DynamicFormField = forwardRef(
             flexShrink: 0,
           }}
         >
-          <Typography variant="body2">{title}</Typography>
+          <Typography variant="body2" sx={{ display: 'flex' }}>
+            {title}
+          </Typography>
+          <Typography variant="body2" color="red">
+            {required && '*'}
+          </Typography>
         </Box>
+
         {!required && !visible && (
           <Button
-            onClick={() => handleShowField()}
+            onClick={handleShowField}
             variant="text"
             sx={{
               '&.MuiButtonBase-root': {
@@ -56,6 +66,7 @@ export const DynamicFormField = forwardRef(
             Заполнить
           </Button>
         )}
+
         {visible && (
           <TextField
             fullWidth
@@ -67,6 +78,12 @@ export const DynamicFormField = forwardRef(
               htmlInput: { ...otherProps },
             }}
           />
+        )}
+
+        {!required && visible && (
+          <IconButton onClick={handleShowField} sx={{ color: 'primary.main' }}>
+            <CloseIcon />
+          </IconButton>
         )}
       </FormControl>
     )

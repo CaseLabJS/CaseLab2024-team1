@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable, reaction, runInAction } from 'mobx'
 import {
   documentControllerApi,
   DocumentVersionModel,
@@ -18,6 +18,12 @@ class DocumentStore {
     makeAutoObservable(this)
 
     this.documentData = document
+    reaction(
+      () => this.documentData,
+      () => {
+        void this.getDocumentTransitions()
+      }
+    )
   }
 
   patchDocumentVersion = async (

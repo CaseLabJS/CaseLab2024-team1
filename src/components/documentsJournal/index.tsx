@@ -1,0 +1,1 @@
+export { DocumentsJournal } from './documentsJournal'

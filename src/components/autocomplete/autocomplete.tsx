@@ -13,6 +13,9 @@ import { alpha } from '@mui/material/styles'
 import Paper from '@mui/material/Paper'
 import { CustomOption } from '@/components/autocomplete/option.tsx'
 import { CustomInput } from '@/components/autocomplete/input.tsx'
+import searchStore from '@/stores/SearchStore'
+import { Document } from '@/types/sharedTypes.ts'
+import authStore from '@/stores/AuthStore'
 
 interface GenericOption {
   id: number
@@ -99,7 +102,8 @@ const CustomAutocomplete = <T extends GenericOption>(
   const [inputValue, setInputValue] = useState('')
   const navigate = useNavigate()
   const theme = useTheme()
-
+  const { findDocumentById } = searchStore
+  const { user } = authStore
   const getOptionLabel = useCallback(
     (option: T) => {
       return displayFields.map((field) => option[field]).join('|')
@@ -138,12 +142,18 @@ const CustomAutocomplete = <T extends GenericOption>(
       setInputValue('')
 
       if (value && onValueAdd) {
-        setSelectedValue(null)
-        onValueAdd(value)
-        navigate(`${ROUTES.app('forward')}/${value.id}`)
+        const document: Document | null = findDocumentById(value.id)
+
+        if (document) {
+          setSelectedValue(null)
+          onValueAdd(value)
+          navigate(
+            `${ROUTES.app(document.user.id === user?.id ? 'forward' : 'inbox')}/${value.id}`
+          )
+        }
       }
     },
-    [navigate, onValueAdd]
+    [findDocumentById, navigate, onValueAdd, user?.id]
   )
 
   return (

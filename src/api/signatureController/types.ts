@@ -7,7 +7,12 @@ export type SignatureRequestModel = {
   documentId: number
 }
 
-export type SignatureRequestStatus = 'APPROVED' | 'REJECTED' | 'PENDING'
+export type SignatureRequestStatus =
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'PENDING'
+  | 'APPROVED_BY_VOTING'
+  | 'REJECTED_BY_VOTING'
 
 export type SignatureRequest = {
   id: number

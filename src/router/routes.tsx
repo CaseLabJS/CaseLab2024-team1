@@ -1,4 +1,4 @@
-import AdminPage from '@/components/adminPage/AdminPage'
+import { AdminPage } from '@/pages/adminPage'
 import UserTable from '@/components/userTable/UserTable'
 import CreateUser from '@/components/createUser/CreateUser'
 import DeletedUsers from '@/components/deletedUsers/DeletedUsers'
@@ -14,13 +14,16 @@ import { SignOutPage } from '@/pages/signOut'
 import HomePage from '@/pages/homePage'
 import { CreateDocumentPage } from '@/pages/createDocumentPage'
 import { ForwardPage } from '@/pages/forwardPage'
-// import { InboxPage } from '@/pages/inboxPage'
+import { InboxPage } from '@/pages/inboxPage'
 import { DeletedPage } from '@/pages/deletedPage'
 import { Navigate } from 'react-router-dom'
 import { DocumentPage } from '@/pages/documentPage'
 import AliveTypes from '@/components/documentTypesTable/AliveTypes'
 import DeadTypes from '@/components/documentTypesTable/DeadTypes'
 import { DraftPage } from '@/pages/draftPage'
+import { JournalPage } from '@/pages/journalPage'
+import AttributesPage from '@/pages/AttributesPage'
+import CreateAttributePage from '@/pages/CreateAttributePage'
 
 export const publicRoutes = [
   {
@@ -66,10 +69,16 @@ export const appRoutes = [
             path: ROUTES.app('new-document'),
             Component: CreateDocumentPage,
           },
-          // {
-          //   path: ROUTES.app('inbox'),
-          //   Component: InboxPage,
-          // },
+          {
+            path: ROUTES.app('inbox'),
+            Component: InboxPage,
+            children: [
+              {
+                path: ':id',
+                Component: DocumentPage,
+              },
+            ],
+          },
           {
             path: ROUTES.app('forward'),
             Component: ForwardPage,
@@ -87,6 +96,22 @@ export const appRoutes = [
           {
             path: ROUTES.app('deleted'),
             Component: DeletedPage,
+            children: [
+              {
+                path: ':id',
+                Component: DocumentPage,
+              },
+            ],
+          },
+          {
+            path: ROUTES.app(':journal'),
+            Component: JournalPage,
+            children: [
+              {
+                path: ':id',
+                Component: DocumentPage,
+              },
+            ],
           },
         ],
       },
@@ -104,7 +129,11 @@ export const adminRoutes = [
         Component: AppDashboardLayout,
         children: [
           {
-            path: ROUTES.admin(),
+            index: true,
+            element: <Navigate to="statistics" replace />,
+          },
+          {
+            path: ROUTES.admin('statistics'),
             element: <AdminPage />,
           },
           {
@@ -133,7 +162,15 @@ export const adminRoutes = [
           },
           {
             path: ROUTES.admin('attribute-type'),
-            element: <div>Attribute Type</div>,
+            element: <AttributesPage aliveTable={true} key={0} />,
+          },
+          {
+            path: ROUTES.admin('attribute-type/create'),
+            element: <CreateAttributePage />,
+          },
+          {
+            path: ROUTES.admin('attribute-type/delete'),
+            element: <AttributesPage aliveTable={false} key={1} />,
           },
         ],
       },

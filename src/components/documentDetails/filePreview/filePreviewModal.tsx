@@ -47,7 +47,7 @@ export const FilePreviewModal = (props: FilePreviewModalProps) => {
             style={{
               cursor: zoomed ? 'zoom-out' : 'zoom-in',
               maxWidth: isSmallScreen ? '100%' : 'none',
-              maxHeight: isSmallScreen ? '100%' : 'none',
+              maxHeight: '100%',
               transition: 'transform 0.4s ease',
               willChange: 'transform',
               transform: zoomed

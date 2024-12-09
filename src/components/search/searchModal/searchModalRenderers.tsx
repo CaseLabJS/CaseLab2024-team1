@@ -1,8 +1,8 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import FindInPageIcon from '@mui/icons-material/FindInPage'
 import { DocumentVersion } from '@/types/sharedTypes.ts'
 import { DocumentItem } from '@/components/search/documentItem/documentItem.tsx'
+import SearchOffIcon from '@mui/icons-material/SearchOff'
 
 interface RenderDocumentItemsProps {
   documents: DocumentVersion[]
@@ -33,7 +33,7 @@ export const renderNoResults = (searchQuery: string) => (
       gap: '1rem',
     }}
   >
-    <FindInPageIcon
+    <SearchOffIcon
       sx={{ color: 'grey.500', width: '2.5rem', height: '2.5rem' }}
     />
     <Typography>

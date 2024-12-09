@@ -24,7 +24,15 @@ export const SignatureModeSelector: FC<SignatureModeSelectorProps> = ({
 
   return (
     <>
-      <Button onClick={handleClick} variant="contained">
+      <Button
+        onClick={handleClick}
+        variant="outlined"
+        size="small"
+        sx={{
+          display: 'flex',
+          gap: '0.2rem',
+        }}
+      >
         <ArrowDropDownIcon />
       </Button>
       <Menu
